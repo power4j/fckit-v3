@@ -1,10 +1,19 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist/fist-kit-dependencies/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist/fist-kit-dependencies)
-## 技术栈
+## 主要版本
+
+### 2022.x
 
 - JDK: `11`
-- spring-boot: `3.0.2`
-- spring-cloud: `2022.0.0`
-- spring-cloud-alibaba: `2022.0.0.0-RC2`
+- spring-boot: `2.7`
+- spring-cloud: `2021`
+- spring-cloud-alibaba: `2021`
+
+### 2023.x
+
+- JDK: `17`
+- spring-boot: `3.0`
+- spring-cloud: `2022`
+- spring-cloud-alibaba: `2022`
 
 ## GIT 提交规范
 
