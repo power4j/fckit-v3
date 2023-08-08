@@ -14,8 +14,10 @@
  *  limitations under the License.
  */
 
-package com.power4j.fist.boot.mybaits.crud.repository;
+package com.power4j.fist.boot.mybaits.crud;
 
+import com.power4j.fist.boot.mybaits.crud.repository.Book;
+import com.power4j.fist.boot.mybaits.crud.repository.People;
 import lombok.experimental.UtilityClass;
 
 import java.util.Collection;

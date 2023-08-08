@@ -47,7 +47,7 @@ class BearTokenAuthenticationConverterFilterTest {
 		given(this.chain.filter(exchange)).willReturn(this.chainResult.mono());
 		BearTokenAuthenticationConverterFilter filter = new BearTokenAuthenticationConverterFilter(
 				authenticationProcessor);
-		Mono<Void> result = filter.filter(exchange, chain).subscriberContext(context);
+		Mono<Void> result = filter.filter(exchange, chain).contextWrite(context);
 		StepVerifier.create(result).verifyComplete();
 		verify(authenticationProcessor, times(0)).process(any(), any());
 	}
@@ -61,7 +61,7 @@ class BearTokenAuthenticationConverterFilterTest {
 		given(this.chain.filter(serverWebExchange)).willReturn(this.chainResult.mono());
 		BearTokenAuthenticationConverterFilter filter = new BearTokenAuthenticationConverterFilter(
 				authenticationProcessor);
-		Mono<Void> result = filter.filter(serverWebExchange, chain).subscriberContext(context);
+		Mono<Void> result = filter.filter(serverWebExchange, chain).contextWrite(context);
 		StepVerifier.create(result).verifyComplete();
 		verify(authenticationProcessor, times(1)).process(any(), any());
 	}

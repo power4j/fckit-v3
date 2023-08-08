@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Operators;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 /**
  * @author CJ (power4j@outlook.com)

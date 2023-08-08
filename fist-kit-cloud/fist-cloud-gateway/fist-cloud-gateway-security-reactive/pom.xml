@@ -78,7 +78,7 @@
     </dependency>
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-webflux-core</artifactId>
+      <artifactId>springdoc-openapi-starter-webflux-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

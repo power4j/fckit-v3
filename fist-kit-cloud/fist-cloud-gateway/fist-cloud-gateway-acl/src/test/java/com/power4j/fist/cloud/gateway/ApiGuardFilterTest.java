@@ -17,11 +17,11 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -44,9 +44,9 @@ class ApiGuardFilterTest {
 		ServerWebExchange exchange = MockServerWebExchange.from(request);
 		ApiGuardFilter filter = spy(new ApiGuardFilter(authFilterChain, permittedHandler, deniedHandler));
 
-		when(deniedHandler.handleAccessDenied(any(), any())).thenReturn(Mono.empty());
-		when(filter.makeAuthContext(any()))
-			.thenReturn(makeAuthContext(exchange, null, AuthProblem.PERMISSION_CHECK_DENIED));
+		given(deniedHandler.handleAccessDenied(any(), any())).willReturn(Mono.empty());
+		given(filter.makeAuthContext(any()))
+			.willReturn(makeAuthContext(exchange, null, AuthProblem.PERMISSION_CHECK_DENIED));
 
 		Mono<Void> result = filter.filter(exchange, gatewayFilterChain);
 		StepVerifier.create(result).verifyComplete();
@@ -63,10 +63,10 @@ class ApiGuardFilterTest {
 		ServerWebExchange exchange = MockServerWebExchange.from(request);
 		ApiGuardFilter filter = spy(new ApiGuardFilter(authFilterChain, permittedHandler, deniedHandler));
 
-		when(permittedHandler.handleAccessPermitted(any())).thenReturn(Mono.just(exchange));
-		when(filter.makeAuthContext(any()))
-			.thenReturn(makeAuthContext(exchange, new UserInfo(), AuthProblem.PUB_ACCESS));
-		when(gatewayFilterChain.filter(any())).thenReturn(Mono.empty());
+		given(permittedHandler.handleAccessPermitted(any())).willReturn(Mono.just(exchange));
+		given(filter.makeAuthContext(any()))
+			.willReturn(makeAuthContext(exchange, new UserInfo(), AuthProblem.PUB_ACCESS));
+		given(gatewayFilterChain.filter(any())).willReturn(Mono.empty());
 
 		Mono<Void> result = filter.filter(exchange, gatewayFilterChain);
 		StepVerifier.create(result).verifyComplete();

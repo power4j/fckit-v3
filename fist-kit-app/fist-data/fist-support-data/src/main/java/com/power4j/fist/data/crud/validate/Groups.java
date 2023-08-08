@@ -26,7 +26,7 @@ public interface Groups {
 	/**
 	 * 默认（通用规则）
 	 */
-	interface Default extends javax.validation.groups.Default {
+	interface Default extends jakarta.validation.groups.Default {
 
 	}
 

@@ -14,8 +14,10 @@
  *  limitations under the License.
  */
 
-package com.power4j.fist.boot.mybaits.crud.repository;
+package com.power4j.fist.boot.mybaits.crud;
 
+import com.power4j.fist.boot.mybaits.crud.repository.People;
+import com.power4j.fist.boot.mybaits.crud.repository.PeopleRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

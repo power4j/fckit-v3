@@ -41,22 +41,25 @@ public class PasswordEncoderUtil {
 	 */
 	@SuppressWarnings("deprecation")
 	public PasswordEncoder createDelegatingPasswordEncoder() {
-		String encodingId = Sm3PasswordEncoder.ID;
-		Map<String, PasswordEncoder> encoders = new HashMap<>();
-		encoders.put(encodingId, new Sm3PasswordEncoder());
-		encoders.put("bcrypt", new BCryptPasswordEncoder());
+		String bcryptId = "bcrypt";
+		Map<String, PasswordEncoder> encoders = new HashMap<>(8);
+		encoders.put(bcryptId, new BCryptPasswordEncoder());
+		encoders.put(Sm3PasswordEncoder.ID, new Sm3PasswordEncoder());
 		encoders.put("ldap", new org.springframework.security.crypto.password.LdapShaPasswordEncoder());
 		encoders.put("MD4", new org.springframework.security.crypto.password.Md4PasswordEncoder());
 		encoders.put("MD5", new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("MD5"));
 		encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
-		encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
-		encoders.put("scrypt", new SCryptPasswordEncoder());
+		encoders.put("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_5());
+		encoders.put("pbkdf2@SpringSecurity_v5_8", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+		encoders.put("scrypt", SCryptPasswordEncoder.defaultsForSpringSecurity_v4_1());
+		encoders.put("scrypt@SpringSecurity_v5_8", SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
 		encoders.put("SHA-1", new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("SHA-1"));
 		encoders.put("SHA-256",
 				new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("SHA-256"));
 		encoders.put("sha256", new org.springframework.security.crypto.password.StandardPasswordEncoder());
-		encoders.put("argon2", new Argon2PasswordEncoder());
-		return new DelegatingPasswordEncoder(encodingId, encoders);
+		encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_2());
+		encoders.put("argon2@SpringSecurity_v5_8", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+		return new DelegatingPasswordEncoder(Sm3PasswordEncoder.ID, encoders);
 	}
 
 }

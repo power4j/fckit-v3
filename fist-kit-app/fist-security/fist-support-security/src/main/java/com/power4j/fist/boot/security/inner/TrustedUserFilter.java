@@ -21,22 +21,24 @@ import com.power4j.fist.boot.common.utils.NetKit;
 import com.power4j.fist.boot.security.context.UserContextHolder;
 import com.power4j.fist.boot.security.core.SecurityConstant;
 import com.power4j.fist.boot.security.core.UserInfo;
+import inet.ipaddr.AddressStringException;
+import inet.ipaddr.IPAddress;
+import inet.ipaddr.IPAddressString;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -54,15 +56,24 @@ public class TrustedUserFilter extends OncePerRequestFilter {
 	@Setter
 	private boolean strictMode = true;
 
-	@Override
-	public void afterPropertiesSet() throws ServletException {
-		postCheck();
-		super.afterPropertiesSet();
-	}
+	private final Collection<IPAddress> whitelist = new ArrayList<>(4);
 
-	@Nullable
-	@Setter
-	private Collection<String> whitelist;
+	public void setWhitelist(Collection<String> list) {
+		whitelist.clear();
+		if (ObjectUtils.isNotEmpty(list)) {
+			for (String p : list) {
+				try {
+					IPAddressString ip = new IPAddressString(p);
+					ip.validate();
+					whitelist.add(ip.getAddress());
+				}
+				catch (AddressStringException e) {
+					String msg = "非法IP地址:" + p;
+					throw new IllegalArgumentException(msg, e);
+				}
+			}
+		}
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -92,32 +103,19 @@ public class TrustedUserFilter extends OncePerRequestFilter {
 		}
 	}
 
-	void postCheck() {
-		if (whitelist != null) {
-			for (String p : whitelist) {
-				try {
-					Pattern.compile(p);
-				}
-				catch (PatternSyntaxException e) {
-					log.error("表达式非法:{}", p);
-					throw e;
-				}
-			}
-		}
-	}
-
 	private boolean isTrusted(HttpServletRequest request) {
 		if (strictMode) {
 			String ip = request.getRemoteAddr();
-			if (whitelist != null && whitelist.stream().anyMatch(ip::matches)) {
-				return true;
+			if (ObjectUtils.isNotEmpty(whitelist)) {
+				IPAddress reqAddr = new IPAddressString(ip).getAddress();
+				return whitelist.stream().anyMatch(addr -> addr.contains(reqAddr));
 			}
 			else {
 				InetAddress address = NetKit.parse(ip);
 				if (address.isLoopbackAddress() || address.isSiteLocalAddress()) {
 					return true;
 				}
-				log.warn("认证信息不可信");
+				log.warn("认证信息不可信,来源:{}", ip);
 				return false;
 			}
 		}

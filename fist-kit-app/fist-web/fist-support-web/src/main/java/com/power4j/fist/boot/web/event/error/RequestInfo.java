@@ -20,7 +20,7 @@ import lombok.Data;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.Nullable;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 /**

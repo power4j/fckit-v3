@@ -37,22 +37,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>${powermock-lib.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.objenesis</groupId>
-          <artifactId>objenesis</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>${powermock-lib.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.tools4j</groupId>
       <artifactId>groovy-tables</artifactId>
       <version>${groovy-tables.version}</version>

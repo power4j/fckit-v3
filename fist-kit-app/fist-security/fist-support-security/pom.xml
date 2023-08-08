@@ -61,6 +61,10 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.github.seancfoley</groupId>
+      <artifactId>ipaddress</artifactId>
+    </dependency>
     <!-- optional -->
     <dependency>
       <groupId>io.projectreactor</groupId>

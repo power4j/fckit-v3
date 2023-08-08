@@ -14,9 +14,11 @@
  *  limitations under the License.
  */
 
-package com.power4j.fist.boot.mybaits.crud.repository;
+package com.power4j.fist.boot.mybaits.crud;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.power4j.fist.boot.mybaits.crud.repository.Book;
+import com.power4j.fist.boot.mybaits.crud.repository.BookRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;

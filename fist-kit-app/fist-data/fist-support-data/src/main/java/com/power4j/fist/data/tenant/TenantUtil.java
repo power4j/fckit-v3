@@ -19,7 +19,7 @@ package com.power4j.fist.data.tenant;
 import com.power4j.fist.support.spring.web.servlet.util.HttpServletRequestUtil;
 import lombok.experimental.UtilityClass;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
