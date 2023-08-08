@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.power4j.fist</groupId>
+    <groupId>com.power4j.fist3</groupId>
     <artifactId>fist-kit-dependencies</artifactId>
     <version>${revision}</version>
     <relativePath>../fist-kit-dependencies</relativePath>

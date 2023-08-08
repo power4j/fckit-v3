@@ -19,13 +19,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.power4j.fist</groupId>
+  <groupId>com.power4j.fist3</groupId>
   <artifactId>fist-kit-parent</artifactId>
   <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
-  <url>https://github.com/power4j/fist-cloud-kit</url>
+  <url>https://github.com/power4j/fckit-v3</url>
   <description>Fist Cloud Dependencies</description>
 
   <licenses>
@@ -45,14 +45,14 @@
 
   <scm>
     <url>https://github.com/power4j/fckit</url>
-    <connection>scm:git:git://github.com/power4j/fckit.git</connection>
-    <developerConnection>scm:git:https://github.com/power4j/fckit.git</developerConnection>
+    <connection>scm:git:git://github.com/power4j/fckit-v3.git</connection>
+    <developerConnection>scm:git:https://github.com/power4j/fckit-v3.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
   <properties>
     <skipTests>false</skipTests>
-    <revision>2023.0.0-SNAPSHOT</revision>
+    <revision>3.0.0-SNAPSHOT</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>17</maven.compiler.target>

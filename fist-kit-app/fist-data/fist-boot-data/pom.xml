@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.power4j.fist</groupId>
+    <groupId>com.power4j.fist3</groupId>
     <artifactId>fist-data</artifactId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
@@ -30,15 +30,15 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-kit-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-data</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-spring</artifactId>
     </dependency>
     <!-- provided -->

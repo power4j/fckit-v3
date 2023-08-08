@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist/fist-kit-dependencies/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist/fist-kit-dependencies)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist3/fist-kit-dependencies/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist3/fist-kit-dependencies)
 ## 主要版本
 
 ### 2022.x

@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.power4j.fist</groupId>
+    <groupId>com.power4j.fist3</groupId>
     <artifactId>fist-cloud-gateway</artifactId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
@@ -33,15 +33,15 @@
   <dependencies>
     <!-- compile libs -->
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-gateway-auth-core</artifactId>
     </dependency>
     <!-- optional libs -->
@@ -77,7 +77,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-test</artifactId>
       <scope>test</scope>
     </dependency>
