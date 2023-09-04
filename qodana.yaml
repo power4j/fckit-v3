@@ -1,0 +1,21 @@
+# https://www.jetbrains.com/help/qodana/qodana-yaml.html
+
+version: 1.0
+
+# bootstrap: apt install <package_name>
+
+
+# Qodana compares maven jdk values and selects the latest version
+# projectJDK: corretto-17
+
+# Starting from version 2022.3, if using the qodana.recommended and qodana.starter profiles, Qodana reads .gitignore
+#  files of your project and defines the files and folders to be ignored during inspections.
+exclude:
+  - name: All
+    paths:
+      - .mvn
+
+include:
+  - name: CheckDependencyLicenses
+
+fixesStrategy: cleanup/apply
