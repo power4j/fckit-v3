@@ -18,4 +18,5 @@ exclude:
 include:
   - name: CheckDependencyLicenses
 
-fixesStrategy: cleanup/apply
+# none/cleanup/apply
+fixesStrategy: cleanup
