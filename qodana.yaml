@@ -4,6 +4,8 @@ version: 1.0
 
 # bootstrap: apt install <package_name>
 
+profile:
+  name: qodana.recommended
 
 # Qodana compares maven jdk values and selects the latest version
 # projectJDK: corretto-17

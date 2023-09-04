@@ -81,6 +81,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains.intellij.deps</groupId>
+      <artifactId>intellij-coverage-agent</artifactId>
+      <version>${intellij.coverage.agent.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -278,6 +284,10 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skip>${skipTests}</skip>
+          <!-- Specify the IntelliJ coverage agent -->
+          <argLine>
+            -javaagent:${settings.localRepository}/org/jetbrains/intellij/deps/intellij-coverage-agent/${intellij.coverage.agent.version}/intellij-coverage-agent-${intellij.coverage.agent.version}.jar=${intellij.agent.options}
+          </argLine>
         </configuration>
       </plugin>
       <plugin>
