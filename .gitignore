@@ -43,6 +43,9 @@ target/
 # flattened pom
 .flattened-pom.xml
 
+### Qodana
+.qodana
+
 ### logs ####
 /logs/
 *.log
