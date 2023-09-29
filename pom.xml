@@ -75,7 +75,7 @@
     <intellij.coverage.agent.version>1.0.725</intellij.coverage.agent.version>
     <intellij.agent.options>${project.basedir}/.qodana/code-coverage/output.ic,true,true,true,false</intellij.agent.options>
     <!-- libs -->
-    <commons-io.version>2.13.0</commons-io.version>
+    <commons-io.version>2.14.0</commons-io.version>
     <coca-kit.version>0.1.8</coca-kit.version>
     <guava.version>31.1-jre</guava.version>
     <hutool.version>5.8.22</hutool.version>
