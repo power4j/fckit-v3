@@ -71,7 +71,7 @@
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-    <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
     <intellij.coverage.agent.version>1.0.725</intellij.coverage.agent.version>
     <intellij.agent.options>${project.basedir}/.qodana/code-coverage/output.ic,true,true,true,false</intellij.agent.options>
     <!-- libs -->
