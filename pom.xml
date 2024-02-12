@@ -93,7 +93,7 @@
     <oauth2-oidc-sdk.version>9.43.1</oauth2-oidc-sdk.version>
     <transmittable-thread-local.version>2.14.0</transmittable-thread-local.version>
     <excel-spring-boot-starter.version>1.2.7</excel-spring-boot-starter.version>
-    <seancfoley.ipaddress.version>5.4.0</seancfoley.ipaddress.version>
+    <seancfoley.ipaddress.version>5.4.2</seancfoley.ipaddress.version>
 
     <spock-lib.version>2.4-M1-groovy-4.0</spock-lib.version>
   </properties>
