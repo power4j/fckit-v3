@@ -62,7 +62,8 @@ import java.util.stream.StreamSupport;
 public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable> extends ServiceImpl<M, T>
 		implements Repository<T, ID> {
 
-	private final LambdaHelper<T> lambdaHelper = new LambdaHelper<>(getEntityClass());
+	@Nullable
+	private LambdaHelper<T> lambdaHelper;
 
 	@Override
 	public T saveOne(T entity) {
@@ -207,13 +208,13 @@ public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable>
 
 	@Override
 	public long lambdaCount(Eq<T> expr, @Nullable ID exclude) {
-		return countByColumn(lambdaHelper.colToStr(expr.getColumn(), true), expr.getValue(), exclude);
+		return countByColumn(getLambdaHelper().colToStr(expr.getColumn(), true), expr.getValue(), exclude);
 	}
 
 	@Override
 	public long lambdaCount(List<Eq<T>> expr, @Nullable ID exclude) {
 		Map<String, Object> parsed = expr.stream()
-			.collect(Collectors.toMap(o -> lambdaHelper.colToStr(o.getColumn(), true),
+			.collect(Collectors.toMap(o -> getLambdaHelper().colToStr(o.getColumn(), true),
 					o -> Objects.requireNonNull(o.getValue())));
 		return countByColumns(parsed, exclude);
 	}
@@ -279,6 +280,9 @@ public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable>
 	}
 
 	protected LambdaHelper<T> getLambdaHelper() {
+		if (lambdaHelper == null) {
+			lambdaHelper = new LambdaHelper<>(getEntityClass());
+		}
 		return lambdaHelper;
 	}
 

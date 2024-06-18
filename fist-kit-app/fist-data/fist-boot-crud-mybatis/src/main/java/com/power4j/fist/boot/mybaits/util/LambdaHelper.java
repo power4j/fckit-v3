@@ -82,13 +82,15 @@ public class LambdaHelper<T> {
 	}
 
 	private void tryInitCache(Class<?> lambdaClass) {
-		if (!initColumnMap) {
-			final Class<T> entityClass = getEntityClass();
-			if (entityClass != null) {
-				lambdaClass = entityClass;
+		synchronized (this) {
+			if (!initColumnMap) {
+				final Class<T> entityClass = getEntityClass();
+				if (entityClass != null) {
+					lambdaClass = entityClass;
+				}
+				columnMap = LambdaUtils.getColumnMap(lambdaClass);
+				initColumnMap = true;
 			}
-			columnMap = LambdaUtils.getColumnMap(lambdaClass);
-			initColumnMap = true;
 		}
 		Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", lambdaClass.getName());
 	}

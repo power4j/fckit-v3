@@ -16,6 +16,8 @@
 
 package com.power4j.fist.boot.mybaits;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
@@ -24,6 +26,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 1.0
  */
 @SpringBootApplication
+@MapperScan(basePackages = { "com.power4j.fist.boot.mybaits.tree", "com.power4j.fist.boot.mybaits.crud.repository" },
+		markerInterface = BaseMapper.class)
 public class MpTestApplication {
 
 }
