@@ -87,7 +87,7 @@
     <mybatis-plus.version>3.5.7</mybatis-plus.version>
     <mapstruct.version>1.4.2.Final</mapstruct.version>
     <springfox.version>3.0.0</springfox.version>
-    <swagger3-api.version>2.2.3</swagger3-api.version>
+    <swagger3-api.version>2.2.20</swagger3-api.version>
     <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
     <spring-boot-admin.version>3.0.4</spring-boot-admin.version>
     <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
