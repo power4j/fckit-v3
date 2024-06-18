@@ -50,5 +50,5 @@ jobs:
         run: ./mvnw --settings ./ossrh-settings.xml clean deploy -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE} -DskipTests=true -P 'oss-release'
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_TOKEN_USER }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_TOKEN_PWD }}
