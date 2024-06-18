@@ -104,7 +104,7 @@ public class ApiAccessRegistry implements InitializingBean {
 				return;
 			}
 			Set<HttpMethod> methods = info.getMethodsCondition().getMethods()
-					.stream().map(m -> HttpMethod.resolve(m.name()))
+					.stream().map(m -> HttpMethod.valueOf(m.name()))
 					.collect(Collectors.toSet());
 			for(String pattern: patterns){
 				if(log.isDebugEnabled()){

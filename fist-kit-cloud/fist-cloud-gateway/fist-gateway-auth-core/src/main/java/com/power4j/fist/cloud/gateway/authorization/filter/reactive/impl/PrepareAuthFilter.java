@@ -55,10 +55,6 @@ public class PrepareAuthFilter implements GatewayAuthFilter {
 		else {
 			originUri = request.getURI();
 		}
-		if (Objects.isNull(request.getMethod())) {
-			return exitChain(ctx,
-					AuthProblem.HTTP_PROTOCOL.moreInfo("Method not supported:" + request.getMethodValue()));
-		}
 		RequestInfo info = new RequestInfo(request.getHeaders(), request.getMethod(), originUri);
 		ctx.setInbound(info);
 		return doNext(ctx, chain);

@@ -84,7 +84,7 @@ public class ApiPermDefinition implements Serializable, PermissionDefinition {
 
 	@Override
 	public HttpMethod getMethod() {
-		return Objects.requireNonNull(HttpMethod.resolve(methodValue));
+		return Objects.requireNonNull(HttpMethod.valueOf(methodValue));
 	}
 
 	@Override

@@ -42,7 +42,7 @@ public class RequestInfo implements Serializable {
 
 	public static RequestInfo from(HttpServletRequest request) {
 		RequestInfo info = new RequestInfo();
-		info.setMethod(HttpMethod.resolve(request.getMethod()));
+		info.setMethod(HttpMethod.valueOf(request.getMethod()));
 		info.setUri(request.getRequestURI());
 		info.setQuery(request.getQueryString());
 		return info;
