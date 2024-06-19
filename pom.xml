@@ -67,6 +67,7 @@
     <spring-javaformat.plugin.version>0.0.41</spring-javaformat.plugin.version>
     <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
     <gmavenplus-plugin.version>1.13.1</gmavenplus-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
     <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     <maven-surefire-plugin.version>3.3.0</maven-surefire-plugin.version>
@@ -126,6 +127,21 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>io.spring.javaformat</groupId>
@@ -227,21 +243,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.12</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>report</id>
-              <phase>test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
+          <version>${jacoco-maven-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>pl.project13.maven</groupId>

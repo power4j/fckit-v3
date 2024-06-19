@@ -7,7 +7,3 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 20
-  ignore:
-  - dependency-name: org.springframework.security.oauth:spring-security-oauth2
-  - dependency-name: com.alibaba.cloud:spring-cloud-alibaba-dependencies
-    versions: ["2021.1"]
