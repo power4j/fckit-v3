@@ -87,7 +87,7 @@
     <bcprov-18.version>1.78</bcprov-18.version>
     <mybatis-spring.version>3.0.3</mybatis-spring.version>
     <mybatis-plus.version>3.5.7</mybatis-plus.version>
-    <mapstruct.version>1.4.2.Final</mapstruct.version>
+    <mapstruct.version>1.5.5.Final</mapstruct.version>
     <springfox.version>3.0.0</springfox.version>
     <swagger3-api.version>2.2.20</swagger3-api.version>
     <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
