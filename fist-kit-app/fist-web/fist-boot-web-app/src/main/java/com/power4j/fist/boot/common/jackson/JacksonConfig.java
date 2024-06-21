@@ -103,7 +103,7 @@ public class JacksonConfig {
 			.stream()
 			.filter(kv -> !excludeModules.contains(kv.getKey()))
 			.map(Map.Entry::getValue)
-			.collect(Collectors.toList());
+			.toList();
 		if (!modules.isEmpty()) {
 			List<String> names = modules.stream().map(Module::getModuleName).collect(Collectors.toList());
 			log.info("Install modules: {}", names);

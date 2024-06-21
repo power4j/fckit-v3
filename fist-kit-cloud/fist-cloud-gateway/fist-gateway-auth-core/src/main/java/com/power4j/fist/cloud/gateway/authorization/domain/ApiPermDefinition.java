@@ -20,6 +20,7 @@ import com.power4j.fist.security.core.authorization.domain.PermissionDefinition;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,6 +32,7 @@ import java.util.Objects;
 @Data
 public class ApiPermDefinition implements Serializable, PermissionDefinition {
 
+	@Serial
 	private final static long serialVersionUID = 1L;
 
 	public static final String API_LEVEL_PLATFORM = "0";

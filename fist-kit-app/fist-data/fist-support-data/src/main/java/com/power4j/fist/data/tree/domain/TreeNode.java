@@ -19,6 +19,7 @@ package com.power4j.fist.data.tree.domain;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Objects;
 @Data
 public class TreeNode<ID> implements Node<ID, TreeNode<ID>>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private ID id;

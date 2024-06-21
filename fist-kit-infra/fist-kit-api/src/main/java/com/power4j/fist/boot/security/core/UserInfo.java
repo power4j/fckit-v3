@@ -21,6 +21,7 @@ import lombok.Data;
 import org.apache.commons.lang3.reflect.Typed;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ import java.util.Optional;
 @Data
 public class UserInfo implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private Long userId;

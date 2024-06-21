@@ -22,6 +22,7 @@ import com.power4j.fist.boot.mon.info.TraceInfo;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -33,6 +34,7 @@ import java.time.LocalDateTime;
 @Data
 public class ServerErrorEvent implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private String appName;

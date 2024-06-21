@@ -23,6 +23,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -36,6 +38,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class HttpRequestInfo implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**

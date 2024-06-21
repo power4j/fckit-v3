@@ -21,6 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -33,6 +34,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TraceInfo implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	@Nullable

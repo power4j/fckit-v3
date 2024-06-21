@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ApiLogEvent implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private String appName;

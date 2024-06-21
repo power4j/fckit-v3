@@ -99,7 +99,7 @@ public class ClientErrorHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Result<Object> handleException(ConstraintViolationException e) {
 		ConstraintViolation<?> violation = e.getConstraintViolations().iterator().next();
-		String path = ((Path) violation.getPropertyPath()).toString();
+		String path = violation.getPropertyPath().toString();
 		log.warn("请求参数校验失败:{}", path);
 		return Results.requestParameterError(violation.getMessage(), path);
 	}
