@@ -69,27 +69,27 @@ public interface SecurityConstant {
 
 	interface UserProp {
 
-		public static String KEY_USER_SOURCE = "userSource";
+		String KEY_USER_SOURCE = "userSource";
 
-		public static String KEY_USERNAME = "username";
+		String KEY_USERNAME = "username";
 
-		public static String KEY_USER_ID = "userId";
+		String KEY_USER_ID = "userId";
 
-		public static String KEY_NICK_NAME = "nickName";
+		String KEY_NICK_NAME = "nickName";
 
-		public static String KEY_AVATAR_URL = "avatarUrl";
+		String KEY_AVATAR_URL = "avatarUrl";
 
-		public static String KEY_TENANT_ID = "tenantId";
+		String KEY_TENANT_ID = "tenantId";
 
-		public static String KEY_CLIENT_ID = "clientId";
+		String KEY_CLIENT_ID = "clientId";
 
-		public static String KEY_DEPT = "dept";
+		String KEY_DEPT = "dept";
 
-		public static String KEY_ROLE_LIST = "roles";
+		String KEY_ROLE_LIST = "roles";
 
-		public static String KEY_PERMISSION_LIST = "permissions";
+		String KEY_PERMISSION_LIST = "permissions";
 
-		public static String VAL_DEFAULT_USER_SOURCE = "local";
+		String VAL_DEFAULT_USER_SOURCE = "local";
 
 	}
 
