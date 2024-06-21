@@ -21,7 +21,7 @@
  */
 @NonNullApi
 @NonNullFields
-package com.power4j.fist.cloud.gateway.authorization;
+package com.power4j.fist.cloud.gateway;
 
 import org.springframework.lang.NonNullApi;
 import org.springframework.lang.NonNullFields;
