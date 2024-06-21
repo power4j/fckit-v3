@@ -16,9 +16,14 @@
 
 package com.power4j.fist.boot.autoconfigure.data;
 
+import com.power4j.fist.data.crud.validate.DefaultObjectValidator;
+import com.power4j.fist.data.crud.validate.ObjectValidator;
+import com.power4j.fist.data.crud.validate.ValidateUtil;
 import com.power4j.fist.data.tenant.InTenantAspect;
 import com.power4j.fist.data.tenant.TenantContextFilter;
 import com.power4j.fist.data.tenant.TenantInvokeAspect;
+import jakarta.validation.ValidatorFactory;
+import org.hibernate.validator.HibernateValidator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,6 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
 
@@ -74,6 +80,24 @@ public class DataAutoConfiguration {
 			registration.setDispatcherTypes(REQUEST, ASYNC);
 			registration.setOrder(order);
 			return registration;
+		}
+
+	}
+
+	@Configuration
+	@ConditionalOnClass({ HibernateValidator.class })
+	static class ValidationConfiguration {
+
+		@Bean
+		@ConditionalOnMissingBean
+		public ValidatorFactory validatorFactory() {
+			return ValidateUtil.createValidatorFactory();
+		}
+
+		@Bean
+		@ConditionalOnMissingBean
+		public ObjectValidator objectValidator(ValidatorFactory validatorFactory) {
+			return new DefaultObjectValidator(validatorFactory.getValidator());
 		}
 
 	}
