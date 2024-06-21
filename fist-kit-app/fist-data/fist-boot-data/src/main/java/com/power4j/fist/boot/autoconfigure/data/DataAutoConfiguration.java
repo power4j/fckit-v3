@@ -85,6 +85,7 @@ public class DataAutoConfiguration {
 	}
 
 	@Configuration
+	@ConditionalOnClass({ HibernateValidator.class })
 	static class ValidationConfiguration {
 
 		@Bean
