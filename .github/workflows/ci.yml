@@ -46,5 +46,7 @@ jobs:
         run: mvn -B test -DskipTests=false
       - name: Upload to Codecov
         uses: codecov/codecov-action@v4
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_ORG_TOKEN }}
+        with:
+          # possibly other stuff
+          token: ${{ secrets.CODECOV_ORG_TOKEN }}
+          fail_ci_if_error: false  # or true if you want CI to fail when Codecov fails
