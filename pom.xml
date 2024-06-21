@@ -78,7 +78,7 @@
     <!-- libs -->
     <commons-io.version>2.15.1</commons-io.version>
     <coca-kit.version>0.1.9</coca-kit.version>
-    <guava.version>31.1-jre</guava.version>
+    <guava.version>33.2.1-jre</guava.version>
     <hutool.version>5.8.28</hutool.version>
     <redisson.version>3.27.2</redisson.version>
     <ez-captcha.version>0.1.1</ez-captcha.version>
