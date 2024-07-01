@@ -16,6 +16,8 @@
 
 package com.power4j.fist.jackson.support.obfuscation;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,9 +27,14 @@ import java.util.function.Supplier;
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
+@Slf4j
 public class StringObfuscateRegistry {
 
 	private final static Map<Class<?>, Supplier<StringObfuscate>> OBFUSCATE_MAP = new ConcurrentHashMap<>();
+
+	static {
+		registerObfuscate(SimpleStringObfuscate.class, SimpleStringObfuscate::ofDefault);
+	}
 
 	public static Optional<StringObfuscate> getObfuscateInstance(Class<? extends StringObfuscate> obfuscate) {
 		return Optional.ofNullable(OBFUSCATE_MAP.get(obfuscate)).map(Supplier::get);

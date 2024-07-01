@@ -16,6 +16,7 @@
 
 package com.power4j.fist.jackson.support.obfuscation;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -31,13 +32,15 @@ import java.util.Optional;
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
+ * @see StringObfuscateRegistry
  */
 public class ObfuscatedStringSerializer extends StdSerializer<String> implements ContextualSerializer {
 
 	private final StringObfuscate obfuscate;
 
 	public ObfuscatedStringSerializer() {
-		this(SimpleStringObfuscate.ofDefault());
+		super(String.class);
+		this.obfuscate = SimpleStringObfuscate.ofDefault();
 	}
 
 	public ObfuscatedStringSerializer(StringObfuscate obfuscate) {
@@ -51,13 +54,19 @@ public class ObfuscatedStringSerializer extends StdSerializer<String> implements
 		if (value == null) {
 			jsonGenerator.writeNull();
 		}
+		else if (value.isEmpty()) {
+			jsonGenerator.writeString(value);
+		}
 		else {
+			String obfuscated;
 			try {
-				jsonGenerator.writeString(obfuscate.algorithm() + "." + obfuscate.obfuscate(value));
+				obfuscated = obfuscate.algorithm() + "." + obfuscate.obfuscate(value);
 			}
 			catch (Exception e) {
-				throw new IOException(e);
+				throw new JsonGenerationException(e, jsonGenerator);
 			}
+
+			jsonGenerator.writeString(obfuscated);
 		}
 	}
 

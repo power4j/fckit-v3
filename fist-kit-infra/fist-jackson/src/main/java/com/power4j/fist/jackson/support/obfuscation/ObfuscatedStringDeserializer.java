@@ -17,6 +17,7 @@
 package com.power4j.fist.jackson.support.obfuscation;
 
 import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -33,10 +34,16 @@ import java.util.Optional;
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
+ * @see StringObfuscateRegistry
  */
 public class ObfuscatedStringDeserializer extends StdDeserializer<String> implements ContextualDeserializer {
 
 	private final StringObfuscate obfuscate;
+
+	public ObfuscatedStringDeserializer() {
+		super(String.class);
+		this.obfuscate = SimpleStringObfuscate.ofDefault();
+	}
 
 	protected ObfuscatedStringDeserializer(StringObfuscate obfuscate) {
 		super(String.class);
@@ -45,7 +52,7 @@ public class ObfuscatedStringDeserializer extends StdDeserializer<String> implem
 
 	@Override
 	public String deserialize(JsonParser p, DeserializationContext ctx) throws IOException, JacksonException {
-		String value = p.getText();
+		String value = p.getValueAsString();
 		if (value == null) {
 			return null;
 		}
@@ -57,7 +64,7 @@ public class ObfuscatedStringDeserializer extends StdDeserializer<String> implem
 			return obfuscate.deobfuscate(value);
 		}
 		catch (Exception e) {
-			throw new IOException(e);
+			throw new JsonParseException(p, e.getMessage(), e);
 		}
 	}
 

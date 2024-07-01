@@ -16,10 +16,9 @@
 
 package com.power4j.fist.jackson.support.obfuscation;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author CJ (power4j@outlook.com)

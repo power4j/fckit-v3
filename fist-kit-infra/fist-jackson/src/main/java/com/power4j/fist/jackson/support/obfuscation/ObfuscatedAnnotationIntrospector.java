@@ -28,13 +28,24 @@ import java.util.Objects;
  */
 public class ObfuscatedAnnotationIntrospector extends NopAnnotationIntrospector {
 
+	private final StringObfuscate defaultProcessor = SimpleStringObfuscate.ofDefault();
+
 	@Override
 	public Object findSerializer(Annotated am) {
 		Obfuscation obfuscation = am.getAnnotation(Obfuscation.class);
 		if (Objects.nonNull(obfuscation)) {
-			return new ObfuscatedStringSerializer();
+			return new ObfuscatedStringSerializer(defaultProcessor);
 		}
 		return super.findSerializer(am);
+	}
+
+	@Override
+	public Object findDeserializer(Annotated am) {
+		Obfuscation obfuscation = am.getAnnotation(Obfuscation.class);
+		if (Objects.nonNull(obfuscation)) {
+			return new ObfuscatedStringDeserializer(defaultProcessor);
+		}
+		return super.findContentDeserializer(am);
 	}
 
 }
