@@ -20,6 +20,7 @@ import reactor.test.StepVerifier;
 
 import java.net.InetSocketAddress;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,6 +100,21 @@ class UserIpAccessFilterTest {
 	@Test
 	void shouldDenyIfNotMatch() {
 		Map<String, List<IPAddress>> rules = Map.of("xx", List.of(new IPAddressString("0.0.0.0/32").getAddress()));
+		UserIpAccessFilter filter = new UserIpAccessFilter(rules, 1);
+		when(authContext.getUserInfo()).thenReturn(null);
+		Mono<Void> result = filter.filter(authContext, authFilterChain);
+		StepVerifier.create(result).verifyComplete();
+		assertThat(authContext.getAuthState()).isNotNull();
+		assertThat(authContext.getAuthState().getProblem()).isNotNull();
+		assertThat(authContext.getAuthState().getProblem().getCode()).isEqualTo(AuthProblem.USER_IP_DENIED.getCode());
+		verify(authFilterChain, never()).filter(any());
+	}
+
+	@Test
+	void shouldNotApplyGlobalRuleWhenUserRuleExists() {
+		Map<String, List<IPAddress>> rules = new HashMap<>();
+		rules.put("admin", List.of(new IPAddressString("1.2.3.5").getAddress()));
+		rules.put("*", List.of(new IPAddressString("0.0.0.0/32").getAddress()));
 		UserIpAccessFilter filter = new UserIpAccessFilter(rules, 1);
 		when(authContext.getUserInfo()).thenReturn(null);
 		Mono<Void> result = filter.filter(authContext, authFilterChain);

@@ -62,18 +62,22 @@ public class UserIpAccessFilter implements GatewayAuthFilter {
 				}
 			}
 		}
-		// apply global rules
-		if (rules.containsKey(ANY_USER)) {
-			List<IPAddress> ipList = rules.get(ANY_USER);
-			for (IPAddress rule : ipList) {
-				if (rule.contains(accessIp)) {
-					if (log.isDebugEnabled()) {
-						log.debug("user [{}] allowed access from [{}] with global rule [{}]", username, accessIp, rule);
+		else {
+			// no user based rules, apply global rules
+			if (rules.containsKey(ANY_USER)) {
+				List<IPAddress> ipList = rules.get(ANY_USER);
+				for (IPAddress rule : ipList) {
+					if (rule.contains(accessIp)) {
+						if (log.isDebugEnabled()) {
+							log.debug("user [{}] allowed access from [{}] with global rule [{}]", username, accessIp,
+									rule);
+						}
+						return doNext(ctx, chain);
 					}
-					return doNext(ctx, chain);
 				}
 			}
 		}
+
 		return exitChain(ctx, AuthProblem.USER_IP_DENIED
 			.moreInfo(String.format("user [%s] not allowed access from [%s]", username, accessIp)));
 	}
