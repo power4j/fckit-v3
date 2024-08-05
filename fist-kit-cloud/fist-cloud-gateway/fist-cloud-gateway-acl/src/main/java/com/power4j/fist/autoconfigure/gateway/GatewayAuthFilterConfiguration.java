@@ -17,11 +17,14 @@ import com.power4j.fist.cloud.gateway.authorization.filter.reactive.impl.ReadRou
 import com.power4j.fist.cloud.gateway.authorization.filter.reactive.impl.SafeModeFilter;
 import com.power4j.fist.cloud.gateway.authorization.filter.reactive.impl.SkipAuthorizationFilter;
 import com.power4j.fist.cloud.gateway.authorization.filter.reactive.impl.TenantFilter;
+import com.power4j.fist.cloud.gateway.authorization.filter.reactive.impl.UserIpAccessFilter;
 import com.power4j.fist.cloud.gateway.authorization.filter.reactive.impl.UserPermissionFilter;
 import com.power4j.fist.cloud.security.oauth2.client.UserIntrospectClient;
 import com.power4j.fist.security.core.authorization.config.GlobalAuthorizationProperties;
 import com.power4j.fist.security.core.authorization.domain.PermissionDefinition;
 import com.power4j.fist.security.core.authorization.service.reactive.ReactivePermissionDefinitionService;
+import inet.ipaddr.IPAddress;
+import inet.ipaddr.IPAddressString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +36,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -113,6 +119,25 @@ public class GatewayAuthFilterConfiguration {
 	@Order(BASE_ORDER + 700)
 	public Oauth2IntrospectFilter oauth2IntrospectFilter(UserIntrospectClient client) {
 		return new Oauth2IntrospectFilter(client);
+	}
+
+	@Bean
+	@Order(BASE_ORDER + 800)
+	public UserIpAccessFilter userIpAccessFilter() {
+		final GlobalAuthorizationProperties.AccessIpConfig config = authorizationProperties.getAccessIp();
+		Map<String, List<IPAddress>> rules = new HashMap<>(8);
+		List<IPAddress> global = config.getGlobal()
+			.stream()
+			.map(o -> new IPAddressString(o).getAddress())
+			.collect(Collectors.toList());
+		rules.put(UserIpAccessFilter.ANY_USER, global);
+		config.getRules().forEach((k, v) -> {
+			List<IPAddress> rule = v.stream()
+				.map(o -> new IPAddressString(o).getAddress())
+				.collect(Collectors.toList());
+			rules.put(k, rule);
+		});
+		return new UserIpAccessFilter(rules, config.getMaxTrustResolves());
 	}
 
 	@Bean
