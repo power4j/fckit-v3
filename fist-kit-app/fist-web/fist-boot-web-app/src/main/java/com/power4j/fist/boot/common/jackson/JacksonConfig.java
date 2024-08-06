@@ -74,8 +74,9 @@ public class JacksonConfig {
 			applyTimeZone(builder);
 			applySimpleDateFormat(builder);
 			applyModules(builder);
-			// Temporary fix Jackson NPE #272
-			// applyExtra(builder);
+			if (jacksonCustomizeProperties.isObfuscatedSupport()) {
+				applyExtra(builder);
+			}
 		};
 	}
 
@@ -117,8 +118,14 @@ public class JacksonConfig {
 
 	private void applyExtra(Jackson2ObjectMapperBuilder builder) {
 		log.info("Install extra Serializer/Deserializer");
-		builder.annotationIntrospector(
-				introspector -> AnnotationIntrospectorPair.pair(introspector, new ObfuscatedAnnotationIntrospector()));
+		builder.annotationIntrospector(introspector -> {
+			if (null != introspector) {
+				return AnnotationIntrospectorPair.pair(introspector, new ObfuscatedAnnotationIntrospector());
+			}
+			else {
+				return new ObfuscatedAnnotationIntrospector();
+			}
+		});
 	}
 
 }
