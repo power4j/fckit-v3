@@ -16,7 +16,6 @@
 
 package com.power4j.fist.boot.common.jackson;
 
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
@@ -75,7 +74,8 @@ public class JacksonConfig {
 			applyTimeZone(builder);
 			applySimpleDateFormat(builder);
 			applyModules(builder);
-			applyExtra(builder);
+			// Temporary fix Jackson NPE #272
+			// applyExtra(builder);
 		};
 	}
 
