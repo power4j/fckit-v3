@@ -42,7 +42,7 @@
       <artifactId>fist-support-spring</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.power4j.fist</groupId>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-jackson</artifactId>
     </dependency>
     <dependency>
