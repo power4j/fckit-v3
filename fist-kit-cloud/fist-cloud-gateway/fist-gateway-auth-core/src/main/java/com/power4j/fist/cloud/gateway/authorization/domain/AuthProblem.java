@@ -133,6 +133,11 @@ public class AuthProblem {
 	public final static AuthProblem USER_ACCESS_DENIED = new AuthProblem(50, "USER_ACCESS_DENIED");
 
 	/**
+	 * 用户IP不在白名单
+	 */
+	public final static AuthProblem USER_IP_DENIED = new AuthProblem(51, "USER_IP_DENIED");
+
+	/**
 	 * 无API访问权限
 	 */
 	public final static AuthProblem PERMISSION_CHECK_DENIED = new AuthProblem(60, "PERMISSION_CHECK_DENIED");

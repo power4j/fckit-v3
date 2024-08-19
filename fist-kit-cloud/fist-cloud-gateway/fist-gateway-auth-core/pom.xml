@@ -38,6 +38,10 @@
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-security</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.github.seancfoley</groupId>
+      <artifactId>ipaddress</artifactId>
+    </dependency>
     <!-- optional -->
     <dependency>
       <groupId>org.redisson</groupId>

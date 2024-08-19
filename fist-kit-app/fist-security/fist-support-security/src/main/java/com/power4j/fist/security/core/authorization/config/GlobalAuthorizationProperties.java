@@ -23,6 +23,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -55,6 +56,8 @@ public class GlobalAuthorizationProperties {
 
 	private Auth auth = new Auth();
 
+	private AccessIpConfig accessIp = new AccessIpConfig();
+
 	@Data
 	public static class Auth {
 
@@ -78,6 +81,22 @@ public class GlobalAuthorizationProperties {
 		 *
 		 */
 		private List<String> whitelist = Collections.singletonList("127.*");
+
+	}
+
+	@Data
+	public static class AccessIpConfig {
+
+		/** 用户访问IP的最大解析索引,用于防止IP欺骗 */
+		private int maxTrustResolves = 64;
+
+		/** 所有用户的IP白名单(CIDR) */
+		private List<String> global = Collections.singletonList("0.0.0.0/0");
+
+		/**
+		 * 针对特定用户的IP白名单(CIDR)
+		 */
+		private Map<String, List<String>> rules = Collections.emptyMap();
 
 	}
 
