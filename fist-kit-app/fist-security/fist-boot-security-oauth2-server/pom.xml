@@ -21,16 +21,27 @@
 
   <parent>
     <groupId>com.power4j.fist3</groupId>
-    <artifactId>fist-kit-app</artifactId>
+    <artifactId>fist-security</artifactId>
     <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>fist-security</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>fist-boot-security-oauth2-server</artifactId>
+  <packaging>jar</packaging>
 
-  <modules>
-    <module>fist-support-security</module>
-    <module>fist-boot-security</module>
-    <module>fist-boot-security-oauth2-server</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-boot-web-app</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-oauth2-jose</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-oauth2-authorization-server</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>
