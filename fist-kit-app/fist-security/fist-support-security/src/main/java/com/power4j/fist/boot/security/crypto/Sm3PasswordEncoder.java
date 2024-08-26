@@ -16,8 +16,7 @@
 
 package com.power4j.fist.boot.security.crypto;
 
-import cn.hutool.crypto.digest.SM3;
-import org.apache.commons.lang3.ObjectUtils;
+import com.power4j.tile.crypto.bc.Sm3Util;
 import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 
 import java.nio.charset.StandardCharsets;
@@ -33,8 +32,8 @@ public class Sm3PasswordEncoder extends AbstractPasswordEncoder {
 
 	@Override
 	protected byte[] encode(CharSequence rawPassword, byte[] salt) {
-		SM3 sm3 = ObjectUtils.isEmpty(salt) ? new SM3() : new SM3(salt);
-		return sm3.digest(rawPassword.toString().getBytes(StandardCharsets.UTF_8));
+		byte[] input = rawPassword.toString().getBytes(StandardCharsets.UTF_8);
+		return Sm3Util.hash(input, salt);
 	}
 
 }

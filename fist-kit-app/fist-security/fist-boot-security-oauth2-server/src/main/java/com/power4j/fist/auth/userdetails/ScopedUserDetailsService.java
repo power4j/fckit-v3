@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.autoconfigure.oas.annotation;
+package com.power4j.fist.auth.userdetails;
 
-import com.power4j.fist.autoconfigure.oas.AuthorizationServerAutoConfiguration;
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.core.Ordered;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * @author CJ (power4j@outlook.com)
  * @since 3.1
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Import({ AuthorizationServerAutoConfiguration.class })
-public @interface Oauth2AuthorizationServer {
+public interface ScopedUserDetailsService extends UserDetailsService, Ordered {
+
+	int DEFAULT_ORDER = 0;
+
+	/**
+	 * 是否支持此客户端校验
+	 * @param clientId 请求客户端
+	 * @param grantType 授权类型
+	 * @return true/false
+	 */
+	default boolean supported(String clientId, String grantType) {
+		return true;
+	}
+
+	@Override
+	default int getOrder() {
+		return DEFAULT_ORDER;
+	}
 
 }

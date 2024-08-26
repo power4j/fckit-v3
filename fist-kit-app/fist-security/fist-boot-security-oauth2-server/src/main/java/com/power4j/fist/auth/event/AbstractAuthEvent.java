@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.autoconfigure.oas.annotation;
+package com.power4j.fist.auth.event;
 
-import com.power4j.fist.autoconfigure.oas.AuthorizationServerAutoConfiguration;
-import org.springframework.context.annotation.Import;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.time.Instant;
 
 /**
  * @author CJ (power4j@outlook.com)
  * @since 3.1
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Import({ AuthorizationServerAutoConfiguration.class })
-public @interface Oauth2AuthorizationServer {
+@SuperBuilder
+public class AbstractAuthEvent {
+
+	@Builder.Default
+	private final Instant time = Instant.now();
+
+	private final HttpServletRequest request;
 
 }

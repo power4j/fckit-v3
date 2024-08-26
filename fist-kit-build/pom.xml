@@ -136,6 +136,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>com.power4j.tile</groupId>
+        <artifactId>tile-dependencies</artifactId>
+        <version>${tile.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!-- jar -->
       <dependency>
         <groupId>commons-io</groupId>
@@ -252,7 +259,6 @@
         <artifactId>spring-security-oauth2-authorization-server</artifactId>
         <version>${spring.oauth2-authorization-server.version}</version>
       </dependency>
-      <!-- BOM -->
       <dependency>
         <groupId>com.github.seancfoley</groupId>
         <artifactId>ipaddress</artifactId>
