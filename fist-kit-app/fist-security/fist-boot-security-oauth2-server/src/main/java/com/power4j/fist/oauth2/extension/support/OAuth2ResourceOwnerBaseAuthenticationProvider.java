@@ -138,29 +138,29 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		T resouceOwnerBaseAuthentication = (T) authentication;
+		T resourceOwnerBaseAuthentication = (T) authentication;
 
 		OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(
-				resouceOwnerBaseAuthentication);
+				resourceOwnerBaseAuthentication);
 
 		RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
 		checkClient(registeredClient);
 
-		Set<String> authorizedScopes;
+		Set<String> scopeSet;
 		// Default to configured scopes
-		if (!CollectionUtils.isEmpty(resouceOwnerBaseAuthentication.getScopes())) {
-			for (String requestedScope : resouceOwnerBaseAuthentication.getScopes()) {
+		if (!CollectionUtils.isEmpty(resourceOwnerBaseAuthentication.getScopes())) {
+			for (String requestedScope : resourceOwnerBaseAuthentication.getScopes()) {
 				if (!registeredClient.getScopes().contains(requestedScope)) {
 					throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_SCOPE);
 				}
 			}
-			authorizedScopes = new LinkedHashSet<>(resouceOwnerBaseAuthentication.getScopes());
+			scopeSet = new LinkedHashSet<>(resourceOwnerBaseAuthentication.getScopes());
 		}
 		else {
-			authorizedScopes = new LinkedHashSet<>();
+			scopeSet = new LinkedHashSet<>();
 		}
 
-		Map<String, Object> reqParameters = resouceOwnerBaseAuthentication.getAdditionalParameters();
+		Map<String, Object> reqParameters = resourceOwnerBaseAuthentication.getAdditionalParameters();
 		try {
 
 			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = buildToken(reqParameters);
@@ -170,38 +170,48 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 			Authentication usernamePasswordAuthentication = authenticationManager
 				.authenticate(usernamePasswordAuthenticationToken);
 
-			Object unlimitedSetting = registeredClient.getClientSettings()
-				.getSettings()
-				.get(AuthConstants.ONLINE_UNLIMITED);
-			boolean unlimited = false;
-			if (unlimitedSetting != null) {
-				unlimited = ObjectUtils.defaultIfNull(BooleanUtils.toBooleanObject(unlimitedSetting.toString()), false);
-			}
-			// 没有设置并发控制走原有逻辑生成 || 设置同时在线为 true
-			if (unlimited) {
-				return generateAuthenticationToken(resouceOwnerBaseAuthentication, clientPrincipal, registeredClient,
-						authorizedScopes, usernamePasswordAuthentication);
-			}
-
-			if (authorizationService instanceof ManagedOAuth2AuthorizationService) {
-				// 不允许同时在线,删除原有username 关联的所有token
-				ManagedOAuth2AuthorizationService managedAuthorizationService = (ManagedOAuth2AuthorizationService) this.authorizationService;
-				int count = managedAuthorizationService.removeByUsername(authentication);
-				if (log.isDebugEnabled()) {
-					log.debug("remove user token due to online limit ,user: {},removed token: {}",
-							authentication.getName(), count);
-				}
-			}
-			return generateAuthenticationToken(resouceOwnerBaseAuthentication, clientPrincipal, registeredClient,
-					authorizedScopes, usernamePasswordAuthentication);
+			prepareGenerateAuthenticationToken(registeredClient, usernamePasswordAuthenticationToken);
+			return generateAuthenticationToken(resourceOwnerBaseAuthentication, clientPrincipal, registeredClient,
+					scopeSet, usernamePasswordAuthentication);
 
 		}
 		catch (AuthenticationException ex) {
 			throw oAuth2AuthenticationException(authentication, ex);
 		}
 		catch (Exception e) {
-			log.error("登录异常:", e);
+			log.error("发放Token异常:", e);
 			throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR));
+		}
+	}
+
+	/**
+	 * callback invoked before generate authentication
+	 * @param registeredClient the RegisteredClient
+	 * @param authentication the principal
+	 */
+	protected void prepareGenerateAuthenticationToken(RegisteredClient registeredClient,
+			Authentication authentication) {
+		Object unlimitedSetting = registeredClient.getClientSettings()
+			.getSettings()
+			.get(AuthConstants.ClientOpts.KEY_ONLINE_UNLIMITED);
+		boolean unlimited = false;
+		if (unlimitedSetting != null) {
+			unlimited = ObjectUtils.defaultIfNull(BooleanUtils.toBooleanObject(unlimitedSetting.toString()), false);
+		}
+		if (unlimited) {
+			return;
+		}
+
+		if (authorizationService instanceof ManagedOAuth2AuthorizationService) {
+			ManagedOAuth2AuthorizationService managedAuthorizationService = (ManagedOAuth2AuthorizationService) this.authorizationService;
+			int count = managedAuthorizationService.removeByUsername(registeredClient, authentication);
+			if (log.isDebugEnabled()) {
+				log.debug("remove user token due to online limit ,client:{}, user: {},removed token: {}",
+						registeredClient.getClientId(), authentication.getName(), count);
+			}
+		}
+		else {
+			log.warn("Limit user online is not supported,please use ManagedOAuth2AuthorizationService");
 		}
 	}
 

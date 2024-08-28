@@ -17,6 +17,7 @@
 package com.power4j.fist.oauth2.extension.event;
 
 import com.power4j.fist.auth.event.AbstractAuthEvent;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
 
@@ -24,10 +25,11 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
+@Getter
 @SuperBuilder
 public class OauthSuccessEvent extends AbstractAuthEvent {
 
-	private final String username;
+	private final String grantType;
 
 	private final OAuth2AccessTokenAuthenticationToken authentication;
 

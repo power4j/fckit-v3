@@ -17,8 +17,10 @@
 
 package com.power4j.fist.auth.handler;
 
+import com.power4j.fist.auth.event.AuthSuccessEvent;
 import com.power4j.fist.data.tenant.TenantConstant;
 import com.power4j.fist.data.tenant.TenantUtil;
+import com.power4j.fist.support.spring.util.SpringEventUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,6 +51,12 @@ public class TenantUrlAuthenticationSuccessHandler extends SimpleUrlAuthenticati
 		if (savedRequest == null) {
 			super.onAuthenticationSuccess(request, response, authentication);
 		}
+		AuthSuccessEvent event = AuthSuccessEvent.builder()
+			.request(request)
+			.username(request.getParameter("username"))
+			.authentication(authentication)
+			.build();
+		SpringEventUtil.publishEvent(event);
 
 		if (isAlwaysUseDefaultTargetUrl()) {
 			this.requestCache.removeRequest(request, response);

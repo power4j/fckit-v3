@@ -45,6 +45,7 @@ public class DefaultOauthFailureHandler implements AuthenticationFailureHandler 
 		}
 		OauthFailureEvent event = OauthFailureEvent.builder()
 			.grantType(grantType)
+			.username(request.getParameter(OAuth2ParameterNames.USERNAME))
 			.exception(exception)
 			.request(request)
 			.build();

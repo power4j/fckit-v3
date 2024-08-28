@@ -23,6 +23,11 @@ package com.power4j.fist.oauth2.core;
 public interface AuthConstants {
 
 	/**
+	 * Bearer 前缀
+	 */
+	String BEARER_PREFIX = "Bearer";
+
+	/**
 	 * 客户端是否允许同时在线
 	 */
 	String ONLINE_UNLIMITED = "online_unlimited";
@@ -76,5 +81,43 @@ public interface AuthConstants {
 	 * 手机号登录
 	 */
 	String APP = "mobile";
+
+	interface ClientOpts {
+
+		/**
+		 * 是否允许同时在线
+		 */
+		String KEY_ONLINE_UNLIMITED = "online_unlimited";
+
+		String VAL_ONLINE_UNLIMITED_YES = "1";
+
+		/**
+		 * 凭据加密算法
+		 */
+		String KEY_CREDENTIAL_ENC_ALGO = "credential_enc_algo";
+
+		String VAL_CREDENTIAL_ENC_ALGO_SM4_1 = "sm4-1";
+
+		String VAL_CREDENTIAL_ENC_ALGO_SM4_2 = "sm4-2";
+
+		/**
+		 * 下发用户详情
+		 */
+		String KEY_USER_DETAILS_EXPOSE = "user_details_expose";
+
+		String VAL_USER_DETAILS_EXPOSE_NONE = "none";
+
+		String VAL_USER_DETAILS_EXPOSE_LESS = "less";
+
+		String VAL_USER_DETAILS_EXPOSE_FULL = "full";
+
+		/**
+		 * 用户详情的字段名称
+		 */
+		String KEY_USER_DETAILS_FIELD = "user_details_field";
+
+		String VAL_USER_DETAILS_FIELD_DEFAULT = "userInfo";
+
+	}
 
 }

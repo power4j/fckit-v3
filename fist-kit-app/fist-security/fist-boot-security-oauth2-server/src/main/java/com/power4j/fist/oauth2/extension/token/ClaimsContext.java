@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.auth.event;
+package com.power4j.fist.oauth2.extension.token;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
-
-import java.time.Instant;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 
 /**
  * @author CJ (power4j@outlook.com)
- * @since 3.1
+ * @since 1.0
  */
 @Getter
-@SuperBuilder
-public class AbstractAuthEvent {
+@Builder
+public class ClaimsContext {
 
-	private final String username;
+	private final String clientId;
 
-	@Builder.Default
-	private final Instant time = Instant.now();
+	private final String grantType;
 
-	private final HttpServletRequest request;
+	private final Object principal;
+
+	private final ClientSettings clientSettings;
 
 }

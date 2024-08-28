@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.auth.event;
+package com.power4j.fist.oauth2.extension.utils;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author CJ (power4j@outlook.com)
- * @since 3.1
+ * @since 1.0
  */
-@Getter
-@SuperBuilder
-public class AbstractAuthEvent {
+class WebUtilTest {
 
-	private final String username;
-
-	@Builder.Default
-	private final Instant time = Instant.now();
-
-	private final HttpServletRequest request;
+	@Test
+	void parseBasicClientId() {
+		String head = "Basic ZmlzdC1hZG1pbi13ZWI6M2MyOWFmOTItMTVjYS00YjVjLWE1MmYtYjgzMWI1ZDZjMjc3";
+		String clientId = WebUtil.parseBasicClientId(head).orElse(null);
+		Assertions.assertEquals("fist-admin-web", clientId);
+	}
 
 }

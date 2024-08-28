@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.auth.event;
+package com.power4j.fist.oauth2.extension.token;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.experimental.SuperBuilder;
-
-import java.time.Instant;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author CJ (power4j@outlook.com)
- * @since 3.1
+ * @since 3.0
  */
-@Getter
-@SuperBuilder
-public class AbstractAuthEvent {
+public interface OauthUserPropExporter {
 
-	private final String username;
+	OauthUserPropExporter NO_OP = (ctx) -> Collections.emptyMap();
 
-	@Builder.Default
-	private final Instant time = Instant.now();
-
-	private final HttpServletRequest request;
+	/**
+	 * Export user properties
+	 * @param claimsContext the context
+	 * @return user properties
+	 */
+	Map<String, Object> export(ClaimsContext claimsContext);
 
 }

@@ -16,6 +16,7 @@
 
 package com.power4j.fist.auth.event;
 
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.AuthenticationException;
 
@@ -23,6 +24,7 @@ import org.springframework.security.core.AuthenticationException;
  * @author CJ (power4j@outlook.com)
  * @since 3.1
  */
+@Getter
 @SuperBuilder
 public class AuthFailureEvent extends AbstractAuthEvent {
 

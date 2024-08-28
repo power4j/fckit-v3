@@ -1,8 +1,7 @@
 package com.power4j.fist.oauth2.extension.password;
 
 import com.power4j.fist.oauth2.extension.support.OAuth2ResourceOwnerBaseAuthenticationProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -22,10 +21,9 @@ import java.util.Map;
  * @author jumuning
  * @since 3.1
  */
+@Slf4j
 public class OAuth2ResourceOwnerPasswordAuthenticationProvider
 		extends OAuth2ResourceOwnerBaseAuthenticationProvider<OAuth2ResourceOwnerPasswordAuthenticationToken> {
-
-	private static final Logger LOGGER = LogManager.getLogger(OAuth2ResourceOwnerPasswordAuthenticationProvider.class);
 
 	/**
 	 * Constructs an {@code OAuth2AuthorizationCodeAuthenticationProvider} using the
@@ -51,7 +49,9 @@ public class OAuth2ResourceOwnerPasswordAuthenticationProvider
 	@Override
 	public boolean supports(Class<?> authentication) {
 		boolean supports = OAuth2ResourceOwnerPasswordAuthenticationToken.class.isAssignableFrom(authentication);
-		LOGGER.debug("supports authentication=" + authentication + " returning " + supports);
+		if (log.isDebugEnabled()) {
+			log.debug("supports authentication= {} returning {}", authentication, supports);
+		}
 		return supports;
 	}
 

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -47,10 +48,12 @@ public class DefaultOauthSuccessHandler implements AuthenticationSuccessHandler 
 			log.debug("OAuth2 Authentication Success: {}", authentication.getName());
 		}
 		OAuth2AccessTokenAuthenticationToken accessTokenAuthentication = (OAuth2AccessTokenAuthenticationToken) authentication;
+		String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
 		String username = Objects
 			.toString(accessTokenAuthentication.getAdditionalParameters().get(AuthConstants.DETAILS_USERNAME));
 		OauthSuccessEvent event = OauthSuccessEvent.builder()
 			.request(request)
+			.grantType(grantType)
 			.authentication(accessTokenAuthentication)
 			.username(username)
 			.build();

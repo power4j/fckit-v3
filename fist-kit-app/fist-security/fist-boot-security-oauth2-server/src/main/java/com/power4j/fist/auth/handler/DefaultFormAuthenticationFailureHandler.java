@@ -49,7 +49,11 @@ public class DefaultFormAuthenticationFailureHandler implements AuthenticationFa
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) {
 		log.debug("Form Authentication Failure:{}", exception.getLocalizedMessage());
-		AuthFailureEvent event = AuthFailureEvent.builder().request(request).exception(exception).build();
+		AuthFailureEvent event = AuthFailureEvent.builder()
+			.request(request)
+			.username(request.getParameter("username"))
+			.exception(exception)
+			.build();
 		SpringEventUtil.publishEvent(event);
 		String url = "/token/login?error=" + exception.getMessage();
 		response.sendRedirect(urlCodec.encode(url, StandardCharsets.UTF_8.name()));

@@ -18,6 +18,7 @@ package com.power4j.fist.oauth2.extension.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -27,9 +28,20 @@ public interface ManagedOAuth2AuthorizationService extends OAuth2AuthorizationSe
 
 	/**
 	 * 根据 username 删除
-	 * @param authentication
+	 * @param registeredClient 客户端信息
+	 * @param username 用户名
 	 * @return 返回记录影响条数
 	 */
-	int removeByUsername(Authentication authentication);
+	int removeByUsername(RegisteredClient registeredClient, String username);
+
+	/**
+	 * 根据 username 删除
+	 * @param registeredClient 客户端信息
+	 * @param authentication 认证信息
+	 * @return 返回记录影响条数
+	 */
+	default int removeByUsername(RegisteredClient registeredClient, Authentication authentication) {
+		return removeByUsername(registeredClient, authentication.getName());
+	}
 
 }

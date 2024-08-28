@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2024. ChenJun (power4j@outlook.com & https://github.com/John-Chan)
  *
@@ -14,28 +15,9 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.auth.event;
+@NonNullApi
+@NonNullFields
+package com.power4j.fist.oauth2.extension.filter;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.experimental.SuperBuilder;
-
-import java.time.Instant;
-
-/**
- * @author CJ (power4j@outlook.com)
- * @since 3.1
- */
-@Getter
-@SuperBuilder
-public class AbstractAuthEvent {
-
-	private final String username;
-
-	@Builder.Default
-	private final Instant time = Instant.now();
-
-	private final HttpServletRequest request;
-
-}
+import org.springframework.lang.NonNullApi;
+import org.springframework.lang.NonNullFields;
