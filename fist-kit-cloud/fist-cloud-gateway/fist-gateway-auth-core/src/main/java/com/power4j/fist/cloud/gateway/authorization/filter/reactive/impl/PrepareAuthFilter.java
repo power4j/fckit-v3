@@ -19,7 +19,6 @@ package com.power4j.fist.cloud.gateway.authorization.filter.reactive.impl;
 import com.power4j.fist.boot.security.core.SecurityConstant;
 import com.power4j.fist.cloud.gateway.AuthUtils;
 import com.power4j.fist.cloud.gateway.authorization.domain.AuthContext;
-import com.power4j.fist.cloud.gateway.authorization.domain.AuthProblem;
 import com.power4j.fist.cloud.gateway.authorization.domain.RequestInfo;
 import com.power4j.fist.cloud.gateway.authorization.filter.reactive.GatewayAuthFilter;
 import com.power4j.fist.security.core.authorization.filter.reactive.ServerAuthFilterChain;
@@ -30,7 +29,6 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ORIGINAL_REQUEST_URL_ATTR;
 

@@ -16,12 +16,11 @@
 
 /**
  * @author CJ (power4j@outlook.com)
- * @date 2021/6/2
- * @since 1.0
+ * @since 3.1
  */
 @NonNullApi
 @NonNullFields
-package com.power4j.fist.jackson;
+package com.power4j.fist.boot.web.servlet;
 
 import org.springframework.lang.NonNullApi;
 import org.springframework.lang.NonNullFields;

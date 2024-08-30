@@ -42,12 +42,12 @@
       <artifactId>fist-support-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
+      <groupId>com.power4j.tile</groupId>
+      <artifactId>tile-crypto</artifactId>
     </dependency>
     <dependency>
-      <groupId>cn.hutool</groupId>
-      <artifactId>hutool-all</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -92,12 +92,12 @@
       <artifactId>spring-security-crypto</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!-- test -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15to18</artifactId>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
+    <!-- test -->
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-test</artifactId>

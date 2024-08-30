@@ -16,9 +16,11 @@
 
 package com.power4j.fist.data.crud.validate;
 
+import jakarta.validation.ValidatorFactory;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.beanvalidation.MessageSourceResourceBundleLocator;
 
 import jakarta.validation.ConstraintViolation;
@@ -47,21 +49,29 @@ public class ValidateUtil {
 
 	/**
 	 * 校验对象的约束条件(快速失败)
+	 * @param factory ValidatorFactory 对象
 	 * @param object 被校验的对象
 	 * @param groups 校验组
 	 * @param <T> 被校验的对象
 	 * @return 违例的约束,如果没有违例情况返回空的Set
 	 */
-	public static <T> Set<ConstraintViolation<T>> check(T object, Class<?>... groups) {
+	public static <T> Set<ConstraintViolation<T>> check(ValidatorFactory factory, T object, Class<?>... groups) {
 		Locale.setDefault(LocaleContextHolder.getLocale());
-		Validator validator = Validation.byDefaultProvider()
-			.configure()
-			.messageInterpolator(
-					new ResourceBundleMessageInterpolator(new MessageSourceResourceBundleLocator(getMessageSource())))
-			.buildValidatorFactory()
-			.getValidator();
+		return factory.getValidator().validate(object, groups);
+	}
 
-		return validator.validate(object, groups);
+	/**
+	 * 校验对象的约束条件(快速失败)
+	 * @param object 被校验的对象
+	 * @param groups 校验组
+	 * @param <T> 被校验的对象
+	 * @return 违例的约束,如果没有违例情况返回空的Set
+	 * @deprecated use {@link ValidateUtil#check(ValidatorFactory, T, Class[])}
+	 */
+	public static <T> Set<ConstraintViolation<T>> check(T object, Class<?>... groups) {
+		try (ValidatorFactory factory = createValidatorFactory()) {
+			return check(factory, object, groups);
+		}
 	}
 
 	/**
@@ -102,6 +112,18 @@ public class ValidateUtil {
 		validate((constraintViolations) -> new ValidationException(
 				constraintViolations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(","))),
 				object, groups);
+	}
+
+	/**
+	 * 创建 ValidatorFactory
+	 * @return ValidatorFactory
+	 */
+	public static ValidatorFactory createValidatorFactory() {
+		return Validation.byDefaultProvider()
+			.configure()
+			.messageInterpolator(
+					new ResourceBundleMessageInterpolator(new MessageSourceResourceBundleLocator(getMessageSource())))
+			.buildValidatorFactory();
 	}
 
 }

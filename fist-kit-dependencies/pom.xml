@@ -80,6 +80,11 @@
       </dependency>
       <dependency>
         <groupId>com.power4j.fist3</groupId>
+        <artifactId>fist-boot-security-oauth2-server</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.power4j.fist3</groupId>
         <artifactId>fist-support-web</artifactId>
         <version>${revision}</version>
       </dependency>

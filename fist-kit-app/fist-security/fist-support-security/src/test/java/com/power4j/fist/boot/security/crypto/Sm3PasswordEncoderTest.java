@@ -19,8 +19,6 @@ package com.power4j.fist.boot.security.crypto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author CJ (power4j@outlook.com)
  * @date 2022/3/7
@@ -30,11 +28,20 @@ class Sm3PasswordEncoderTest {
 
 	@Test
 	void encode() {
-		final String raw = "123";
+		final String raw = "root";
 		Sm3PasswordEncoder encoder = new Sm3PasswordEncoder();
 		String encoded = encoder.encode(raw);
 		boolean matched = encoder.matches(raw, encoded);
 		Assertions.assertTrue(matched);
+	}
+
+	@Test
+	void testSalted() {
+		final String raw = "root";
+		Sm3PasswordEncoder encoder = new Sm3PasswordEncoder();
+		String enc_1 = encoder.encode(raw);
+		String enc_2 = encoder.encode(raw);
+		Assertions.assertNotEquals(enc_1, enc_2);
 	}
 
 }

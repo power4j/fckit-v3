@@ -25,9 +25,14 @@ public class JacksonCustomizeProperties {
 	public static final String TZ_SYSTEM = "system";
 
 	/**
-	 * 是否启用个性化配置
+	 * 关闭时所有增强功能的开关
 	 */
 	private boolean enabled = true;
+
+	/**
+	 * Obfuscation 注解支持
+	 */
+	private boolean obfuscatedSupport = true;
 
 	/**
 	 * 排除的自定义模块

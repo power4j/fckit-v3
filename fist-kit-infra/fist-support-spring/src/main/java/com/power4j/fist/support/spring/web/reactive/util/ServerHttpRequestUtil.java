@@ -43,7 +43,7 @@ public class ServerHttpRequestUtil {
 	 */
 	public Optional<String> getRemoteIp(ServerHttpRequest request) {
 		Optional<String> ip = HttpServletRequestUtil.getRemoteIp(request.getHeaders());
-		if (!ip.isPresent()) {
+		if (ip.isEmpty()) {
 			ip = Optional.ofNullable(request.getRemoteAddress())
 				.map(InetSocketAddress::getAddress)
 				.map(InetAddress::getHostAddress);

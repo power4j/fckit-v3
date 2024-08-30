@@ -31,5 +31,6 @@
   <modules>
     <module>fist-support-security</module>
     <module>fist-boot-security</module>
+    <module>fist-boot-security-oauth2-server</module>
   </modules>
 </project>

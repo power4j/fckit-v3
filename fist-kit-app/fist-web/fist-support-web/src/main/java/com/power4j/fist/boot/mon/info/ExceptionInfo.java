@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -35,6 +36,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ExceptionInfo implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private String ex;

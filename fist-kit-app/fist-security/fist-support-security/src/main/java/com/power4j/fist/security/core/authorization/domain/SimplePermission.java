@@ -2,12 +2,15 @@ package com.power4j.fist.security.core.authorization.domain;
 
 import org.springframework.util.Assert;
 
+import java.io.Serial;
+
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
 public class SimplePermission implements GrantedPermission {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private final String code;

@@ -3,6 +3,7 @@ package com.power4j.fist.boot.web.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 public class PageDTO<T> implements Serializable {
 
+	@Serial
 	private final static long serialVersionUID = 1L;
 
 	@Schema(description = "数据")

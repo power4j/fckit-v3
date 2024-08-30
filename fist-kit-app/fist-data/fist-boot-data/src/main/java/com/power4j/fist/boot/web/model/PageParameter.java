@@ -24,6 +24,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -34,6 +35,7 @@ import java.io.Serializable;
 @Data
 public class PageParameter implements Serializable {
 
+	@Serial
 	private final static long serialVersionUID = 1L;
 
 	public final static int DEFAULT_PAGE_SIZE = 20;

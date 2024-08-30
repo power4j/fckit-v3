@@ -36,7 +36,7 @@ public class RejectedException extends RuntimeException {
 	@Nullable
 	private final String hint;
 
-	private HttpStatus status = HttpStatus.OK;
+	private HttpStatus status;
 
 	/**
 	 * 构造函数，不会进行国际化处理

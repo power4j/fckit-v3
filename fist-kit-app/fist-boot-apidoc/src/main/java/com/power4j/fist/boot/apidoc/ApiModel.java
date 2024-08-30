@@ -2,6 +2,7 @@ package com.power4j.fist.boot.apidoc;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 public class ApiModel implements Serializable {
 
+	@Serial
 	private final static long serialVersionUID = 1L;
 
 	/** tag */

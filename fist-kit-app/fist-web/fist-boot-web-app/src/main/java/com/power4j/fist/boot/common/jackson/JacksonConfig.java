@@ -18,8 +18,10 @@ package com.power4j.fist.boot.common.jackson;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.power4j.fist.boot.common.jackson.module.DateTimeModule;
 import com.power4j.fist.boot.common.jackson.module.NumberStrModule;
+import com.power4j.fist.jackson.support.obfuscation.ObfuscatedAnnotationIntrospector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -72,6 +74,9 @@ public class JacksonConfig {
 			applyTimeZone(builder);
 			applySimpleDateFormat(builder);
 			applyModules(builder);
+			if (jacksonCustomizeProperties.isObfuscatedSupport()) {
+				applyExtra(builder);
+			}
 		};
 	}
 
@@ -103,12 +108,24 @@ public class JacksonConfig {
 			.stream()
 			.filter(kv -> !excludeModules.contains(kv.getKey()))
 			.map(Map.Entry::getValue)
-			.collect(Collectors.toList());
+			.toList();
 		if (!modules.isEmpty()) {
 			List<String> names = modules.stream().map(Module::getModuleName).collect(Collectors.toList());
 			log.info("Install modules: {}", names);
 			builder.modulesToInstall(modules.toArray(modules.toArray(new Module[0])));
 		}
+	}
+
+	private void applyExtra(Jackson2ObjectMapperBuilder builder) {
+		log.info("Install extra Serializer/Deserializer");
+		builder.annotationIntrospector(introspector -> {
+			if (null != introspector) {
+				return AnnotationIntrospectorPair.pair(introspector, new ObfuscatedAnnotationIntrospector());
+			}
+			else {
+				return new ObfuscatedAnnotationIntrospector();
+			}
+		});
 	}
 
 }

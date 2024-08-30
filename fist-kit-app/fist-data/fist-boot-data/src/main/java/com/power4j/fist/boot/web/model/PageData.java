@@ -20,6 +20,7 @@ import com.power4j.fist.data.domain.Paged;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.util.Assert;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -28,11 +29,11 @@ import java.util.stream.Collectors;
 
 /**
  * @author CJ (power4j@outlook.com)
- * @date 2021/12/15
  * @since 1.0
  */
 public class PageData<T> implements Serializable {
 
+	@Serial
 	private final static long serialVersionUID = 1L;
 
 	@Schema(description = "数据")
