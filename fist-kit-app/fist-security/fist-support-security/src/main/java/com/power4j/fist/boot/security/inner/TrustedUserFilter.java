@@ -17,7 +17,6 @@
 package com.power4j.fist.boot.security.inner;
 
 import com.power4j.coca.kit.common.exception.WrappedException;
-import com.power4j.fist.boot.common.utils.NetKit;
 import com.power4j.fist.boot.security.context.UserContextHolder;
 import com.power4j.fist.boot.security.core.SecurityConstant;
 import com.power4j.fist.boot.security.core.UserInfo;
@@ -36,9 +35,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -68,7 +67,7 @@ public class TrustedUserFilter extends OncePerRequestFilter {
 					whitelist.add(ip.getAddress());
 				}
 				catch (AddressStringException e) {
-					String msg = "非法IP地址:" + p;
+					String msg = "白名单配置错误,非法IP地址:" + p;
 					throw new IllegalArgumentException(msg, e);
 				}
 			}
@@ -105,14 +104,22 @@ public class TrustedUserFilter extends OncePerRequestFilter {
 
 	private boolean isTrusted(HttpServletRequest request) {
 		if (strictMode) {
-			String ip = request.getRemoteAddr();
+			final String ip = request.getRemoteAddr();
+			final IPAddress reqAddr = new IPAddressString(ip).getAddress();
 			if (ObjectUtils.isNotEmpty(whitelist)) {
-				IPAddress reqAddr = new IPAddressString(ip).getAddress();
-				return whitelist.stream().anyMatch(addr -> addr.contains(reqAddr));
+				Optional<IPAddress> matched = whitelist.stream().filter(addr -> addr.contains(reqAddr)).findFirst();
+				if (matched.isPresent()) {
+					if (log.isTraceEnabled()) {
+						log.trace("认证信息可信(白名单: {}),来源:{}", matched.get(), ip);
+					}
+				}
+				else {
+					log.warn("认证信息不可信(白名单),来源:{}", ip);
+				}
+				return matched.isPresent();
 			}
 			else {
-				InetAddress address = NetKit.parse(ip);
-				if (address.isLoopbackAddress() || address.isSiteLocalAddress()) {
+				if (reqAddr.isAnyLocal() || reqAddr.isLoopback()) {
 					return true;
 				}
 				log.warn("认证信息不可信,来源:{}", ip);
