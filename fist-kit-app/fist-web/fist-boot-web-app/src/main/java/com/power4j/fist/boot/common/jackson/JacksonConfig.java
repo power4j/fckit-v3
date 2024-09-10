@@ -34,6 +34,7 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.ZoneId;
@@ -68,6 +69,7 @@ public class JacksonConfig {
 	}
 
 	@Bean
+	@Order(10_000)
 	public Jackson2ObjectMapperBuilderCustomizer customizer() {
 		return builder -> {
 			builder.locale(Locale.CHINA);
@@ -112,7 +114,7 @@ public class JacksonConfig {
 		if (!modules.isEmpty()) {
 			List<String> names = modules.stream().map(Module::getModuleName).collect(Collectors.toList());
 			log.info("Install modules: {}", names);
-			builder.modulesToInstall(modules.toArray(modules.toArray(new Module[0])));
+			builder.modulesToInstall(l -> l.addAll(modules));
 		}
 	}
 
