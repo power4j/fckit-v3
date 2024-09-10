@@ -1,12 +1,12 @@
 
 package com.power4j.fist.oauth2.extension.handler;
 
-import com.power4j.fist.oauth2.core.AuthConstants;
 import com.power4j.fist.oauth2.extension.event.OauthSuccessEvent;
 import com.power4j.fist.support.spring.util.SpringEventUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.security.core.Authentication;
@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenRespon
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimNames;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.util.CollectionUtils;
 
@@ -49,8 +50,11 @@ public class DefaultOauthSuccessHandler implements AuthenticationSuccessHandler 
 		}
 		OAuth2AccessTokenAuthenticationToken accessTokenAuthentication = (OAuth2AccessTokenAuthenticationToken) authentication;
 		String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
-		String username = Objects
-			.toString(accessTokenAuthentication.getAdditionalParameters().get(AuthConstants.DETAILS_USERNAME));
+		String username = request.getParameter(OAuth2ParameterNames.USERNAME);
+		if (StringUtils.isEmpty(username)) {
+			username = Objects
+				.toString(accessTokenAuthentication.getAdditionalParameters().get(OAuth2TokenClaimNames.SUB));
+		}
 		OauthSuccessEvent event = OauthSuccessEvent.builder()
 			.request(request)
 			.grantType(grantType)
