@@ -76,7 +76,7 @@
     <!-- libs -->
     <commons-io.version>2.16.1</commons-io.version>
     <coca-kit.version>0.2.0</coca-kit.version>
-    <tile.version>1.5.1</tile.version>
+    <tile.version>1.6.2</tile.version>
     <guava.version>33.3.0-jre</guava.version>
     <redisson.version>3.35.0</redisson.version>
     <ez-captcha.version>0.1.1</ez-captcha.version>
