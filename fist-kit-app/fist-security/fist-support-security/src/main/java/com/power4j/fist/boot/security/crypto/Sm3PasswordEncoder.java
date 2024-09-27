@@ -16,7 +16,7 @@
 
 package com.power4j.fist.boot.security.crypto;
 
-import com.power4j.tile.crypto.bc.Sm3Util;
+import com.power4j.tile.crypto.utils.Sm3Util;
 import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 
 import java.nio.charset.StandardCharsets;
