@@ -18,13 +18,8 @@ package com.power4j.fist.boot.mybaits.migrate;
 
 import com.power4j.fist.boot.mybaits.crud.repository.Repository;
 import com.power4j.fist.data.migrate.DataImporter;
-import com.power4j.fist.data.migrate.ImportStatistic;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -39,7 +34,9 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 
 	private UniqueResolveEnum uniqueResolve;
 
-	private BatchUniqueResolver<T> uniqueResolver;
+	private BatchUniqueResolver<T> batchUniqueResolver;
+
+	private UniqueResolver<T> uniqueResolver;
 
 	private boolean cleanAll;
 
@@ -60,8 +57,15 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 		return this;
 	}
 
-	public ImportPipelineBuilder<P, T, ID> uniqueDetector(BatchUniqueResolver<T> uniqueResolver) {
-		this.uniqueResolver = uniqueResolver;
+	public ImportPipelineBuilder<P, T, ID> batchUniqueResolver(BatchUniqueResolver<T> resolver) {
+		this.uniqueResolver = null;
+		this.batchUniqueResolver = resolver;
+		return this;
+	}
+
+	public ImportPipelineBuilder<P, T, ID> uniqueResolver(UniqueResolver<T> resolver) {
+		this.batchUniqueResolver = null;
+		this.uniqueResolver = resolver;
 		return this;
 	}
 
@@ -76,72 +80,17 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 	}
 
 	public DataImporter<P> build() {
+		if (!cleanAll && uniqueResolve == null) {
+			throw new IllegalStateException("must set unique resolve strategy when cleanAll is false");
+		}
+		if (uniqueResolver == null && batchUniqueResolver == null) {
+			throw new IllegalStateException("must set uniqueResolver or batchUniqueResolver");
+		}
+		if (batchUniqueResolver != null) {
+			return new BatchImportPipeline<>(uniqueResolve, batchUniqueResolver, repository, mapper, cleanAll,
+					maxImportCount);
+		}
 		return new ImportPipeline<>(uniqueResolve, uniqueResolver, repository, mapper, cleanAll, maxImportCount);
-	}
-
-	@Slf4j
-	@RequiredArgsConstructor
-	static class ImportPipeline<P, T, ID extends Serializable> implements DataImporter<P> {
-
-		private final UniqueResolveEnum uniqueResolve;
-
-		private final BatchUniqueResolver<T> uniqueResolver;
-
-		private final Repository<T, ID> repository;
-
-		private final Function<P, T> mapper;
-
-		private final boolean cleanAll;
-
-		private final long maxImportCount;
-
-		private final ImportStatistic statistic = ImportStatistic.empty();
-
-		@Override
-		public void accept(Collection<P> data) {
-			statistic.addReceiveCount(data.size());
-			handleData(data);
-		}
-
-		private void handleData(Collection<P> data) {
-			// 不需要精确控制条数
-			if (statistic.getInsertCount() >= maxImportCount && maxImportCount > 0) {
-				log.info("Import max count reached: {},skip", maxImportCount);
-				return;
-			}
-			long exists;
-			List<T> entities = data.stream().map(mapper).toList();
-			if (!cleanAll && (exists = uniqueResolver.exists(entities)) > 0L) {
-				switch (uniqueResolve) {
-					case SKIP:
-						statistic.addSkipCount((int) exists);
-						return;
-					case REMOVE:
-						uniqueResolver.removeExists(entities);
-						statistic.addDeleteCount((int) exists);
-						break;
-					default:
-						throw new IllegalStateException("Unsupported unique resolve: " + uniqueResolve);
-				}
-			}
-			repository.saveAll(entities);
-		}
-
-		@Override
-		public ImportStatistic statistic() {
-			return statistic;
-		}
-
-		@Override
-		public void beforeAll() {
-			statistic.reset();
-			if (cleanAll) {
-				long deleteCount = repository.countAll();
-				repository.deleteAll();
-				statistic.setDeleteCount(deleteCount);
-			}
-		}
-
 	}
 
 }

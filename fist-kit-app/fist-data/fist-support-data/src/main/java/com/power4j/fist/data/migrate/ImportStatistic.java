@@ -16,6 +16,7 @@
 
 package com.power4j.fist.data.migrate;
 
+import com.power4j.coca.kit.common.text.Display;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ImportStatistic {
+public class ImportStatistic implements Display {
 
 	private long receiveCount;
 
@@ -82,6 +83,18 @@ public class ImportStatistic {
 		this.insertCount = 0;
 		this.deleteCount = 0;
 		this.updateCount = 0;
+	}
+
+	@Override
+	public String display() {
+		return "{" + "receiveCount=" + receiveCount + ", skipCount=" + skipCount + ", insertCount=" + insertCount
+				+ ", deleteCount=" + deleteCount + ", updateCount=" + updateCount + '}';
+	}
+
+	@Override
+	public String toString() {
+		return "ImportStatistic{" + "receiveCount=" + receiveCount + ", skipCount=" + skipCount + ", insertCount="
+				+ insertCount + ", deleteCount=" + deleteCount + ", updateCount=" + updateCount + '}';
 	}
 
 }

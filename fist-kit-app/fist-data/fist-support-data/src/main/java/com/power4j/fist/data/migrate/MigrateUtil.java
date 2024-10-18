@@ -64,7 +64,8 @@ public class MigrateUtil {
 		if (data.isEmpty()) {
 			return;
 		}
-		consumer.accept(data);
+		consumer.accept(new ArrayList<>(data));
+		data.clear();
 	}
 
 }

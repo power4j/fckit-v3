@@ -35,4 +35,16 @@ public interface UniqueResolver<T> {
 	 */
 	void remove(T example);
 
+	UniqueResolver<?> INVALID = new UniqueResolver<>() {
+		@Override
+		public boolean exists(Object example) {
+			throw new IllegalStateException("Invalid unique resolver");
+		}
+
+		@Override
+		public void remove(Object example) {
+			throw new IllegalStateException("Invalid unique resolver");
+		}
+	};
+
 }

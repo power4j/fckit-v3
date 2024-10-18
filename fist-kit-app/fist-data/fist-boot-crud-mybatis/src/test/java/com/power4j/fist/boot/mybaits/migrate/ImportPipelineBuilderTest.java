@@ -16,37 +16,27 @@
 
 package com.power4j.fist.boot.mybaits.migrate;
 
-import java.util.Collection;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
-public interface BatchUniqueResolver<T> {
+class ImportPipelineBuilderTest {
 
-	/**
-	 * 检测是记录否存在
-	 * @param data 数据
-	 * @return 已经存在数据条数
-	 */
-	long exists(Collection<T> data);
+	@Test
+	void mustSetOneResolver() {
+		ImportPipelineBuilder<?, ?, ?> builder = ImportPipelineBuilder.of(null, null)
+			.batchUniqueResolver(null)
+			.uniqueResolver(null);
+		Assertions.assertThrows(IllegalStateException.class, builder::build);
+	}
 
-	/**
-	 * 删除已经存在的记录
-	 * @param data 数据
-	 */
-	void removeExists(Collection<T> data);
-
-	BatchUniqueResolver<?> INVALID = new BatchUniqueResolver<>() {
-		@Override
-		public long exists(Collection<Object> data) {
-			throw new IllegalStateException("Invalid unique resolver");
-		}
-
-		@Override
-		public void removeExists(Collection<Object> data) {
-			throw new IllegalStateException("Invalid unique resolver");
-		}
-	};
+	@Test
+	void mustSetUniqueResolve() {
+		ImportPipelineBuilder<?, ?, ?> builder = ImportPipelineBuilder.of(null, null);
+		Assertions.assertThrows(IllegalStateException.class, builder::build);
+	}
 
 }
