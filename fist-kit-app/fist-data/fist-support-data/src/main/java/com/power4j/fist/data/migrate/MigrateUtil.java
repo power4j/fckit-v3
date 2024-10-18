@@ -19,7 +19,6 @@ package com.power4j.fist.data.migrate;
 import com.alibaba.excel.context.AnalysisContext;
 import com.power4j.fist.data.excel.ExcelParser;
 import lombok.experimental.UtilityClass;
-import org.apache.poi.ss.formula.functions.T;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,7 +36,8 @@ public class MigrateUtil {
 
 	private final static int DEFAULT_BATCH_SIZE = 1_000;
 
-	public ImportStatistic importExcel(InputStream stream, Class<T> docType, int batchSize, DataImporter<T> consumer) {
+	public <T> ImportStatistic importExcel(InputStream stream, Class<T> docType, int batchSize,
+			DataImporter<T> consumer) {
 		int batch = batchSize > 0 ? batchSize : DEFAULT_BATCH_SIZE;
 		AtomicLong total = new AtomicLong();
 		List<T> list = new ArrayList<>(batch);
@@ -48,7 +48,7 @@ public class MigrateUtil {
 				processAndClear(list, consumer);
 			}
 		};
-		consumer.beforeImport();
+		consumer.beforeAll();
 		// @formatter:off
         ExcelParser.<T>builder()
                 .docType(docType)
@@ -60,11 +60,11 @@ public class MigrateUtil {
 		return consumer.statistic();
 	}
 
-	static void processAndClear(Collection<T> data, DataImporter<T> consumer) {
+	static <T> void processAndClear(Collection<T> data, DataImporter<T> consumer) {
 		if (data.isEmpty()) {
 			return;
 		}
-		consumer.handleData(data);
+		consumer.accept(data);
 	}
 
 }

@@ -29,6 +29,8 @@ import lombok.Setter;
 @Builder
 public class ImportStatistic {
 
+	private long receiveCount;
+
 	private long skipCount;
 
 	private long insertCount;
@@ -42,6 +44,7 @@ public class ImportStatistic {
 	}
 
 	public ImportStatistic merge(ImportStatistic other) {
+		this.receiveCount += other.getReceiveCount();
 		this.skipCount += other.getSkipCount();
 		this.insertCount += other.getInsertCount();
 		this.deleteCount += other.getDeleteCount();
@@ -63,6 +66,18 @@ public class ImportStatistic {
 
 	public void addUpdateCount(int val) {
 		this.updateCount += val;
+	}
+
+	public void addReceiveCount(int val) {
+		this.receiveCount += val;
+	}
+
+	public void reset() {
+		this.receiveCount = 0;
+		this.skipCount = 0;
+		this.insertCount = 0;
+		this.deleteCount = 0;
+		this.updateCount = 0;
 	}
 
 }

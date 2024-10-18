@@ -16,6 +16,8 @@
 
 package com.power4j.fist.data.migrate;
 
+import java.util.Collection;
+
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
@@ -23,11 +25,10 @@ package com.power4j.fist.data.migrate;
 public interface DataImporter<T> {
 
 	/**
-	 * 批量导入
-	 * @param itr 输入
-	 * @param statistic 统计数据同步状态
+	 * 处理输入数据
+	 * @param data 输入
 	 */
-	void handleData(Iterable<T> itr);
+	void accept(Collection<T> data);
 
 	/**
 	 * 读取统计数据
@@ -38,14 +39,14 @@ public interface DataImporter<T> {
 	/**
 	 * 回调方法,在执行导入前调用
 	 */
-	default void beforeImport() {
+	default void beforeAll() {
 		// do nothing
 	}
 
 	/**
 	 * 回调方法,在执行导入后调用
 	 */
-	default void afterImport() {
+	default void afterAll() {
 		// do nothing
 	}
 

@@ -20,9 +20,10 @@ import com.power4j.fist.boot.mybaits.crud.repository.Repository;
 import com.power4j.fist.data.migrate.DataImporter;
 import com.power4j.fist.data.migrate.ImportStatistic;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
@@ -77,6 +78,7 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 		return new ImportPipeline<>(uniqueResolve, uniqueHandler, repository, mapper, cleanAll, maxImportCount);
 	}
 
+	@Slf4j
 	@RequiredArgsConstructor
 	static class ImportPipeline<P, T, ID extends Serializable> implements DataImporter<P> {
 
@@ -95,25 +97,34 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 		private final ImportStatistic statistic = ImportStatistic.of();
 
 		@Override
-		public void handleData(Iterable<P> itr) {
-			Iterator<P> it = itr.iterator();
-			while (it.hasNext() && statistic.getInsertCount() < maxImportCount) {
-				P p = it.next();
-				T t = mapper.apply(p);
-				if (!cleanAll && uniqueHandler.exists(t)) {
-					switch (uniqueResolve) {
-						case SKIP:
-							statistic.addSkipCount(1);
-							continue;
-						case REMOVE:
-							uniqueHandler.remove(t);
-							statistic.addDeleteCount(1);
-							break;
-					}
+		public void accept(Collection<P> data) {
+			statistic.addReceiveCount(data.size());
+			for (P value : data) {
+				if (statistic.getInsertCount() >= maxImportCount && maxImportCount > 0) {
+					log.info("Import max count reached: {},skip", maxImportCount);
+					return;
 				}
-				repository.saveOne(t);
+				handleData(value);
 				statistic.addInsertCount(1);
 			}
+		}
+
+		private void handleData(P object) {
+			T t = mapper.apply(object);
+			if (!cleanAll && uniqueHandler.exists(t)) {
+				switch (uniqueResolve) {
+					case SKIP:
+						statistic.addSkipCount(1);
+						return;
+					case REMOVE:
+						uniqueHandler.remove(t);
+						statistic.addDeleteCount(1);
+						break;
+					default:
+						throw new IllegalStateException("Unsupported unique resolve: " + uniqueResolve);
+				}
+			}
+			repository.saveOne(t);
 		}
 
 		@Override
@@ -122,7 +133,8 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 		}
 
 		@Override
-		public void beforeImport() {
+		public void beforeAll() {
+			statistic.reset();
 			if (cleanAll) {
 				long deleteCount = repository.countAll();
 				repository.deleteAll();
