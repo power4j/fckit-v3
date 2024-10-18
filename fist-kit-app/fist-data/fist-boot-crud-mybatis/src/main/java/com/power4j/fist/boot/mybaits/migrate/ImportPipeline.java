@@ -50,6 +50,10 @@ public class ImportPipeline<P, T, ID extends Serializable> implements DataImport
 
 	@Override
 	public void accept(Collection<P> data) {
+		final int size = data.size();
+		if (log.isDebugEnabled()) {
+			log.debug("receive data,count :{},total :{}", size, statistic.getReceiveCount());
+		}
 		statistic.addReceiveCount(data.size());
 		handleData(data);
 	}
