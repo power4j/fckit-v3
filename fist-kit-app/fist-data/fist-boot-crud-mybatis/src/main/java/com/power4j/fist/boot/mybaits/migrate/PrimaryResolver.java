@@ -16,23 +16,36 @@
 
 package com.power4j.fist.boot.mybaits.migrate;
 
+import com.power4j.fist.boot.mybaits.crud.repository.Repository;
+
+import java.io.Serializable;
+import java.util.function.Function;
+
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
-public interface UniqueHandler<T> {
+public class PrimaryResolver<T, ID extends Serializable> implements UniqueResolver<T> {
 
-	/**
-	 * 检测是记录否存在
-	 * @param example 查询样本
-	 * @return true 表示存在
-	 */
-	boolean exists(T example);
+	private final Repository<T, ID> repository;
 
-	/**
-	 * 删除记录
-	 * @param example 查询样本
-	 */
-	void remove(T example);
+	private final Function<T, ID> idExtractor;
+
+	public PrimaryResolver(Repository<T, ID> repository, Function<T, ID> idExtractor) {
+		this.repository = repository;
+		this.idExtractor = idExtractor;
+	}
+
+	@Override
+	public boolean exists(T example) {
+		ID id = idExtractor.apply(example);
+		return repository.existsById(id);
+	}
+
+	@Override
+	public void remove(T example) {
+		ID id = idExtractor.apply(example);
+		repository.deleteOneById(id);
+	}
 
 }

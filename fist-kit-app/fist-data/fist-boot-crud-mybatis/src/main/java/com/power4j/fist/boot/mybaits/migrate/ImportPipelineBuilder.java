@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -38,7 +39,7 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 
 	private UniqueResolveEnum uniqueResolve;
 
-	private UniqueHandler<T> uniqueHandler;
+	private BatchUniqueResolver<T> uniqueResolver;
 
 	private boolean cleanAll;
 
@@ -59,8 +60,8 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 		return this;
 	}
 
-	public ImportPipelineBuilder<P, T, ID> uniqueDetector(UniqueHandler<T> uniqueHandler) {
-		this.uniqueHandler = uniqueHandler;
+	public ImportPipelineBuilder<P, T, ID> uniqueDetector(BatchUniqueResolver<T> uniqueResolver) {
+		this.uniqueResolver = uniqueResolver;
 		return this;
 	}
 
@@ -75,7 +76,7 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 	}
 
 	public DataImporter<P> build() {
-		return new ImportPipeline<>(uniqueResolve, uniqueHandler, repository, mapper, cleanAll, maxImportCount);
+		return new ImportPipeline<>(uniqueResolve, uniqueResolver, repository, mapper, cleanAll, maxImportCount);
 	}
 
 	@Slf4j
@@ -84,7 +85,7 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 
 		private final UniqueResolveEnum uniqueResolve;
 
-		private final UniqueHandler<T> uniqueHandler;
+		private final BatchUniqueResolver<T> uniqueResolver;
 
 		private final Repository<T, ID> repository;
 
@@ -94,37 +95,36 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 
 		private final long maxImportCount;
 
-		private final ImportStatistic statistic = ImportStatistic.of();
+		private final ImportStatistic statistic = ImportStatistic.empty();
 
 		@Override
 		public void accept(Collection<P> data) {
 			statistic.addReceiveCount(data.size());
-			for (P value : data) {
-				if (statistic.getInsertCount() >= maxImportCount && maxImportCount > 0) {
-					log.info("Import max count reached: {},skip", maxImportCount);
-					return;
-				}
-				handleData(value);
-				statistic.addInsertCount(1);
-			}
+			handleData(data);
 		}
 
-		private void handleData(P object) {
-			T t = mapper.apply(object);
-			if (!cleanAll && uniqueHandler.exists(t)) {
+		private void handleData(Collection<P> data) {
+			// 不需要精确控制条数
+			if (statistic.getInsertCount() >= maxImportCount && maxImportCount > 0) {
+				log.info("Import max count reached: {},skip", maxImportCount);
+				return;
+			}
+			long exists;
+			List<T> entities = data.stream().map(mapper).toList();
+			if (!cleanAll && (exists = uniqueResolver.exists(entities)) > 0L) {
 				switch (uniqueResolve) {
 					case SKIP:
-						statistic.addSkipCount(1);
+						statistic.addSkipCount((int) exists);
 						return;
 					case REMOVE:
-						uniqueHandler.remove(t);
-						statistic.addDeleteCount(1);
+						uniqueResolver.removeExists(entities);
+						statistic.addDeleteCount((int) exists);
 						break;
 					default:
 						throw new IllegalStateException("Unsupported unique resolve: " + uniqueResolve);
 				}
 			}
-			repository.saveOne(t);
+			repository.saveAll(entities);
 		}
 
 		@Override

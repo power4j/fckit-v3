@@ -20,40 +20,41 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.power4j.fist.boot.mybaits.crud.repository.Repository;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.function.BiConsumer;
 
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
-public class ColumnHandler<T> implements UniqueHandler<T> {
+public class BatchColumnResolver<T> implements BatchUniqueResolver<T> {
 
 	private final Repository<T, ? extends Serializable> repository;
 
-	private final BiConsumer<T, LambdaQueryWrapper<T>> queryBuilder;
+	private final BiConsumer<Collection<T>, LambdaQueryWrapper<T>> queryBuilder;
 
-	public static <T> ColumnHandler<T> of(Repository<T, ? extends Serializable> repository,
-			BiConsumer<T, LambdaQueryWrapper<T>> queryBuilder) {
-		return new ColumnHandler<>(repository, queryBuilder);
+	public static <T> BatchColumnResolver<T> of(Repository<T, ? extends Serializable> repository,
+			BiConsumer<Collection<T>, LambdaQueryWrapper<T>> queryBuilder) {
+		return new BatchColumnResolver<>(repository, queryBuilder);
 	}
 
-	public ColumnHandler(Repository<T, ? extends Serializable> repository,
-			BiConsumer<T, LambdaQueryWrapper<T>> queryBuilder) {
+	public BatchColumnResolver(Repository<T, ? extends Serializable> repository,
+			BiConsumer<Collection<T>, LambdaQueryWrapper<T>> queryBuilder) {
 		this.queryBuilder = queryBuilder;
 		this.repository = repository;
 	}
 
 	@Override
-	public boolean exists(T example) {
-		return repository.countBy(applyQuery(example)) > 0;
+	public long exists(Collection<T> data) {
+		return repository.countBy(applyQuery(data));
 	}
 
 	@Override
-	public void remove(T example) {
-		repository.deleteAllBy(applyQuery(example));
+	public void removeExists(Collection<T> data) {
+		repository.deleteAllBy(applyQuery(data));
 	}
 
-	protected LambdaQueryWrapper<T> applyQuery(T example) {
+	protected LambdaQueryWrapper<T> applyQuery(Collection<T> example) {
 		LambdaQueryWrapper<T> queryWrapper = repository.lambdaWrapper();
 		queryBuilder.accept(example, queryWrapper);
 		return queryWrapper;

@@ -39,8 +39,12 @@ public class ImportStatistic {
 
 	private long updateCount;
 
-	public static ImportStatistic of() {
+	public static ImportStatistic empty() {
 		return ImportStatistic.builder().build();
+	}
+
+	public static ImportStatistic copyOf(ImportStatistic other) {
+		return empty().merge(other);
 	}
 
 	public ImportStatistic merge(ImportStatistic other) {

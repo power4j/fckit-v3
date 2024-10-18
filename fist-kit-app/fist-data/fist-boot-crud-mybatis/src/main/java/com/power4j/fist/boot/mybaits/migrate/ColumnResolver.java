@@ -16,36 +16,47 @@
 
 package com.power4j.fist.boot.mybaits.migrate;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.power4j.fist.boot.mybaits.crud.repository.Repository;
 
 import java.io.Serializable;
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
-public class PrimaryHandler<T, ID extends Serializable> implements UniqueHandler<T> {
+public class ColumnResolver<T> implements UniqueResolver<T> {
 
-	private final Repository<T, ID> repository;
+	private final Repository<T, ? extends Serializable> repository;
 
-	private final Function<T, ID> idExtractor;
+	private final BiConsumer<T, LambdaQueryWrapper<T>> queryBuilder;
 
-	public PrimaryHandler(Repository<T, ID> repository, Function<T, ID> idExtractor) {
+	public static <T> ColumnResolver<T> of(Repository<T, ? extends Serializable> repository,
+			BiConsumer<T, LambdaQueryWrapper<T>> queryBuilder) {
+		return new ColumnResolver<>(repository, queryBuilder);
+	}
+
+	public ColumnResolver(Repository<T, ? extends Serializable> repository,
+			BiConsumer<T, LambdaQueryWrapper<T>> queryBuilder) {
+		this.queryBuilder = queryBuilder;
 		this.repository = repository;
-		this.idExtractor = idExtractor;
 	}
 
 	@Override
 	public boolean exists(T example) {
-		ID id = idExtractor.apply(example);
-		return repository.existsById(id);
+		return repository.countBy(applyQuery(example)) > 0;
 	}
 
 	@Override
 	public void remove(T example) {
-		ID id = idExtractor.apply(example);
-		repository.deleteOneById(id);
+		repository.deleteAllBy(applyQuery(example));
+	}
+
+	protected LambdaQueryWrapper<T> applyQuery(T example) {
+		LambdaQueryWrapper<T> queryWrapper = repository.lambdaWrapper();
+		queryBuilder.accept(example, queryWrapper);
+		return queryWrapper;
 	}
 
 }
