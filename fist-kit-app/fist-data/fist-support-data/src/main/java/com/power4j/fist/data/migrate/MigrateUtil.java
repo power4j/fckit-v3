@@ -57,6 +57,7 @@ public class MigrateUtil {
                 .process(stream);
         // @formatter:on
 		processAndClear(list, consumer);
+		consumer.afterAll();
 		return consumer.statistic();
 	}
 

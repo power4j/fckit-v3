@@ -84,7 +84,7 @@ public class BatchImportPipeline<P, T, ID extends Serializable> implements DataI
 			switch (uniqueResolve) {
 				case SKIP:
 					skipCount = (int) existCount;
-					return;
+					break;
 				case REMOVE:
 					uniqueResolver.removeExists(entities);
 					deleteCount = (int) existCount;
