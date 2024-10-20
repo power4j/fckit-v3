@@ -37,7 +37,7 @@ public class MigrateUtil {
 	private final static int DEFAULT_BATCH_SIZE = 1_000;
 
 	public <T> ImportStatistic importExcel(InputStream stream, Class<T> docType, int batchSize,
-			DataImporter<T> consumer) {
+			ImportDataHandler<T> consumer) {
 		int batch = batchSize > 0 ? batchSize : DEFAULT_BATCH_SIZE;
 		AtomicLong total = new AtomicLong();
 		List<T> list = new ArrayList<>(batch);
@@ -61,7 +61,7 @@ public class MigrateUtil {
 		return consumer.statistic();
 	}
 
-	static <T> void processAndClear(Collection<T> data, DataImporter<T> consumer) {
+	static <T> void processAndClear(Collection<T> data, ImportDataHandler<T> consumer) {
 		if (data.isEmpty()) {
 			return;
 		}

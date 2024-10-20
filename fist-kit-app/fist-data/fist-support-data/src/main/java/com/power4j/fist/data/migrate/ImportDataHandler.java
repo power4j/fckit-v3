@@ -22,7 +22,7 @@ import java.util.Collection;
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
-public interface DataImporter<T> {
+public interface ImportDataHandler<T> {
 
 	/**
 	 * 处理输入数据

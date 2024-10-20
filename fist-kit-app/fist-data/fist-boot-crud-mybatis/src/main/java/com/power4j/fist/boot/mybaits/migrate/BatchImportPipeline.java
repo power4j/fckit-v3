@@ -17,7 +17,7 @@
 package com.power4j.fist.boot.mybaits.migrate;
 
 import com.power4j.fist.boot.mybaits.crud.repository.Repository;
-import com.power4j.fist.data.migrate.DataImporter;
+import com.power4j.fist.data.migrate.ImportDataHandler;
 import com.power4j.fist.data.migrate.ImportStatistic;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ import java.util.function.Function;
  * @since 1.0
  */
 @Slf4j
-public class BatchImportPipeline<P, T, ID extends Serializable> implements DataImporter<P> {
+public class BatchImportPipeline<P, T, ID extends Serializable> implements ImportDataHandler<P> {
 
 	private final UniqueResolveEnum uniqueResolve;
 

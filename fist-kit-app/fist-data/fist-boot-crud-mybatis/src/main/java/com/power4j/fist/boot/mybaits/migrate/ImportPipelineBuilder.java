@@ -17,7 +17,7 @@
 package com.power4j.fist.boot.mybaits.migrate;
 
 import com.power4j.fist.boot.mybaits.crud.repository.Repository;
-import com.power4j.fist.data.migrate.DataImporter;
+import com.power4j.fist.data.migrate.ImportDataHandler;
 
 import java.io.Serializable;
 import java.util.function.Function;
@@ -79,7 +79,7 @@ public class ImportPipelineBuilder<P, T, ID extends Serializable> {
 		return this;
 	}
 
-	public DataImporter<P> build() {
+	public ImportDataHandler<P> build() {
 		if (!cleanAll && uniqueResolve == null) {
 			throw new IllegalStateException("must set unique resolve strategy when cleanAll is false");
 		}
