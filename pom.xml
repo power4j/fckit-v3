@@ -52,7 +52,7 @@
 
   <properties>
     <skipTests>false</skipTests>
-    <revision>3.3.0</revision>
+    <revision>3.4-RC1</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>17</maven.compiler.target>
@@ -66,11 +66,11 @@
     <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
     <spring-javaformat.plugin.version>0.0.43</spring-javaformat.plugin.version>
     <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
-    <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version>
+    <gmavenplus-plugin.version>4.0.1</gmavenplus-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <git-commit-id-plugin.version>9.0.1</git-commit-id-plugin.version>
-    <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.5.1</maven-surefire-plugin.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-dependency-plugin.version>3.8.0</maven-dependency-plugin.version>
     <!-- libs -->
@@ -89,10 +89,10 @@
     <springfox.version>3.0.0</springfox.version>
     <swagger3-api.version>2.2.20</swagger3-api.version>
     <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
-    <spring-boot-admin.version>3.3.3</spring-boot-admin.version>
+    <spring-boot-admin.version>3.3.4</spring-boot-admin.version>
     <spring.oauth2-authorization-server.version>1.3.2</spring.oauth2-authorization-server.version>
     <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
-    <oauth2-oidc-sdk.version>11.20</oauth2-oidc-sdk.version>
+    <oauth2-oidc-sdk.version>11.20.1</oauth2-oidc-sdk.version>
     <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
     <excel-spring-boot-starter.version>3.3.1</excel-spring-boot-starter.version>
     <seancfoley.ipaddress.version>5.5.1</seancfoley.ipaddress.version>

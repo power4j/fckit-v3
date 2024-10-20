@@ -96,7 +96,10 @@ public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable>
 
 	@Override
 	public boolean existsById(ID id) {
-		return findOneById(id).isPresent();
+		QueryWrapper<T> wrapper = new QueryWrapper<>();
+		TableInfo tableInfo = getTableInfo();
+		wrapper.eq(tableInfo.getKeyColumn(), id);
+		return getBaseMapper().selectCount(wrapper) > 0;
 	}
 
 	@Override
