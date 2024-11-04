@@ -40,14 +40,18 @@ public class ObfuscatedStringDeserializer extends StdDeserializer<String> implem
 
 	private final StringObfuscate obfuscate;
 
+	private final ObfuscateProcessorProvider resolver;
+
 	public ObfuscatedStringDeserializer() {
 		super(String.class);
 		this.obfuscate = SimpleStringObfuscate.ofDefault();
+		this.resolver = StringObfuscateRegistry.INSTANCE;
 	}
 
-	protected ObfuscatedStringDeserializer(StringObfuscate obfuscate) {
+	protected ObfuscatedStringDeserializer(StringObfuscate obfuscate, ObfuscateProcessorProvider resolver) {
 		super(String.class);
 		this.obfuscate = obfuscate;
+		this.resolver = resolver;
 	}
 
 	@Override
@@ -79,12 +83,12 @@ public class ObfuscatedStringDeserializer extends StdDeserializer<String> implem
 			return StringDeserializer.instance;
 		}
 		Class<? extends StringObfuscate> obfuscate = annotation.processor();
-		Optional<StringObfuscate> processor = StringObfuscateRegistry.getObfuscateInstance(obfuscate);
+		Optional<StringObfuscate> processor = resolver.getInstance(obfuscate);
 		if (processor.isEmpty()) {
 			throw new IllegalStateException(
 					String.format("Obfuscation processor not registered: %s", annotation.processor().getName()));
 		}
-		return new ObfuscatedStringDeserializer(processor.get());
+		return new ObfuscatedStringDeserializer(processor.get(), resolver);
 	}
 
 }

@@ -38,14 +38,18 @@ public class ObfuscatedStringSerializer extends StdSerializer<String> implements
 
 	private final StringObfuscate obfuscate;
 
+	private final ObfuscateProcessorProvider resolver;
+
 	public ObfuscatedStringSerializer() {
 		super(String.class);
 		this.obfuscate = SimpleStringObfuscate.ofDefault();
+		this.resolver = StringObfuscateRegistry.INSTANCE;
 	}
 
-	public ObfuscatedStringSerializer(StringObfuscate obfuscate) {
+	public ObfuscatedStringSerializer(StringObfuscate obfuscate, ObfuscateProcessorProvider resolver) {
 		super(String.class);
 		this.obfuscate = obfuscate;
+		this.resolver = resolver;
 	}
 
 	@Override
@@ -81,12 +85,12 @@ public class ObfuscatedStringSerializer extends StdSerializer<String> implements
 			return prov.findContentValueSerializer(property.getType(), property);
 		}
 		Class<? extends StringObfuscate> obfuscate = annotation.processor();
-		Optional<StringObfuscate> processor = StringObfuscateRegistry.getObfuscateInstance(obfuscate);
+		Optional<StringObfuscate> processor = resolver.getInstance(obfuscate);
 		if (processor.isEmpty()) {
 			throw new IllegalStateException(
 					String.format("Obfuscation processor not registered: %s", annotation.processor().getName()));
 		}
-		return new ObfuscatedStringSerializer(processor.get());
+		return new ObfuscatedStringSerializer(processor.get(), resolver);
 	}
 
 }

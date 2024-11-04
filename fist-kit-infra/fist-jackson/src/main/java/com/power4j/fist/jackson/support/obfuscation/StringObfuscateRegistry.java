@@ -28,7 +28,9 @@ import java.util.function.Supplier;
  * @since 1.0
  */
 @Slf4j
-public class StringObfuscateRegistry {
+public class StringObfuscateRegistry implements ObfuscateProcessorProvider {
+
+	public final static StringObfuscateRegistry INSTANCE = new StringObfuscateRegistry();
 
 	private final static Map<Class<?>, Supplier<StringObfuscate>> OBFUSCATE_MAP = new ConcurrentHashMap<>();
 
@@ -43,6 +45,11 @@ public class StringObfuscateRegistry {
 	public static void registerObfuscate(Class<? extends StringObfuscate> obfuscate,
 			Supplier<StringObfuscate> supplier) {
 		OBFUSCATE_MAP.put(obfuscate, supplier);
+	}
+
+	@Override
+	public Optional<StringObfuscate> getInstance(Class<? extends StringObfuscate> obfuscateClass) {
+		return getObfuscateInstance(obfuscateClass);
 	}
 
 }

@@ -30,11 +30,17 @@ public class ObfuscatedAnnotationIntrospector extends NopAnnotationIntrospector 
 
 	private final StringObfuscate defaultProcessor = SimpleStringObfuscate.ofDefault();
 
+	private final ObfuscateProcessorProvider processorProvider;
+
+	public ObfuscatedAnnotationIntrospector(ObfuscateProcessorProvider processorProvider) {
+		this.processorProvider = processorProvider;
+	}
+
 	@Override
 	public Object findSerializer(Annotated am) {
 		Obfuscation obfuscation = am.getAnnotation(Obfuscation.class);
 		if (Objects.nonNull(obfuscation)) {
-			return new ObfuscatedStringSerializer(defaultProcessor);
+			return new ObfuscatedStringSerializer(defaultProcessor, processorProvider);
 		}
 		return super.findSerializer(am);
 	}
@@ -43,7 +49,7 @@ public class ObfuscatedAnnotationIntrospector extends NopAnnotationIntrospector 
 	public Object findDeserializer(Annotated am) {
 		Obfuscation obfuscation = am.getAnnotation(Obfuscation.class);
 		if (Objects.nonNull(obfuscation)) {
-			return new ObfuscatedStringDeserializer(defaultProcessor);
+			return new ObfuscatedStringDeserializer(defaultProcessor, processorProvider);
 		}
 		return super.findContentDeserializer(am);
 	}

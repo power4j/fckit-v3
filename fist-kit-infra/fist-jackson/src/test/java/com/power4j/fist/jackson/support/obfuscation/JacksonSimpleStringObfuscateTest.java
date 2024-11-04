@@ -47,7 +47,8 @@ public class JacksonSimpleStringObfuscateTest {
 	public static void init() {
 		ObjectMapper mapper = new ObjectMapper();
 		AnnotationIntrospector sis = mapper.getSerializationConfig().getAnnotationIntrospector();
-		AnnotationIntrospector is1 = AnnotationIntrospectorPair.pair(sis, new ObfuscatedAnnotationIntrospector());
+		AnnotationIntrospector is1 = AnnotationIntrospectorPair.pair(sis,
+				new ObfuscatedAnnotationIntrospector(StringObfuscateRegistry.INSTANCE));
 		mapper.setAnnotationIntrospector(is1);
 		objectMapper = mapper;
 	}
