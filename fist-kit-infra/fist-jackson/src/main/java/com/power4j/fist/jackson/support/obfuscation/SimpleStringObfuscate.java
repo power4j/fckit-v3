@@ -25,7 +25,7 @@ import java.util.Base64;
  */
 public class SimpleStringObfuscate implements StringObfuscate {
 
-	public final static String ALGORITHM = "OBF.XOR_V1";
+	public final static String MODE_ID = "OBF.XOR_V1";
 
 	private final Base64.Encoder ENCODER = Base64.getEncoder();
 
@@ -42,8 +42,8 @@ public class SimpleStringObfuscate implements StringObfuscate {
 	}
 
 	@Override
-	public String algorithm() {
-		return ALGORITHM;
+	public String modeId() {
+		return MODE_ID;
 	}
 
 	@Override

@@ -21,13 +21,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.power4j.fist.boot.common.jackson.module.DateTimeModule;
 import com.power4j.fist.boot.common.jackson.module.NumberStrModule;
+import com.power4j.fist.jackson.support.obfuscation.NoopStringObfuscate;
+import com.power4j.fist.jackson.support.obfuscation.ObfuscateProcessorProvider;
 import com.power4j.fist.jackson.support.obfuscation.ObfuscatedAnnotationIntrospector;
+import com.power4j.fist.jackson.support.obfuscation.SimpleStringObfuscate;
+import com.power4j.fist.jackson.support.obfuscation.StringObfuscate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -43,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -68,16 +74,36 @@ public class JacksonConfig {
 		MODULE_MAP.put(JacksonCustomizeProperties.ModuleName.NumberToStr, new NumberStrModule());
 	}
 
+	@Order
+	@Bean
+	@ConditionalOnMissingBean
+	NoopStringObfuscate noopStringObfuscate() {
+		return new NoopStringObfuscate();
+	}
+
+	@Order
+	@Bean
+	@ConditionalOnMissingBean
+	SimpleStringObfuscate simpleStringObfuscate() {
+		return SimpleStringObfuscate.ofDefault();
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	ObfuscateProcessorProvider obfuscateProcessorProvider(List<StringObfuscate> processors) {
+		return new ObfuscateProcessorBeanRegistry(processors);
+	}
+
 	@Bean
 	@Order(10_000)
-	public Jackson2ObjectMapperBuilderCustomizer customizer() {
+	public Jackson2ObjectMapperBuilderCustomizer customizer(ObfuscateProcessorProvider obfuscateProcessorProvider) {
 		return builder -> {
 			builder.locale(Locale.CHINA);
 			applyTimeZone(builder);
 			applySimpleDateFormat(builder);
 			applyModules(builder);
 			if (jacksonCustomizeProperties.isObfuscatedSupport()) {
-				applyExtra(builder);
+				applyExtra(builder, obfuscateProcessorProvider);
 			}
 		};
 	}
@@ -118,16 +144,38 @@ public class JacksonConfig {
 		}
 	}
 
-	private void applyExtra(Jackson2ObjectMapperBuilder builder) {
+	private void applyExtra(Jackson2ObjectMapperBuilder builder,
+			ObfuscateProcessorProvider obfuscateProcessorProvider) {
 		log.info("Install extra Serializer/Deserializer");
 		builder.annotationIntrospector(introspector -> {
 			if (null != introspector) {
-				return AnnotationIntrospectorPair.pair(introspector, new ObfuscatedAnnotationIntrospector());
+				return AnnotationIntrospectorPair.pair(introspector,
+						new ObfuscatedAnnotationIntrospector(obfuscateProcessorProvider));
 			}
 			else {
-				return new ObfuscatedAnnotationIntrospector();
+				return new ObfuscatedAnnotationIntrospector(obfuscateProcessorProvider);
 			}
 		});
+	}
+
+	static class ObfuscateProcessorBeanRegistry implements ObfuscateProcessorProvider {
+
+		private final List<StringObfuscate> processors;
+
+		ObfuscateProcessorBeanRegistry(List<StringObfuscate> processors) {
+			this.processors = processors;
+		}
+
+		@Override
+		public Optional<StringObfuscate> getInstance(String mode) {
+			for (StringObfuscate processor : processors) {
+				if (mode.equals(processor.modeId())) {
+					return Optional.of(processor);
+				}
+			}
+			return Optional.empty();
+		}
+
 	}
 
 }

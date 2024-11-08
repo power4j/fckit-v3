@@ -18,31 +18,38 @@ package com.power4j.fist.jackson.support.obfuscation;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
 @Slf4j
-public class StringObfuscateRegistry {
+public class StringObfuscateRegistry implements ObfuscateProcessorProvider {
 
-	private final static Map<Class<?>, Supplier<StringObfuscate>> OBFUSCATE_MAP = new ConcurrentHashMap<>();
+	public final static StringObfuscateRegistry INSTANCE = new StringObfuscateRegistry();
+
+	private final static List<StringObfuscate> INSTANCES = new CopyOnWriteArrayList<>();
 
 	static {
-		registerObfuscate(SimpleStringObfuscate.class, SimpleStringObfuscate::ofDefault);
+		registerObfuscate(new NoopStringObfuscate());
+		registerObfuscate(SimpleStringObfuscate.ofDefault());
 	}
 
-	public static Optional<StringObfuscate> getObfuscateInstance(Class<? extends StringObfuscate> obfuscate) {
-		return Optional.ofNullable(OBFUSCATE_MAP.get(obfuscate)).map(Supplier::get);
+	public static void registerObfuscate(StringObfuscate instance) {
+		INSTANCES.add(instance);
 	}
 
-	public static void registerObfuscate(Class<? extends StringObfuscate> obfuscate,
-			Supplier<StringObfuscate> supplier) {
-		OBFUSCATE_MAP.put(obfuscate, supplier);
+	@Override
+	public Optional<StringObfuscate> getInstance(String mode) {
+		for (StringObfuscate obfuscate : INSTANCES) {
+			if (mode.equals(obfuscate.modeId())) {
+				return Optional.of(obfuscate);
+			}
+		}
+		return Optional.empty();
 	}
 
 }
