@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.power4j.fist.boot.common.jackson.module.DateTimeModule;
 import com.power4j.fist.boot.common.jackson.module.NumberStrModule;
+import com.power4j.fist.jackson.support.obfuscation.NoopStringObfuscate;
 import com.power4j.fist.jackson.support.obfuscation.ObfuscateProcessorProvider;
 import com.power4j.fist.jackson.support.obfuscation.ObfuscatedAnnotationIntrospector;
 import com.power4j.fist.jackson.support.obfuscation.SimpleStringObfuscate;
@@ -73,6 +74,14 @@ public class JacksonConfig {
 		MODULE_MAP.put(JacksonCustomizeProperties.ModuleName.NumberToStr, new NumberStrModule());
 	}
 
+	@Order
+	@Bean
+	@ConditionalOnMissingBean
+	NoopStringObfuscate noopStringObfuscate() {
+		return new NoopStringObfuscate();
+	}
+
+	@Order
 	@Bean
 	@ConditionalOnMissingBean
 	SimpleStringObfuscate simpleStringObfuscate() {
@@ -158,9 +167,9 @@ public class JacksonConfig {
 		}
 
 		@Override
-		public Optional<StringObfuscate> getInstance(Class<? extends StringObfuscate> obfuscateClass) {
+		public Optional<StringObfuscate> getInstance(String mode) {
 			for (StringObfuscate processor : processors) {
-				if (processor.getClass().equals(obfuscateClass)) {
+				if (mode.equals(processor.modeId())) {
 					return Optional.of(processor);
 				}
 			}

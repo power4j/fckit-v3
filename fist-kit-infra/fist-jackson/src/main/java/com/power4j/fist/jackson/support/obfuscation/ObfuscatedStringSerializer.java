@@ -64,7 +64,7 @@ public class ObfuscatedStringSerializer extends StdSerializer<String> implements
 		else {
 			String obfuscated;
 			try {
-				obfuscated = obfuscate.algorithm() + "." + obfuscate.obfuscate(value);
+				obfuscated = obfuscate.modeId() + StringObfuscate.HEAD + obfuscate.obfuscate(value);
 			}
 			catch (Exception e) {
 				throw new JsonGenerationException(e, jsonGenerator);
@@ -84,11 +84,10 @@ public class ObfuscatedStringSerializer extends StdSerializer<String> implements
 		if (annotation == null) {
 			return prov.findContentValueSerializer(property.getType(), property);
 		}
-		Class<? extends StringObfuscate> obfuscate = annotation.processor();
-		Optional<StringObfuscate> processor = resolver.getInstance(obfuscate);
+		String mode = annotation.mode();
+		Optional<StringObfuscate> processor = resolver.getInstance(mode);
 		if (processor.isEmpty()) {
-			throw new IllegalStateException(
-					String.format("Obfuscation processor not registered: %s", annotation.processor().getName()));
+			throw new IllegalStateException(String.format("Obfuscation processor not registered: %s", mode));
 		}
 		return new ObfuscatedStringSerializer(processor.get(), resolver);
 	}

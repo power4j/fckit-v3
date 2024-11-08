@@ -60,10 +60,10 @@ public class ObfuscatedStringDeserializer extends StdDeserializer<String> implem
 		if (value == null) {
 			return null;
 		}
-		else if (!value.startsWith(obfuscate.algorithm() + ".")) {
+		else if (!value.startsWith(obfuscate.modeId() + StringObfuscate.HEAD)) {
 			return value;
 		}
-		value = value.substring(obfuscate.algorithm().length() + 1);
+		value = value.substring(obfuscate.modeId().length() + 1);
 		try {
 			return obfuscate.deobfuscate(value);
 		}
@@ -82,11 +82,10 @@ public class ObfuscatedStringDeserializer extends StdDeserializer<String> implem
 		if (annotation == null) {
 			return StringDeserializer.instance;
 		}
-		Class<? extends StringObfuscate> obfuscate = annotation.processor();
-		Optional<StringObfuscate> processor = resolver.getInstance(obfuscate);
+		String mode = annotation.mode();
+		Optional<StringObfuscate> processor = resolver.getInstance(mode);
 		if (processor.isEmpty()) {
-			throw new IllegalStateException(
-					String.format("Obfuscation processor not registered: %s", annotation.processor().getName()));
+			throw new IllegalStateException(String.format("Obfuscation processor not registered: %s", mode));
 		}
 		return new ObfuscatedStringDeserializer(processor.get(), resolver);
 	}

@@ -22,11 +22,13 @@ package com.power4j.fist.jackson.support.obfuscation;
  */
 public interface StringObfuscate {
 
+	String HEAD = "$";
+
 	/**
-	 * The algorithm id
+	 * The mode id, {@code $} is <b> reserved</b>.
 	 * @return String
 	 */
-	String algorithm();
+	String modeId();
 
 	/**
 	 * Obfuscate string value

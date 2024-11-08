@@ -16,19 +16,27 @@
 
 package com.power4j.fist.jackson.support.obfuscation;
 
-import java.util.Optional;
-
 /**
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
-public interface ObfuscateProcessorProvider {
+public class NoopStringObfuscate implements StringObfuscate {
 
-	/**
-	 * Resolve the specified obfuscate instance.
-	 * @param mode the mode to use
-	 * @return empty if not found
-	 */
-	Optional<StringObfuscate> getInstance(String mode);
+	public final static String MODEL_ID = "noop";
+
+	@Override
+	public String modeId() {
+		return MODEL_ID;
+	}
+
+	@Override
+	public String obfuscate(String value) throws Exception {
+		return value;
+	}
+
+	@Override
+	public String deobfuscate(String value) throws Exception {
+		return value;
+	}
 
 }

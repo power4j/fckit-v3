@@ -36,7 +36,7 @@ public class JacksonSimpleStringObfuscateTest {
 	@Data
 	public static class Foo {
 
-		@Obfuscation
+		@Obfuscation(mode = SimpleStringObfuscate.MODE_ID)
 		private String name;
 
 	}
@@ -59,7 +59,7 @@ public class JacksonSimpleStringObfuscateTest {
 		foo.setName("hello world");
 		String value = objectMapper.writeValueAsString(foo);
 		System.out.println("Serialized: " + value);
-		Assertions.assertEquals("{\"name\":\"OBF.XOR_V1.aGRub2slcWh6ZW4=\"}", value);
+		Assertions.assertEquals("{\"name\":\"OBF.XOR_V1$aGRub2slcWh6ZW4=\"}", value);
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class JacksonSimpleStringObfuscateTest {
 
 	@Test
 	public void testDeserialize() throws IOException {
-		String json = "{\"name\":\"OBF.XOR_V1.aGRub2slcWh6ZW4=\"}";
+		String json = "{\"name\":\"OBF.XOR_V1$aGRub2slcWh6ZW4=\"}";
 		Foo foo = objectMapper.readValue(json, Foo.class);
 		System.out.println("Deserialized: " + foo.getName());
 		Assertions.assertEquals("hello world", foo.getName());

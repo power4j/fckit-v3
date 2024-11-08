@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.power4j.fist.jackson.support.obfuscation.ObfuscatedStringDeserializer;
 import com.power4j.fist.jackson.support.obfuscation.ObfuscatedStringSerializer;
-import com.power4j.fist.jackson.support.obfuscation.SimpleStringObfuscate;
-import com.power4j.fist.jackson.support.obfuscation.StringObfuscate;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,6 +24,10 @@ import java.lang.annotation.Target;
 @JsonDeserialize(using = ObfuscatedStringDeserializer.class)
 public @interface Obfuscation {
 
-	Class<? extends StringObfuscate> processor() default SimpleStringObfuscate.class;
+	/**
+	 * Obfuscation mode, default value {@code "noop"}
+	 * @return mode name to determine witch obfuscation processor should be used
+	 */
+	String mode() default "noop";
 
 }
