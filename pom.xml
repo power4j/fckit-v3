@@ -74,7 +74,7 @@
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
     <!-- libs -->
-    <commons-io.version>2.17.0</commons-io.version>
+    <commons-io.version>2.18.0</commons-io.version>
     <coca-kit.version>0.2.0</coca-kit.version>
     <tile.version>1.6.2</tile.version>
     <guava.version>33.3.1-jre</guava.version>
