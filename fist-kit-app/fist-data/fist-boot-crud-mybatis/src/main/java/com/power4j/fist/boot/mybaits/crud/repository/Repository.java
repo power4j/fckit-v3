@@ -20,10 +20,10 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.power4j.fist.boot.mybaits.crud.repository.matcher.Eq;
 import com.power4j.fist.data.crud.repository.PagingAndSortingRepository;
 import com.power4j.fist.data.domain.Pageable;
 import com.power4j.fist.data.domain.Paged;
-import com.power4j.fist.boot.mybaits.crud.repository.matcher.Eq;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
@@ -38,6 +38,8 @@ import java.util.Optional;
  * @param <ID> 主键类型
  */
 public interface Repository<T, ID extends Serializable> extends PagingAndSortingRepository<T, ID> {
+
+	int DEFAULT_BATCH_SIZE = 1_000;
 
 	/**
 	 * 批量保存

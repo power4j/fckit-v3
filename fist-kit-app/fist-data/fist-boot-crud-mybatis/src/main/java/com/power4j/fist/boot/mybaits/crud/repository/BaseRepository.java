@@ -27,8 +27,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.repository.CrudRepository;
 import com.power4j.fist.boot.mybaits.crud.repository.matcher.Eq;
 import com.power4j.fist.boot.mybaits.util.LambdaHelper;
 import com.power4j.fist.boot.mybaits.util.PageUtil;
@@ -59,7 +58,7 @@ import java.util.stream.StreamSupport;
  * @param <ID> 主键类型
  */
 @Transactional(rollbackFor = Exception.class)
-public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable> extends ServiceImpl<M, T>
+public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable> extends CrudRepository<M, T>
 		implements Repository<T, ID> {
 
 	@Nullable
@@ -74,7 +73,7 @@ public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable>
 	@Override
 	public List<T> saveAll(Iterable<T> entities) {
 		List<T> list = toList(entities);
-		saveBatch(list);
+		saveBatch(list, Repository.DEFAULT_BATCH_SIZE);
 		return list;
 	}
 
@@ -86,7 +85,7 @@ public class BaseRepository<M extends BaseMapper<T>, T, ID extends Serializable>
 
 	@Override
 	public List<T> updateAllById(Iterable<T> entities) {
-		return updateAllById(entities, IService.DEFAULT_BATCH_SIZE);
+		return updateAllById(entities, Repository.DEFAULT_BATCH_SIZE);
 	}
 
 	@Override
