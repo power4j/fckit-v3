@@ -242,11 +242,6 @@
         <artifactId>spring-security-oauth2-authorization-server</artifactId>
         <version>${spring.oauth2-authorization-server.version}</version>
       </dependency>
-      <dependency>
-        <groupId>com.github.seancfoley</groupId>
-        <artifactId>ipaddress</artifactId>
-        <version>${seancfoley.ipaddress.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
