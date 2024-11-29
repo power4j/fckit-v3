@@ -124,6 +124,13 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp-bom</artifactId>
+        <version>${okhttp3.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>org.spockframework</groupId>
         <artifactId>spock-bom</artifactId>
         <version>${spock-lib.version}</version>
