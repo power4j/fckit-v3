@@ -76,7 +76,7 @@
     <!-- libs -->
     <commons-io.version>2.18.0</commons-io.version>
     <coca-kit.version>0.2.0</coca-kit.version>
-    <tile.version>1.6.2</tile.version>
+    <tile.version>1.7.0</tile.version>
     <guava.version>33.3.1-jre</guava.version>
     <redisson.version>3.39.0</redisson.version>
     <okhttp3.version>4.12.0</okhttp3.version>
