@@ -103,6 +103,13 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-bom</artifactId>
+        <version>${mybatis-plus.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>org.springdoc</groupId>
         <artifactId>springdoc-openapi</artifactId>
         <version>${springdoc-openapi.version}</version>
@@ -113,6 +120,13 @@
         <groupId>de.codecentric</groupId>
         <artifactId>spring-boot-admin-dependencies</artifactId>
         <version>${spring-boot-admin.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp-bom</artifactId>
+        <version>${okhttp3.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -194,26 +208,6 @@
         <version>${mybatis-spring.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-core</artifactId>
-        <version>${mybatis-plus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-extension</artifactId>
-        <version>${mybatis-plus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-        <version>${mybatis-plus.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-spring-boot3-starter-test</artifactId>
-        <version>${mybatis-plus.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.pig4cloud.excel</groupId>
         <artifactId>excel-spring-boot-starter</artifactId>
         <version>${excel-spring-boot-starter.version}</version>
@@ -247,11 +241,6 @@
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-oauth2-authorization-server</artifactId>
         <version>${spring.oauth2-authorization-server.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.github.seancfoley</groupId>
-        <artifactId>ipaddress</artifactId>
-        <version>${seancfoley.ipaddress.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

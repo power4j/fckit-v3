@@ -43,6 +43,14 @@ public interface CrudRepository<T, ID> {
 	List<T> saveAll(Iterable<T> entities);
 
 	/**
+	 * 批量保存
+	 * @param entities 实体集合
+	 * @param batchSize 批量大小
+	 * @return 返回保存后的实体集合
+	 */
+	List<T> saveAll(Iterable<T> entities, int batchSize);
+
+	/**
 	 * 更新(根据ID)
 	 * @param entity 实体
 	 * @return 返回更新后的实体
