@@ -52,7 +52,7 @@
 
   <properties>
     <skipTests>false</skipTests>
-    <revision>3.4.0</revision>
+    <revision>3.4.1</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>17</maven.compiler.target>
@@ -95,7 +95,7 @@
     <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
     <oauth2-oidc-sdk.version>11.20.1</oauth2-oidc-sdk.version>
     <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-    <excel-spring-boot-starter.version>3.3.1</excel-spring-boot-starter.version>
+    <excel-spring-boot-starter.version>3.4.0</excel-spring-boot-starter.version>
     <seancfoley.ipaddress.version>5.5.1</seancfoley.ipaddress.version>
 
     <spock-lib.version>2.4-M4-groovy-4.0</spock-lib.version>
@@ -278,7 +278,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.11.1</version>
+            <version>3.11.2</version>
             <configuration>
               <encoding>UTF-8</encoding>
               <charset>UTF-8</charset>
