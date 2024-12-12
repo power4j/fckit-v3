@@ -16,7 +16,7 @@
 
 package com.power4j.fist.data.migrate;
 
-import com.alibaba.excel.context.AnalysisContext;
+import cn.idev.excel.context.AnalysisContext;
 import com.power4j.fist.data.excel.ExcelParser;
 import lombok.experimental.UtilityClass;
 
