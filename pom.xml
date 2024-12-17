@@ -77,7 +77,7 @@
     <commons-io.version>2.18.0</commons-io.version>
     <coca-kit.version>0.2.0</coca-kit.version>
     <tile.version>1.7.0</tile.version>
-    <guava.version>33.3.1-jre</guava.version>
+    <guava.version>33.4.0-jre</guava.version>
     <redisson.version>3.40.2</redisson.version>
     <okhttp3.version>4.12.0</okhttp3.version>
     <ez-captcha.version>0.1.1</ez-captcha.version>
