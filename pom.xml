@@ -97,7 +97,7 @@
     <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
     <excel-spring-boot-starter.version>3.4.0</excel-spring-boot-starter.version>
     <seancfoley.ipaddress.version>5.5.1</seancfoley.ipaddress.version>
-    <bucket4j.version>8.13.0</bucket4j.version>
+    <bucket4j.version>8.14.0</bucket4j.version>
 
     <junit-pioneer.version>2.3.0</junit-pioneer.version>
     <spock-lib.version>2.4-M5-groovy-4.0</spock-lib.version>
