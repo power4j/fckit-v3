@@ -59,7 +59,7 @@
     <maven.compiler.source>17</maven.compiler.source>
 
     <spring-boot.version>3.4.4</spring-boot.version>
-    <spring-cloud.version>2024.0.0</spring-cloud.version>
+    <spring-cloud.version>2024.0.1</spring-cloud.version>
     <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
     <!-- plugin -->
     <mapstruct.version>1.6.0</mapstruct.version>
