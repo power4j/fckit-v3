@@ -67,7 +67,7 @@
     <spring-javaformat.plugin.version>0.0.43</spring-javaformat.plugin.version>
     <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
     <gmavenplus-plugin.version>4.1.1</gmavenplus-plugin.version>
-    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <git-commit-id-plugin.version>9.0.1</git-commit-id-plugin.version>
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
