@@ -100,7 +100,7 @@
     <bucket4j.version>8.14.0</bucket4j.version>
 
     <junit-pioneer.version>2.3.0</junit-pioneer.version>
-    <spock-lib.version>2.4-M5-groovy-4.0</spock-lib.version>
+    <spock-lib.version>2.4-M6-groovy-4.0</spock-lib.version>
   </properties>
 
   <modules>
