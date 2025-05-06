@@ -111,7 +111,7 @@
       </dependency>
       <dependency>
         <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi</artifactId>
+        <artifactId>springdoc-openapi-bom</artifactId>
         <version>${springdoc-openapi.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -166,6 +166,11 @@
         <groupId>com.power4j.kit</groupId>
         <artifactId>ez-captcha</artifactId>
         <version>${ez-captcha.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-core-jakarta</artifactId>
+        <version>${swagger3-api.version}</version>
       </dependency>
       <dependency>
         <groupId>io.springfox</groupId>
