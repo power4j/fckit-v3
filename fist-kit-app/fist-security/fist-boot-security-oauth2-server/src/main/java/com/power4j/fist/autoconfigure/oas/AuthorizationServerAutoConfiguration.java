@@ -20,6 +20,7 @@ import com.power4j.fist.auth.handler.DefaultFormAuthenticationFailureHandler;
 import com.power4j.fist.auth.handler.DefaultSsoLogoutSuccessHandler;
 import com.power4j.fist.oauth2.extension.password.OAuth2ResourceOwnerPasswordAuthenticationConverter;
 import com.power4j.fist.oauth2.extension.sms.OAuth2ResourceOwnerSmsAuthenticationConverter;
+import com.power4j.fist.oauth2.extension.sso.OAuth2SsoAuthenticationConverter;
 import com.power4j.fist.oauth2.extension.token.DefaultOAuth2AccessTokenGenerator;
 import com.power4j.fist.oauth2.extension.token.DefaultTokenCustomizer;
 import com.power4j.fist.oauth2.extension.token.OAuth2RefreshTokenAuthenticationConverter;
@@ -31,12 +32,12 @@ import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2RefreshTokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
-import org.springframework.security.oauth2.server.authorization.web.authentication.DelegatingAuthenticationConverter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2AuthorizationCodeAuthenticationConverter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2AuthorizationCodeRequestAuthenticationConverter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2ClientCredentialsAuthenticationConverter;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.DelegatingAuthenticationConverter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import java.util.Arrays;
@@ -79,8 +80,8 @@ public class AuthorizationServerAutoConfiguration {
 	public AuthenticationConverter accessTokenRequestConverter() {
 		return new DelegatingAuthenticationConverter(Arrays.asList(
 				new OAuth2ResourceOwnerPasswordAuthenticationConverter(),
-				new OAuth2ResourceOwnerSmsAuthenticationConverter(), new OAuth2RefreshTokenAuthenticationConverter(),
-				new OAuth2ClientCredentialsAuthenticationConverter(),
+				new OAuth2ResourceOwnerSmsAuthenticationConverter(), new OAuth2SsoAuthenticationConverter(),
+				new OAuth2RefreshTokenAuthenticationConverter(), new OAuth2ClientCredentialsAuthenticationConverter(),
 				new OAuth2AuthorizationCodeAuthenticationConverter(),
 				new OAuth2AuthorizationCodeRequestAuthenticationConverter()));
 	}
