@@ -82,6 +82,16 @@ public interface AuthConstants {
 	 */
 	String APP = "mobile";
 
+	/**
+	 * SSO登录 参数名称
+	 */
+	String SSO_PARAMETER_NAME = "uid";
+
+	/**
+	 * SSO登录
+	 */
+	String SSO = "sso";
+
 	interface ClientOpts {
 
 		/**
