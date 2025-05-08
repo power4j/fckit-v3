@@ -4,6 +4,7 @@ package com.power4j.fist.oauth2.extension.handler;
 import com.power4j.coca.kit.common.lang.Result;
 import com.power4j.fist.boot.common.api.Results;
 import com.power4j.fist.oauth2.extension.event.OauthFailureEvent;
+import com.power4j.fist.oauth2.extension.utils.OAuth2EndpointUtils;
 import com.power4j.fist.support.spring.util.SpringEventUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,7 +46,7 @@ public class DefaultOauthFailureHandler implements AuthenticationFailureHandler 
 		}
 		OauthFailureEvent event = OauthFailureEvent.builder()
 			.grantType(grantType)
-			.username(request.getParameter(OAuth2ParameterNames.USERNAME))
+			.username(OAuth2EndpointUtils.resolveUsername(request).orElse(""))
 			.exception(exception)
 			.request(request)
 			.build();

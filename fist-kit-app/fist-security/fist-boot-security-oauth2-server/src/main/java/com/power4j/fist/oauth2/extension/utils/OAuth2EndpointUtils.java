@@ -1,7 +1,9 @@
 package com.power4j.fist.oauth2.extension.utils;
 
+import com.power4j.fist.oauth2.core.AuthConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
@@ -11,6 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Original code comes from <a href="https://github.com/pig-mesh/pig">pig-mesh/pig</a>
@@ -44,6 +47,22 @@ public class OAuth2EndpointUtils {
 	public void throwError(String errorCode, String parameterName, String errorUri) {
 		OAuth2Error error = new OAuth2Error(errorCode, "OAuth 2.0 Parameter: " + parameterName, errorUri);
 		throw new OAuth2AuthenticationException(error);
+	}
+
+	public Optional<String> resolveParameter(HttpServletRequest request, String... names) {
+		MultiValueMap<String, String> parameters = getParameters(request);
+		for (String name : names) {
+			final String value = parameters.getFirst(name);
+			if (StringUtils.isNotEmpty(value)) {
+				return Optional.of(value);
+			}
+		}
+		return Optional.empty();
+	}
+
+	public Optional<String> resolveUsername(HttpServletRequest request) {
+		return resolveParameter(request, OAuth2ParameterNames.USERNAME, AuthConstants.SSO_PARAMETER_NAME,
+				AuthConstants.SMS_PARAMETER_NAME);
 	}
 
 }

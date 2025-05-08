@@ -2,6 +2,7 @@
 package com.power4j.fist.oauth2.extension.handler;
 
 import com.power4j.fist.oauth2.extension.event.OauthSuccessEvent;
+import com.power4j.fist.oauth2.extension.utils.OAuth2EndpointUtils;
 import com.power4j.fist.support.spring.util.SpringEventUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,7 +51,7 @@ public class DefaultOauthSuccessHandler implements AuthenticationSuccessHandler 
 		}
 		OAuth2AccessTokenAuthenticationToken accessTokenAuthentication = (OAuth2AccessTokenAuthenticationToken) authentication;
 		String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
-		String username = request.getParameter(OAuth2ParameterNames.USERNAME);
+		String username = OAuth2EndpointUtils.resolveUsername(request).orElse(null);
 		if (StringUtils.isEmpty(username)) {
 			username = Objects
 				.toString(accessTokenAuthentication.getAdditionalParameters().get(OAuth2TokenClaimNames.SUB));
