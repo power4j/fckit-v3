@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.logback;
+package com.power4j.fist.logback.layout;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author CJ (power4j@outlook.com)

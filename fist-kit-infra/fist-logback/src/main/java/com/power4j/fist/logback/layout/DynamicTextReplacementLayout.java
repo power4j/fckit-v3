@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.logback;
+package com.power4j.fist.logback.layout;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.PatternLayout;

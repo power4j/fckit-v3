@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.logback;
+package com.power4j.fist.logback.layout;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
