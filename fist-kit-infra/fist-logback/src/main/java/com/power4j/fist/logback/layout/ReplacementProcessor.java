@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author CJ (power4j@outlook.com)
- * @since 1.0
+ * @since 3.8
  */
 public interface ReplacementProcessor {
 
