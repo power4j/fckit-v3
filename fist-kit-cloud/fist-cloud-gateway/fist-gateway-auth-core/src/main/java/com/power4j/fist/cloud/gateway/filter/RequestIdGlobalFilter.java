@@ -16,7 +16,8 @@
 
 package com.power4j.fist.cloud.gateway.filter;
 
-import com.power4j.fist.boot.common.logging.LogConstant;
+import com.power4j.fist.boot.common.utils.Snowflake;
+import com.power4j.fist.boot.web.reactive.constant.ContextConstant;
 import com.power4j.fist.boot.web.reactive.log.MdcContextLifter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -24,8 +25,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -35,7 +34,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RequestIdGlobalFilter implements GlobalFilter {
 
-	private final static String CONTEXT_REQUEST_ID_KEY = LogConstant.MDC_REQUEST_ID;
+	private final static Snowflake ID_GEN = new Snowflake();
 
 	private final String headerKey;
 
@@ -45,13 +44,13 @@ public class RequestIdGlobalFilter implements GlobalFilter {
 		String requestId = request.getHeaders().getFirst(headerKey);
 
 		if (requestId == null || requestId.isEmpty()) {
-			requestId = UUID.randomUUID().toString();
+			requestId = Long.toHexString(ID_GEN.nextId());
 			ServerHttpRequest mutatedRequest = request.mutate().header(headerKey, requestId).build();
 			exchange = exchange.mutate().request(mutatedRequest).build();
 		}
 
 		final String finalRequestId = requestId;
-		return chain.filter(exchange).contextWrite(ctx -> ctx.put(CONTEXT_REQUEST_ID_KEY, finalRequestId));
+		return chain.filter(exchange).contextWrite(ctx -> ctx.put(ContextConstant.KEY_MDC, finalRequestId));
 	}
 
 }

@@ -23,6 +23,7 @@ import org.springframework.cloud.gateway.support.ConfigurationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import reactor.core.publisher.Mono;
 
@@ -83,6 +84,7 @@ public class RouteGuardConfiguration {
 	 * TODO: Maybe move to another configuration like GatewayConfiguration
 	 */
 	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
 	@ConditionalOnMissingBean
 	RequestIdGlobalFilter requestIdGlobalFilter() {
 		return new RequestIdGlobalFilter(HttpConstant.Header.KEY_REQUEST_ID);
