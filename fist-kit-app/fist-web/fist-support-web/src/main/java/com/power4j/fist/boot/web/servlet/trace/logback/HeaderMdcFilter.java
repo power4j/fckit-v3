@@ -16,6 +16,8 @@
 
 package com.power4j.fist.boot.web.servlet.trace.logback;
 
+import com.power4j.fist.boot.common.logging.LogConstant;
+import com.power4j.fist.boot.web.constant.HttpConstant;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,6 +44,12 @@ public class HeaderMdcFilter implements Filter {
 
 	// Key: http header name,Value: MDC key name
 	private final Map<String, String> mdcKeyMapper;
+
+	public static HeaderMdcFilter useDefault() {
+		Map<String, String> mdcKeyMapper = new HashMap<>(4);
+		mdcKeyMapper.put(HttpConstant.Header.KEY_REQUEST_ID, LogConstant.MDC_REQUEST_ID);
+		return new HeaderMdcFilter(true, mdcKeyMapper);
+	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

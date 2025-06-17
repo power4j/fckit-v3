@@ -16,25 +16,29 @@
 
 package com.power4j.fist.boot.autoconfigure.web;
 
-import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.boot.mon.info.TraceInfo;
 import com.power4j.fist.boot.mon.info.TraceInfoResolver;
+import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.LocalDateFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.LocalDateTimeFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.LocalTimeFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.MonthDayFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.YearMonthFormatter;
+import com.power4j.fist.boot.web.servlet.trace.logback.HeaderMdcFilter;
 import com.power4j.fist.support.spring.web.servlet.util.HttpServletRequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -62,6 +66,14 @@ public class FistWebAutoConfiguration {
 			// TODO uid?
 			return Optional.of(info);
 		};
+	}
+
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	@Bean
+	@ConditionalOnProperty(prefix = "fist.web.filter.mdc", name = "enabled", havingValue = "true",
+			matchIfMissing = true)
+	public HeaderMdcFilter headerMdcFilter() {
+		return HeaderMdcFilter.useDefault();
 	}
 
 	@Configuration
