@@ -58,7 +58,7 @@ public class InnerSecurityConfiguration {
 		return new DefaultUserCodec();
 	}
 
-	@Order(Ordered.HIGHEST_PRECEDENCE)
+	@Order(Ordered.HIGHEST_PRECEDENCE + 100_000)
 	@Bean
 	@ConditionalOnProperty(prefix = "fist.security.authentication.trusted", name = "enabled", havingValue = "true",
 			matchIfMissing = true)
