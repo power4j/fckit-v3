@@ -44,7 +44,7 @@ public class UserRelayInterceptor implements RequestInterceptor {
 			.orElse(Collections.emptyList());
 
 		// @formatter:off
-		if(!tokens.isEmpty()){
+		if(tokens.isEmpty()){
 			UserContextHolder
 					.getOriginalValue()
 					.ifPresent(v -> {
