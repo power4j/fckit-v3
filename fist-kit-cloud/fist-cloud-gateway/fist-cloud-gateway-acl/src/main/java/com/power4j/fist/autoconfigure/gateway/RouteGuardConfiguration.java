@@ -1,8 +1,10 @@
 package com.power4j.fist.autoconfigure.gateway;
 
 import com.power4j.fist.boot.security.inner.DefaultUserCodec;
+import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.cloud.gateway.ApiGuardFilter;
 import com.power4j.fist.cloud.gateway.authorization.filter.reactive.GatewayAuthFilterChain;
+import com.power4j.fist.cloud.gateway.filter.RequestIdGlobalFilter;
 import com.power4j.fist.cloud.gateway.ratelimit.Bucket4jRateLimiter;
 import com.power4j.fist.cloud.security.AccessDeniedHandler;
 import com.power4j.fist.cloud.security.AccessPermittedHandler;
@@ -75,6 +77,15 @@ public class RouteGuardConfiguration {
 	public KeyResolver remoteAddressKeyResolver() {
 		return exchange -> Mono
 			.just(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
+	}
+
+	/**
+	 * TODO: Maybe move to another configuration like GatewayConfiguration
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	RequestIdGlobalFilter requestIdGlobalFilter() {
+		return new RequestIdGlobalFilter(HttpConstant.Header.KEY_REQUEST_ID);
 	}
 
 }
