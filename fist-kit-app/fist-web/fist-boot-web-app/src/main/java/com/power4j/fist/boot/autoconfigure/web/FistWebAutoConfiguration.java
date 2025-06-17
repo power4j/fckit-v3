@@ -31,11 +31,10 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -46,6 +45,10 @@ import java.time.MonthDay;
 import java.time.YearMonth;
 import java.util.Optional;
 
+import static jakarta.servlet.DispatcherType.ASYNC;
+import static jakarta.servlet.DispatcherType.REQUEST;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
 /**
  * @author CJ (power4j@outlook.com)
  * @date 2021/6/16
@@ -55,6 +58,8 @@ import java.util.Optional;
 @ComponentScan(basePackages = { "com.power4j.fist.boot.web.servlet.error" })
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class FistWebAutoConfiguration {
+
+	private final static String HEADER_MDC_FILTER_BEAN = "headerMdcFilter";
 
 	@Bean
 	@ConditionalOnMissingBean(value = HttpServletRequest.class, parameterizedContainer = TraceInfoResolver.class)
@@ -68,12 +73,17 @@ public class FistWebAutoConfiguration {
 		};
 	}
 
-	@Order(Ordered.HIGHEST_PRECEDENCE)
 	@Bean
+	@ConditionalOnMissingBean(name = { HEADER_MDC_FILTER_BEAN })
 	@ConditionalOnProperty(prefix = "fist.web.filter.mdc", name = "enabled", havingValue = "true",
 			matchIfMissing = true)
-	public HeaderMdcFilter headerMdcFilter() {
-		return HeaderMdcFilter.useDefault();
+	public FilterRegistrationBean<HeaderMdcFilter> headerMdcFilter() {
+		FilterRegistrationBean<HeaderMdcFilter> registration = new FilterRegistrationBean<>(
+				HeaderMdcFilter.useDefault());
+		registration.setName(HEADER_MDC_FILTER_BEAN);
+		registration.setDispatcherTypes(REQUEST, ASYNC);
+		registration.setOrder(HIGHEST_PRECEDENCE);
+		return registration;
 	}
 
 	@Configuration

@@ -18,14 +18,13 @@ package com.power4j.fist.boot.web.servlet.trace.logback;
 
 import com.power4j.fist.boot.common.logging.LogConstant;
 import com.power4j.fist.boot.web.constant.HttpConstant;
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ import java.util.Map;
  * @since 3.8
  */
 @RequiredArgsConstructor
-public class HeaderMdcFilter implements Filter {
+public class HeaderMdcFilter extends OncePerRequestFilter {
 
 	private final static String NATIVE_REQ_ID = "REQ-ID";
 
@@ -52,8 +51,8 @@ public class HeaderMdcFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 		Map<String, String> mdcContext = null;
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -61,12 +60,12 @@ public class HeaderMdcFilter implements Filter {
 		}
 
 		if (mdcContext == null || mdcContext.isEmpty()) {
-			chain.doFilter(request, response);
+			filterChain.doFilter(request, response);
 			return;
 		}
 		mdcContext.forEach(MDC::put);
 		try {
-			chain.doFilter(request, response);
+			filterChain.doFilter(request, response);
 		}
 		finally {
 			mdcContext.keySet().forEach(MDC::remove);
@@ -82,9 +81,10 @@ public class HeaderMdcFilter implements Filter {
 			final String reqId = request.getRequestId();
 			mdc.put(NATIVE_REQ_ID, reqId == null ? "null" : reqId);
 		}
-		request.getParameterMap().forEach((k, v) -> {
-			if (mdcKeyMapper.containsKey(k) && v != null && v.length > 0) {
-				mdc.put(mdcKeyMapper.get(k), v[0]);
+		mdcKeyMapper.forEach((headKey, mdcKey) -> {
+			String val = request.getHeader(headKey);
+			if (val != null) {
+				mdc.put(mdcKey, val);
 			}
 		});
 		return mdc;
