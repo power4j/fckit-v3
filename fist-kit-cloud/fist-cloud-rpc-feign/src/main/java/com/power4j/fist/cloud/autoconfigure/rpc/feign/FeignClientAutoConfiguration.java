@@ -16,11 +16,17 @@
 
 package com.power4j.fist.cloud.autoconfigure.rpc.feign;
 
-import com.power4j.fist.cloud.rpc.feign.UserRelayInterceptor;
+import com.power4j.fist.boot.web.constant.HttpConstant;
+import com.power4j.fist.cloud.rpc.feign.HeaderRelayHandler;
+import com.power4j.fist.cloud.rpc.feign.RelayInterceptor;
+import com.power4j.fist.cloud.rpc.feign.UserRelayHandler;
 import feign.RequestInterceptor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -31,11 +37,11 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = { "com.power4j.fist.cloud.autoconfigure.rpc.feign.error" })
 public class FeignClientAutoConfiguration {
 
-	// TODO: Add Interceptor for Jwt, tenant-id, request-id
-
 	@Bean
-	public RequestInterceptor userRelayInterceptor() {
-		return new UserRelayInterceptor();
+	public RequestInterceptor requestInterceptor() {
+		UserRelayHandler userRelayHandler = new UserRelayHandler();
+		HeaderRelayHandler headerRelayHandler = new HeaderRelayHandler(Set.of(HttpConstant.Header.KEY_REQUEST_ID));
+		return new RelayInterceptor(List.of(headerRelayHandler, userRelayHandler));
 	}
 
 	// TODO: 统一降级处理
