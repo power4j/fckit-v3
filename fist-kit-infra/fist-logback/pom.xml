@@ -21,20 +21,27 @@
 
   <parent>
     <groupId>com.power4j.fist3</groupId>
-    <artifactId>fist-kit-build</artifactId>
+    <artifactId>fist-kit-infra</artifactId>
     <version>${revision}</version>
-    <relativePath>../fist-kit-build</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>fist-kit-infra</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>fist-logback</artifactId>
 
-  <modules>
-    <module>fist-kit-api</module>
-    <module>fist-jackson</module>
-    <module>fist-redisson</module>
-    <module>fist-logback</module>
-    <module>fist-support-test</module>
-    <module>fist-support-spring</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <!-- test -->
+    <dependency>
+      <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-support-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
