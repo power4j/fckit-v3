@@ -1,8 +1,10 @@
 package com.power4j.fist.autoconfigure.gateway;
 
 import com.power4j.fist.boot.security.inner.DefaultUserCodec;
+import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.cloud.gateway.ApiGuardFilter;
 import com.power4j.fist.cloud.gateway.authorization.filter.reactive.GatewayAuthFilterChain;
+import com.power4j.fist.cloud.gateway.filter.RequestIdGlobalFilter;
 import com.power4j.fist.cloud.gateway.ratelimit.Bucket4jRateLimiter;
 import com.power4j.fist.cloud.security.AccessDeniedHandler;
 import com.power4j.fist.cloud.security.AccessPermittedHandler;
@@ -21,6 +23,7 @@ import org.springframework.cloud.gateway.support.ConfigurationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import reactor.core.publisher.Mono;
 
@@ -75,6 +78,16 @@ public class RouteGuardConfiguration {
 	public KeyResolver remoteAddressKeyResolver() {
 		return exchange -> Mono
 			.just(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
+	}
+
+	/**
+	 * TODO: Maybe move to another configuration like GatewayConfiguration
+	 */
+	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
+	@ConditionalOnMissingBean
+	RequestIdGlobalFilter requestIdGlobalFilter() {
+		return new RequestIdGlobalFilter(HttpConstant.Header.KEY_REQUEST_ID);
 	}
 
 }

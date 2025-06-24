@@ -14,22 +14,14 @@
  *  limitations under the License.
  */
 
-package com.power4j.fist.boot.autoconfigure.web;
-
-import com.power4j.fist.boot.web.reactive.error.GlobalErrorConfigure;
-import com.power4j.fist.boot.web.reactive.log.MdcContextLifterConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.context.annotation.Import;
-
 /**
  * @author CJ (power4j@outlook.com)
- * @date 2021/6/16
+ * @date 2021/6/2
  * @since 1.0
  */
-@AutoConfiguration
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
-@Import({ GlobalErrorConfigure.class, MdcContextLifterConfiguration.class })
-public class FistReactiveWebAutoConfiguration {
+@NonNullApi
+@NonNullFields
+package com.power4j.fist.cloud.rpc.feign;
 
-}
+import org.springframework.lang.NonNullApi;
+import org.springframework.lang.NonNullFields;

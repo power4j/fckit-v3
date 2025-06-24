@@ -16,31 +16,38 @@
 
 package com.power4j.fist.boot.autoconfigure.web;
 
-import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.boot.mon.info.TraceInfo;
 import com.power4j.fist.boot.mon.info.TraceInfoResolver;
+import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.LocalDateFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.LocalDateTimeFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.LocalTimeFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.MonthDayFormatter;
 import com.power4j.fist.boot.web.servlet.mvc.formatter.YearMonthFormatter;
+import com.power4j.fist.boot.web.servlet.trace.logback.HeaderMdcFilter;
 import com.power4j.fist.support.spring.web.servlet.util.HttpServletRequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.MonthDay;
 import java.time.YearMonth;
 import java.util.Optional;
+
+import static jakarta.servlet.DispatcherType.ASYNC;
+import static jakarta.servlet.DispatcherType.REQUEST;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -52,6 +59,8 @@ import java.util.Optional;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class FistWebAutoConfiguration {
 
+	private final static String HEADER_MDC_FILTER_BEAN = "headerMdcFilter";
+
 	@Bean
 	@ConditionalOnMissingBean(value = HttpServletRequest.class, parameterizedContainer = TraceInfoResolver.class)
 	public TraceInfoResolver<HttpServletRequest> requestTraceInfoResolver() {
@@ -62,6 +71,19 @@ public class FistWebAutoConfiguration {
 			// TODO uid?
 			return Optional.of(info);
 		};
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(name = { HEADER_MDC_FILTER_BEAN })
+	@ConditionalOnProperty(prefix = "fist.web.filter.mdc", name = "enabled", havingValue = "true",
+			matchIfMissing = true)
+	public FilterRegistrationBean<HeaderMdcFilter> headerMdcFilter() {
+		FilterRegistrationBean<HeaderMdcFilter> registration = new FilterRegistrationBean<>(
+				HeaderMdcFilter.useDefault());
+		registration.setName(HEADER_MDC_FILTER_BEAN);
+		registration.setDispatcherTypes(REQUEST, ASYNC);
+		registration.setOrder(HIGHEST_PRECEDENCE);
+		return registration;
 	}
 
 	@Configuration
