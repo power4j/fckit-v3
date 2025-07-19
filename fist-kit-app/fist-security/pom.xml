@@ -26,6 +26,7 @@
   </parent>
 
   <artifactId>fist-security</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>pom</packaging>
 
   <modules>

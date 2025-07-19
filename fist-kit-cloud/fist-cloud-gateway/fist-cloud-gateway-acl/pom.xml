@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-cloud-gateway-acl</artifactId>
+  <name>${project.artifactId}</name>
   <description>网关鉴权插件</description>
 
 

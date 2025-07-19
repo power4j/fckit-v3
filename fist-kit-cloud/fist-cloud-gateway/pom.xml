@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-cloud-gateway</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>pom</packaging>
 
   <modules>

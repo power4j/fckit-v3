@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-cloud-rpc-feign</artifactId>
+  <name>${project.artifactId}</name>
 
   <dependencies>
     <dependency>

@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-support-test</artifactId>
+  <name>${project.artifactId}</name>
 
   <description>Test support</description>
 

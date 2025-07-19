@@ -52,7 +52,7 @@
 
   <properties>
     <skipTests>false</skipTests>
-    <revision>3.9-SNAPSHOT</revision>
+    <revision>3.8.1</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.target>17</maven.compiler.target>
@@ -261,8 +261,8 @@
       </activation>
       <repositories>
         <repository>
-          <id>snapshots-repo</id>
-          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+          <id>central-snapshots</id>
+          <url>https://central.sonatype.com/repository/maven-snapshots/</url>
           <releases>
             <enabled>false</enabled>
           </releases>
@@ -326,16 +326,6 @@
           </plugin>
         </plugins>
       </build>
-      <distributionManagement>
-        <snapshotRepository>
-          <id>ossrh</id>
-          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-          <id>ossrh</id>
-          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-      </distributionManagement>
     </profile>
   </profiles>
 
