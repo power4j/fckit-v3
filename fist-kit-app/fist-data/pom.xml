@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-data</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>pom</packaging>
 
   <modules>

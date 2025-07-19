@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-boot-security-oauth2-server</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>jar</packaging>
 
   <dependencies>
