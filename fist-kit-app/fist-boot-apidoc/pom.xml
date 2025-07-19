@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-boot-apidoc</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>jar</packaging>
 
   <dependencies>

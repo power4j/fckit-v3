@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-kit-cloud</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>pom</packaging>
 
   <modules>

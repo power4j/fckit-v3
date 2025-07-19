@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>fist-jackson</artifactId>
+  <name>${project.artifactId}</name>
 
   <dependencies>
     <dependency>
