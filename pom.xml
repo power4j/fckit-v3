@@ -218,7 +218,7 @@
               <groupId>org.apache.groovy</groupId>
               <artifactId>groovy</artifactId>
               <!-- any version of Groovy \>= 1.5.0 should work here -->
-              <version>4.0.27</version>
+              <version>4.0.28</version>
               <scope>runtime</scope>
             </dependency>
           </dependencies>
