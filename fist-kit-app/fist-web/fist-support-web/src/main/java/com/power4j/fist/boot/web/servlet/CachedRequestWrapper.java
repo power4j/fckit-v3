@@ -27,7 +27,9 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Original code comes from <a href="https://github.com/pig-mesh/pig">pig-mesh/pig</a>
@@ -44,7 +46,7 @@ public class CachedRequestWrapper extends HttpServletRequestWrapper {
 	public CachedRequestWrapper(HttpServletRequest request) {
 		super(request);
 		this.bodyByteArray = getByteBody(request);
-		this.parameterMap = super.getParameterMap();
+		this.parameterMap = new HashMap<>(request.getParameterMap());
 	}
 
 	@Override
@@ -59,12 +61,12 @@ public class CachedRequestWrapper extends HttpServletRequestWrapper {
 		return new ServletInputStream() {
 			@Override
 			public boolean isFinished() {
-				return false;
+				return byteArrayInputStream.available() == 0;
 			}
 
 			@Override
 			public boolean isReady() {
-				return false;
+				return true;
 			}
 
 			@Override
@@ -93,6 +95,28 @@ public class CachedRequestWrapper extends HttpServletRequestWrapper {
 	@Override
 	public Map<String, String[]> getParameterMap() {
 		return this.parameterMap;
+	}
+
+	public void updateParameterMap(Consumer<Map<String, String[]>> consumer) {
+		consumer.accept(this.parameterMap);
+	}
+
+	public void resetParameterMap(Map<String, String[]> parameterMap) {
+		updateParameterMap(m -> {
+			m.clear();
+			m.putAll(parameterMap);
+		});
+	}
+
+	@Override
+	public String getParameter(String name) {
+		String[] values = parameterMap.get(name);
+		return (values != null && values.length > 0) ? values[0] : null;
+	}
+
+	@Override
+	public String[] getParameterValues(String name) {
+		return parameterMap.get(name);
 	}
 
 }
