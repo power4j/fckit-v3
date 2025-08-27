@@ -16,7 +16,7 @@
 
 package com.power4j.fist.mybatis.extension.meta.annotation;
 
-import com.power4j.fist.mybatis.extension.meta.MetaHandler;
+import com.power4j.fist.mybatis.extension.meta.ValueHandler;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -32,17 +32,21 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface FillWith {
-    int LOWEST_ORDER = Integer.MAX_VALUE;
-    int HIGHEST_ORDER = Integer.MIN_VALUE;
 
-    /**
-     * The priority order for filling this field
-     * <p>
-     *     The lower the value, the higher the priority,{@code LOWEST_ORDER} is the highest priority
-     * </p>
-     */
-    int order() default 0;
+	int LOWEST_ORDER = Integer.MAX_VALUE;
 
-    /** Handler class */
-    Class<? extends MetaHandler> handler();
+	int HIGHEST_ORDER = Integer.MIN_VALUE;
+
+	/**
+	 * The priority order for filling this field
+	 * <p>
+	 * The lower the value, the higher the priority,{@code LOWEST_ORDER} is the highest
+	 * priority
+	 * </p>
+	 */
+	int order() default 0;
+
+	/** Handler class */
+	Class<? extends ValueHandler> handler();
+
 }

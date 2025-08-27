@@ -16,23 +16,29 @@
 
 package com.power4j.fist.mybatis.extension.meta;
 
-import com.power4j.fist.mybatis.extension.api.sign.DefaultRegistry;
-import com.power4j.fist.mybatis.extension.api.sign.SignField;
-import com.power4j.fist.mybatis.extension.api.sign.Signer;
-import com.power4j.fist.mybatis.extension.handler.MockSigner;
-import com.power4j.fist.mybatis.extension.handler.SignFieldMetaObjectHandler;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.power4j.fist.mybatis.extension.exception.MetaHandlerException;
 import com.power4j.fist.mybatis.extension.meta.annotation.FillWith;
 import lombok.Data;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.reflection.MetaObject;
-import org.junit.Test;
+import org.apache.ibatis.session.Configuration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -40,59 +46,210 @@ import static org.mockito.Mockito.when;
  * @since 3.9
  */
 class MetaHandlerComposeTest {
-    private static final String MOCK_META_VALUE = "mocked_meta_value";
 
-    @InjectMocks
-    private MetaHandlerCompose metaHandlerCompose;
+	private static final String MOCK_META_VALUE1 = "fill_1";
 
-    @Mock
-    private MetaHandlerRegistry handlerRegistry;
+	@Mock
+	private ValueHandlerRegistry handlerRegistry;
 
-    @Mock
-    private MetaObject metaObject;
+	@Mock
+	private MetaObject metaObject;
 
-    @Mock
-    private MetaHandler mockMetaHandler;
+	@Mock
+	private FakeHandler fakeHandler;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        when(mockMetaHandler.apply(any(),any())).thenReturn(MOCK_META_VALUE);
-        when(handlerRegistry.resolve(any())).thenReturn(Optional.of(mockMetaHandler));
-    }
+	@Mock
+	private CountHandler countHandler;
 
-    @Test
-    void shouldThrowExceptionWhenMetaHandlerNotFound() {
-        MetaHandlerCompose metaHandlerCompose = new MetaHandlerCompose();
-        metaHandlerCompose.insertFill(null);
-    }
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+		when(fakeHandler.getValue(any(), any(), any())).thenReturn(MOCK_META_VALUE1);
+		when(handlerRegistry.resolve(any())).thenReturn(Optional.of(fakeHandler));
+	}
 
+	@Test
+	void shouldThrowExceptionWhenValueHandlerNotFound() {
+		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
+		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Foo.class);
 
-    @Data
-    public static class Foo {
+		when(handlerRegistry.resolve(any())).thenReturn(Optional.empty());
 
-        private String name;
+		MetaHandlerCompose handlerCompose = new MetaHandlerCompose(handlerRegistry);
 
-        @FillWith(handler = MockHandler.class)
-        private String meta;
+		Foo foo = new Foo();
+		when(metaObject.getOriginalObject()).thenReturn(foo);
+		Assertions.assertThrows(MetaHandlerException.class, () -> handlerCompose.insertFill(metaObject));
+		Assertions.assertThrows(MetaHandlerException.class, () -> handlerCompose.updateFill(metaObject));
 
-    }
+	}
 
-    @Data
-    public static class Bar {
+	@Test
+	void shouldUseGlobalHandler() {
 
-        private String name;
+		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
+		TableInfoHelper.initTableInfo(mapperBuilderAssistant, MoMo.class);
 
-        @FillWith(handler = MockHandler.class)
-        private String meta;
+		when(handlerRegistry.resolve(any())).thenReturn(Optional.empty());
 
-    }
+		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry, fakeHandler);
 
-    public static class MockHandler implements MetaHandler {
+		MoMo entity = new MoMo();
+		when(metaObject.getOriginalObject()).thenReturn(entity);
 
-        @Override
-        public Object apply(Object root, String fieldName) {
-            return null;
-        }
-    }
+		// Act
+		handler.insertFill(metaObject);
+
+		verify(fakeHandler, times(1)).getValue(any(), eq("meta"), any());
+
+	}
+
+	@Test
+	void shouldCallHandlerByInsertFill() {
+		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
+		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
+
+		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+
+		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
+
+		Bar entity = new Bar();
+		when(metaObject.getOriginalObject()).thenReturn(entity);
+
+		// Act
+		handler.insertFill(metaObject);
+
+		verify(metaObject, never()).setValue(any(), eq("updateMeta"));
+		verify(countHandler, times(1)).getValue(any(), eq("insertMeta"), any());
+		verify(countHandler, times(1)).getValue(any(), eq("allMeta"), any());
+
+	}
+
+	@Test
+	void shouldCallHandlerByUpdateFill() {
+		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
+		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
+
+		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+
+		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
+
+		Bar entity = new Bar();
+		when(metaObject.getOriginalObject()).thenReturn(entity);
+
+		// Act
+		handler.updateFill(metaObject);
+
+		verify(metaObject, never()).setValue(any(), eq("insertMeta"));
+		verify(countHandler, times(1)).getValue(any(), eq("updateMeta"), any());
+		verify(countHandler, times(1)).getValue(any(), eq("allMeta"), any());
+
+	}
+
+	@Test
+	void shouldInsertFillWithOrder() {
+		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
+		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
+
+		CountHandler countHandler = new CountHandler(1);
+		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+
+		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
+
+		Bar entity = new Bar();
+		when(metaObject.getOriginalObject()).thenReturn(entity);
+
+		// Act
+		handler.insertFill(metaObject);
+
+		verify(metaObject, times(1)).setValue(eq("allMeta"), eq("1"));
+		verify(metaObject, times(1)).setValue(eq("insertMeta"), eq("2"));
+	}
+
+	@Test
+	void shouldUpdateFillWithOrder() {
+		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
+		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
+
+		CountHandler countHandler = new CountHandler(1);
+		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+
+		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
+
+		Bar entity = new Bar();
+		when(metaObject.getOriginalObject()).thenReturn(entity);
+
+		// Act
+		handler.updateFill(metaObject);
+
+		verify(metaObject, times(1)).setValue(eq("allMeta"), eq("1"));
+		verify(metaObject, times(1)).setValue(eq("updateMeta"), eq("2"));
+	}
+
+	@Data
+	public static class Foo {
+
+		private String name;
+
+		@FillWith(handler = FakeHandler.class)
+		@TableField(fill = FieldFill.INSERT_UPDATE)
+		private String meta;
+
+	}
+
+	@Data
+	public static class Bar {
+
+		@FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
+		@TableField(fill = FieldFill.INSERT)
+		private String insertMeta;
+
+		@FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
+		@TableField(fill = FieldFill.UPDATE)
+		private String updateMeta;
+
+		@FillWith(handler = CountHandler.class)
+		@TableField(value = "all_meta_value", fill = FieldFill.INSERT_UPDATE)
+		private String allMeta;
+
+	}
+
+	@Data
+	public static class MoMo {
+
+		private String name;
+
+		@TableField(fill = FieldFill.INSERT_UPDATE)
+		private String meta;
+
+	}
+
+	public static class FakeHandler implements ValueHandler {
+
+		@Override
+		public Object getValue(Object root, String fieldName, Class<?> fieldType) {
+			return MOCK_META_VALUE1;
+		}
+
+	}
+
+	public static class CountHandler implements ValueHandler {
+
+		private final AtomicInteger count;
+
+		public CountHandler(int initValue) {
+			this.count = new AtomicInteger(initValue);
+		}
+
+		@Override
+		public Object getValue(Object root, String fieldName, Class<?> fieldType) {
+			return String.valueOf(count.getAndIncrement());
+		}
+
+		public int getCount() {
+			return count.get();
+		}
+
+	}
+
 }

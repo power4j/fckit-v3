@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.power4j.fist.mybatis.extension.api.sign;
+package com.power4j.fist.mybatis.extension.meta;
+
+import java.util.Optional;
 
 /**
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
-public interface Signer {
+public interface ValueHandlerResolver {
 
 	/**
-	 * get sign value
-	 * @param root root object to sign
-	 * @return sign value(maybe hex string)
+	 * 根据类型查找MetaHandler
+	 * @param cls 类型
+	 * @return 返回Signer实例
 	 */
-	String apply(Object root);
+	Optional<ValueHandler> resolve(Class<?> cls);
 
 }

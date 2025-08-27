@@ -26,9 +26,9 @@ import java.util.function.Consumer;
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
-public class MetaHandlerRegistry implements MetaHandlerResolver {
+public class ValueHandlerRegistry implements ValueHandlerResolver {
 
-	private final Map<Class<? extends MetaHandler>, MetaHandler> registry = new ConcurrentHashMap<>();
+	private final Map<Class<? extends ValueHandler>, ValueHandler> registry = new ConcurrentHashMap<>();
 
 	/**
 	 * 注册,如果已经注册,则覆盖
@@ -36,7 +36,7 @@ public class MetaHandlerRegistry implements MetaHandlerResolver {
 	 * @param signer 注册的实例
 	 * @param <T> 类型
 	 */
-	public <T extends MetaHandler> void register(Class<T> cls, T signer) {
+	public <T extends ValueHandler> void register(Class<T> cls, T signer) {
 		registry.put(cls, signer);
 	}
 
@@ -46,7 +46,7 @@ public class MetaHandlerRegistry implements MetaHandlerResolver {
 	 * @param signer 注册的实例
 	 * @param <T> 类型
 	 */
-	public <T extends MetaHandler> void registerIfAbsent(Class<T> cls, T signer) {
+	public <T extends ValueHandler> void registerIfAbsent(Class<T> cls, T signer) {
 		registry.putIfAbsent(cls, signer);
 	}
 
@@ -54,7 +54,7 @@ public class MetaHandlerRegistry implements MetaHandlerResolver {
 	 * 更新注册表
 	 * @param consumer 更新函数
 	 */
-	public void updateRegistry(Consumer<Map<Class<? extends MetaHandler>, MetaHandler>> consumer) {
+	public void updateRegistry(Consumer<Map<Class<? extends ValueHandler>, ValueHandler>> consumer) {
 		consumer.accept(registry);
 	}
 
@@ -62,13 +62,13 @@ public class MetaHandlerRegistry implements MetaHandlerResolver {
 	 * 内部Map的拷贝
 	 * @return Map
 	 */
-	public Map<Class<? extends MetaHandler>, MetaHandler> copiedMap() {
+	public Map<Class<? extends ValueHandler>, ValueHandler> copiedMap() {
 		return new HashMap<>(registry);
 	}
 
 	@Override
-	public <T extends MetaHandler> Optional<T> resolve(Class<T> cls) {
-		return Optional.ofNullable((T) registry.get(cls));
+	public Optional<ValueHandler> resolve(Class<?> cls) {
+		return Optional.ofNullable(registry.get(cls));
 	}
 
 }

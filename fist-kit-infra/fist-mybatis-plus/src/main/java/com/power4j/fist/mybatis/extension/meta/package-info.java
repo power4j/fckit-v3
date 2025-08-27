@@ -20,7 +20,7 @@
  */
 @NonNullApi
 @NonNullFields
-package com.power4j.fist.mybatis.extension.handler;
+package com.power4j.fist.mybatis.extension.meta;
 
 import org.springframework.lang.NonNullApi;
 import org.springframework.lang.NonNullFields;
