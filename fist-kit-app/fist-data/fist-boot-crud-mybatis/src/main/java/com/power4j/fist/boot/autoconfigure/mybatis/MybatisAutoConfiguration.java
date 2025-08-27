@@ -22,12 +22,15 @@ import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.power4j.fist.boot.mybaits.handler.AuditFiller;
+import com.power4j.fist.boot.mybaits.handler.AuditEntityFiller;
 import com.power4j.fist.boot.mybaits.tenant.DynamicTenantHandler;
 import com.power4j.fist.boot.mybaits.tenant.TenantProperties;
 import com.power4j.fist.boot.security.core.UserInfoSupplier;
+import com.power4j.fist.mybatis.extension.meta.MetaHandlerCompose;
+import com.power4j.fist.mybatis.extension.meta.ValueHandlerResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -35,6 +38,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
@@ -51,9 +56,12 @@ import java.util.Objects;
 @ConditionalOnClass(MybatisConfiguration.class)
 @EnableConfigurationProperties(TenantProperties.class)
 @RequiredArgsConstructor
-public class MybatisAutoConfiguration {
+public class MybatisAutoConfiguration implements ApplicationContextAware {
 
 	private final TenantProperties tenantProperties;
+
+	@Nullable
+	private ApplicationContext applicationContext;
 
 	@Nullable
 	private UserInfoSupplier userInfoSupplier;
@@ -73,11 +81,21 @@ public class MybatisAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public AuditFiller auditAll() {
+	public ValueHandlerResolver valueHandlerResolver() {
+		if (applicationContext == null) {
+			throw new IllegalStateException("ApplicationContext is null");
+		}
+		return new ValueHandlerBeanResolver(applicationContext);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public MetaHandlerCompose metaHandlerCompose(ValueHandlerResolver valueHandlerResolver) {
 		if (Objects.isNull(userInfoSupplier)) {
 			userInfoSupplier = UserInfoSupplier.NONE;
 		}
-		return new AuditFiller(userInfoSupplier);
+		AuditEntityFiller auditEntityFiller = new AuditEntityFiller(userInfoSupplier);
+		return new MetaHandlerCompose(valueHandlerResolver, auditEntityFiller);
 	}
 
 	@Bean
@@ -100,6 +118,11 @@ public class MybatisAutoConfiguration {
 	@Bean
 	public PaginationInnerInterceptor paginationInnerInterceptor() {
 		return new PaginationInnerInterceptor();
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 }

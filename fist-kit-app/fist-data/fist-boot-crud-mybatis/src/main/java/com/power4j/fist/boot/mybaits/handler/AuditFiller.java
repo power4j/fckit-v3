@@ -31,6 +31,7 @@ import java.util.function.Supplier;
  * @author CJ (power4j@outlook.com)
  * @date 2021/7/2
  * @since 1.0
+ * @deprecated use {@link AuditEntityFiller}
  */
 public class AuditFiller implements MetaObjectHandler {
 
