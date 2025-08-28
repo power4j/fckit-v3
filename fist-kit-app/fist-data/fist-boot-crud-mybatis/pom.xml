@@ -40,6 +40,10 @@
       <artifactId>fist-boot-data</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-mybatis-plus</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
     </dependency>
