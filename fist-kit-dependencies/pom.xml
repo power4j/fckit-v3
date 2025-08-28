@@ -67,6 +67,11 @@
         <artifactId>fist-logback</artifactId>
         <version>${revision}</version>
       </dependency>
+      <dependency>
+        <groupId>com.power4j.fist3</groupId>
+        <artifactId>fist-mybatis-plus</artifactId>
+        <version>${revision}</version>
+      </dependency>
       <!-- fist kits app -->
       <dependency>
         <groupId>com.power4j.fist3</groupId>
