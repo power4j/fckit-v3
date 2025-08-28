@@ -16,8 +16,6 @@
 
 package com.power4j.fist.mybatis.extension.meta;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -31,7 +29,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -57,49 +54,41 @@ public class MetaHandlerCompose implements MetaObjectHandler {
 
 	@Override
 	public void insertFill(MetaObject metaObject) {
-		Object originalObject = metaObject.getOriginalObject();
-		List<FillTarget> fillTargets = getFillTargets(originalObject);
+		TableInfo tableInfo = findTableInfo(metaObject);
+		List<FillTarget> fillTargets = getFillTargets(tableInfo, metaObject);
 		for (FillTarget fillTarget : fillTargets) {
-			fillInsertValue(metaObject, fillTarget);
+			fillInsertValue(tableInfo, metaObject, fillTarget);
 		}
 	}
 
 	@Override
 	public void updateFill(MetaObject metaObject) {
-		Object originalObject = metaObject.getOriginalObject();
-		List<FillTarget> fillTargets = getFillTargets(originalObject);
+		TableInfo tableInfo = findTableInfo(metaObject);
+		List<FillTarget> fillTargets = getFillTargets(tableInfo, metaObject);
 		for (FillTarget fillTarget : fillTargets) {
-			fillUpdateValue(metaObject, fillTarget);
+			fillUpdateValue(tableInfo, metaObject, fillTarget);
 		}
 	}
 
-	protected List<FillTarget> getFillTargets(Object originalObject) {
-		Class<?> clazz = originalObject.getClass();
+	protected List<FillTarget> getFillTargets(TableInfo tableInfo, MetaObject metaObject) {
 		List<FillTarget> annotations = new ArrayList<>(4);
-		for (Field field : clazz.getDeclaredFields()) {
-
-			if (field.isAnnotationPresent(FillWith.class)) {
-				FillWith fillWith = field.getAnnotation(FillWith.class);
-				annotations.add(FillTarget.of(fillWith, field));
-			}
-			else {
-				// use TableField alone
-				if (field.isAnnotationPresent(TableField.class)) {
-					TableField tableField = field.getAnnotation(TableField.class);
-					// still try fill with global handler
-					if (tableField.fill() != FieldFill.DEFAULT) {
-						annotations.add(FillTarget.of(null, field));
-					}
+		for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {
+			if (fieldInfo.isWithInsertFill() || fieldInfo.isWithUpdateFill()) {
+				Field field = fieldInfo.getField();
+				if (field.isAnnotationPresent(FillWith.class)) {
+					FillWith fillWith = field.getAnnotation(FillWith.class);
+					annotations.add(FillTarget.of(metaObject, fillWith, fieldInfo));
+				}
+				else {
+					annotations.add(FillTarget.of(metaObject, null, fieldInfo));
 				}
 			}
 		}
-		return annotations.stream()
-			.sorted(Comparator.comparingInt(
-					o -> Optional.ofNullable(o.getFillWith()).map(FillWith::order).orElse(FillWith.LOWEST_ORDER)))
-			.collect(Collectors.toList());
+		return annotations.stream().sorted(Comparator.comparingInt(FillTarget::getOrder)).collect(Collectors.toList());
 	}
 
-	protected Object getFieldValue(Object originalObject, FillTarget fillTarget) {
+	protected Object getFieldValue(FillTarget fillTarget) {
+		Object originalObject = fillTarget.getMetaObject().getOriginalObject();
 		try {
 			ValueHandler handler;
 			FillWith fillWith = fillTarget.getFillWith();
@@ -112,23 +101,22 @@ public class MetaHandlerCompose implements MetaObjectHandler {
 			}
 			if (handler == null) {
 				throw new MetaHandlerException(
-						"could not resolve value handler for: " + fillTarget.getField().getName());
+						"could not resolve value handler for: " + fillTarget.getFieldInfo().getProperty());
 			}
-			return handler.getValue(originalObject, fillTarget.field.getName(), fillTarget.field.getType());
+			return handler.getValue(originalObject, fillTarget.getFieldInfo().getProperty(),
+					fillTarget.getFieldInfo().getPropertyType());
 		}
 		catch (Exception e) {
 			throw new MetaHandlerException(e);
 		}
 	}
 
-	protected void fillInsertValue(MetaObject metaObject, FillTarget fillTarget) {
-		strictFillValue(true, findTableInfo(metaObject), metaObject, fillTarget,
-				() -> getFieldValue(metaObject.getOriginalObject(), fillTarget));
+	protected void fillInsertValue(TableInfo tableInfo, MetaObject metaObject, FillTarget fillTarget) {
+		strictFillValue(true, tableInfo, metaObject, fillTarget, () -> getFieldValue(fillTarget));
 	}
 
-	protected void fillUpdateValue(MetaObject metaObject, FillTarget fillTarget) {
-		strictFillValue(false, findTableInfo(metaObject), metaObject, fillTarget,
-				() -> getFieldValue(metaObject.getOriginalObject(), fillTarget));
+	protected void fillUpdateValue(TableInfo tableInfo, MetaObject metaObject, FillTarget fillTarget) {
+		strictFillValue(false, tableInfo, metaObject, fillTarget, () -> getFieldValue(fillTarget));
 	}
 
 	protected void strictFillValue(boolean insertFill, TableInfo tableInfo, MetaObject metaObject,
@@ -152,21 +140,32 @@ public class MetaHandlerCompose implements MetaObjectHandler {
 	@Getter
 	protected static class FillTarget {
 
+		private final MetaObject metaObject;
+
 		/**
 		 * Null means use FieldFill alone
 		 */
 		@Nullable
 		private final FillWith fillWith;
 
-		private final Field field;
+		private final TableFieldInfo fieldInfo;
 
-		FillTarget(@Nullable FillWith fillWith, Field field) {
+		FillTarget(MetaObject metaObject, @Nullable FillWith fillWith, TableFieldInfo fieldInfo) {
+			this.metaObject = metaObject;
 			this.fillWith = fillWith;
-			this.field = field;
+			this.fieldInfo = fieldInfo;
 		}
 
-		static FillTarget of(@Nullable FillWith annotation, Field field) {
-			return new FillTarget(annotation, field);
+		static FillTarget of(MetaObject metaObject, @Nullable FillWith annotation, TableFieldInfo fieldInfo) {
+			return new FillTarget(metaObject, annotation, fieldInfo);
+		}
+
+		public Field getField() {
+			return fieldInfo.getField();
+		}
+
+		public int getOrder() {
+			return fillWith == null ? FillWith.LOWEST_ORDER : fillWith.order();
 		}
 
 	}

@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.power4j.fist.mybatis.extension.exception.MetaHandlerException;
 import com.power4j.fist.mybatis.extension.meta.annotation.FillWith;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
@@ -198,7 +199,17 @@ class MetaHandlerComposeTest {
 	}
 
 	@Data
-	public static class Bar {
+	public static class Base {
+
+		@FillWith(handler = CountHandler.class)
+		@TableField(value = "all_meta_value", fill = FieldFill.INSERT_UPDATE)
+		private String allMeta;
+
+	}
+
+	@Data
+	@EqualsAndHashCode(callSuper = true)
+	public static class Bar extends Base {
 
 		@FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
 		@TableField(fill = FieldFill.INSERT)
@@ -207,10 +218,6 @@ class MetaHandlerComposeTest {
 		@FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
 		@TableField(fill = FieldFill.UPDATE)
 		private String updateMeta;
-
-		@FillWith(handler = CountHandler.class)
-		@TableField(value = "all_meta_value", fill = FieldFill.INSERT_UPDATE)
-		private String allMeta;
 
 	}
 
