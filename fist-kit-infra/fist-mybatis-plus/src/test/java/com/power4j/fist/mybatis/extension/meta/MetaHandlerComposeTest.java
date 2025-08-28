@@ -27,10 +27,10 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,6 +46,7 @@ import static org.mockito.Mockito.when;
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
+@ExtendWith(MockitoExtension.class)
 class MetaHandlerComposeTest {
 
 	private static final String MOCK_META_VALUE1 = "fill_1";
@@ -61,13 +62,6 @@ class MetaHandlerComposeTest {
 
 	@Mock
 	private CountSupplier countHandler;
-
-	@BeforeEach
-	void setUp() {
-		MockitoAnnotations.openMocks(this);
-		when(fakeHandler.getValue(any(), any(), any())).thenReturn(MOCK_META_VALUE1);
-		when(handlerRegistry.resolve(any())).thenReturn(Optional.of(fakeHandler));
-	}
 
 	@Test
 	void shouldThrowExceptionWhenValueHandlerNotFound() {
@@ -90,8 +84,6 @@ class MetaHandlerComposeTest {
 
 		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
 		TableInfoHelper.initTableInfo(mapperBuilderAssistant, MoMo.class);
-
-		when(handlerRegistry.resolve(any())).thenReturn(Optional.empty());
 
 		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry, fakeHandler);
 
