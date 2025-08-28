@@ -38,17 +38,19 @@ import java.util.stream.Collectors;
  */
 public class MetaHandlerCompose implements MetaObjectHandler {
 
-	private final ValueHandlerResolver resolver;
+	private final static int GLOBAL_ORDER = 1_000_000;
+
+	private final ValueSupplierResolver resolver;
 
 	@Nullable
-	private final ValueHandler globalHandler;
+	private final ValueSupplier globalHandler;
 
-	public MetaHandlerCompose(ValueHandlerResolver resolver, @Nullable ValueHandler globalHandler) {
+	public MetaHandlerCompose(ValueSupplierResolver resolver, @Nullable ValueSupplier globalHandler) {
 		this.resolver = resolver;
 		this.globalHandler = globalHandler;
 	}
 
-	public MetaHandlerCompose(ValueHandlerResolver resolver) {
+	public MetaHandlerCompose(ValueSupplierResolver resolver) {
 		this(resolver, null);
 	}
 
@@ -90,13 +92,13 @@ public class MetaHandlerCompose implements MetaObjectHandler {
 	protected Object getFieldValue(FillTarget fillTarget) {
 		Object originalObject = fillTarget.getMetaObject().getOriginalObject();
 		try {
-			ValueHandler handler;
+			ValueSupplier handler;
 			FillWith fillWith = fillTarget.getFillWith();
 			if (fillWith == null) {
 				handler = globalHandler;
 			}
 			else {
-				Class<? extends ValueHandler> handlerClass = fillWith.handler();
+				Class<? extends ValueSupplier> handlerClass = fillWith.supplier();
 				handler = resolver.resolve(handlerClass).orElse(globalHandler);
 			}
 			if (handler == null) {
@@ -165,7 +167,7 @@ public class MetaHandlerCompose implements MetaObjectHandler {
 		}
 
 		public int getOrder() {
-			return fillWith == null ? FillWith.LOWEST_ORDER : fillWith.order();
+			return fillWith == null ? GLOBAL_ORDER : fillWith.order();
 		}
 
 	}

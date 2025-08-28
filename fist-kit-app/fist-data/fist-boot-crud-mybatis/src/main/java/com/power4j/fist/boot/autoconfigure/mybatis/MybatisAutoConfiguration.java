@@ -22,12 +22,12 @@ import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.power4j.fist.boot.mybaits.handler.AuditEntityFiller;
+import com.power4j.fist.boot.mybaits.handler.AuditInfoSupplier;
 import com.power4j.fist.boot.mybaits.tenant.DynamicTenantHandler;
 import com.power4j.fist.boot.mybaits.tenant.TenantProperties;
 import com.power4j.fist.boot.security.core.UserInfoSupplier;
 import com.power4j.fist.mybatis.extension.meta.MetaHandlerCompose;
-import com.power4j.fist.mybatis.extension.meta.ValueHandlerResolver;
+import com.power4j.fist.mybatis.extension.meta.ValueSupplierResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -81,21 +81,21 @@ public class MybatisAutoConfiguration implements ApplicationContextAware {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ValueHandlerResolver valueHandlerResolver() {
+	public ValueSupplierResolver valueSupplierResolver() {
 		if (applicationContext == null) {
 			throw new IllegalStateException("ApplicationContext is null");
 		}
-		return new ValueHandlerBeanResolver(applicationContext);
+		return new ValueSupplierBeanResolver(applicationContext);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MetaHandlerCompose metaHandlerCompose(ValueHandlerResolver valueHandlerResolver) {
+	public MetaHandlerCompose metaHandlerCompose(ValueSupplierResolver resolver) {
 		if (Objects.isNull(userInfoSupplier)) {
 			userInfoSupplier = UserInfoSupplier.NONE;
 		}
-		AuditEntityFiller auditEntityFiller = new AuditEntityFiller(userInfoSupplier);
-		return new MetaHandlerCompose(valueHandlerResolver, auditEntityFiller);
+		AuditInfoSupplier auditInfoSupplier = new AuditInfoSupplier(userInfoSupplier);
+		return new MetaHandlerCompose(resolver, auditInfoSupplier);
 	}
 
 	@Bean

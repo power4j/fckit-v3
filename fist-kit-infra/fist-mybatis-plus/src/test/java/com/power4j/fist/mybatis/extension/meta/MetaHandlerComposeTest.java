@@ -51,16 +51,16 @@ class MetaHandlerComposeTest {
 	private static final String MOCK_META_VALUE1 = "fill_1";
 
 	@Mock
-	private ValueHandlerRegistry handlerRegistry;
+	private ValueSupplierRegistry handlerRegistry;
 
 	@Mock
 	private MetaObject metaObject;
 
 	@Mock
-	private FakeHandler fakeHandler;
+	private FakeSupplier fakeHandler;
 
 	@Mock
-	private CountHandler countHandler;
+	private CountSupplier countHandler;
 
 	@BeforeEach
 	void setUp() {
@@ -110,7 +110,7 @@ class MetaHandlerComposeTest {
 		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
 		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
 
-		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+		when(handlerRegistry.resolve(eq(CountSupplier.class))).thenReturn(Optional.of(countHandler));
 
 		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
 
@@ -131,7 +131,7 @@ class MetaHandlerComposeTest {
 		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
 		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
 
-		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+		when(handlerRegistry.resolve(eq(CountSupplier.class))).thenReturn(Optional.of(countHandler));
 
 		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
 
@@ -152,8 +152,8 @@ class MetaHandlerComposeTest {
 		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
 		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
 
-		CountHandler countHandler = new CountHandler(1);
-		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+		CountSupplier countHandler = new CountSupplier(1);
+		when(handlerRegistry.resolve(eq(CountSupplier.class))).thenReturn(Optional.of(countHandler));
 
 		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
 
@@ -172,8 +172,8 @@ class MetaHandlerComposeTest {
 		MapperBuilderAssistant mapperBuilderAssistant = new MapperBuilderAssistant(new Configuration(), null);
 		TableInfoHelper.initTableInfo(mapperBuilderAssistant, Bar.class);
 
-		CountHandler countHandler = new CountHandler(1);
-		when(handlerRegistry.resolve(eq(CountHandler.class))).thenReturn(Optional.of(countHandler));
+		CountSupplier countHandler = new CountSupplier(1);
+		when(handlerRegistry.resolve(eq(CountSupplier.class))).thenReturn(Optional.of(countHandler));
 
 		MetaHandlerCompose handler = new MetaHandlerCompose(handlerRegistry);
 
@@ -192,7 +192,7 @@ class MetaHandlerComposeTest {
 
 		private String name;
 
-		@FillWith(handler = FakeHandler.class)
+		@FillWith(supplier = FakeSupplier.class)
 		@TableField(fill = FieldFill.INSERT_UPDATE)
 		private String meta;
 
@@ -201,7 +201,7 @@ class MetaHandlerComposeTest {
 	@Data
 	public static class Base {
 
-		@FillWith(handler = CountHandler.class)
+		@FillWith(supplier = CountSupplier.class)
 		@TableField(value = "all_meta_value", fill = FieldFill.INSERT_UPDATE)
 		private String allMeta;
 
@@ -211,11 +211,11 @@ class MetaHandlerComposeTest {
 	@EqualsAndHashCode(callSuper = true)
 	public static class Bar extends Base {
 
-		@FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
+		@FillWith(supplier = CountSupplier.class, order = FillWith.LOWEST_ORDER)
 		@TableField(fill = FieldFill.INSERT)
 		private String insertMeta;
 
-		@FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
+		@FillWith(supplier = CountSupplier.class, order = FillWith.LOWEST_ORDER)
 		@TableField(fill = FieldFill.UPDATE)
 		private String updateMeta;
 
@@ -231,7 +231,7 @@ class MetaHandlerComposeTest {
 
 	}
 
-	public static class FakeHandler implements ValueHandler {
+	public static class FakeSupplier implements ValueSupplier {
 
 		@Override
 		public Object getValue(Object root, String fieldName, Class<?> fieldType) {
@@ -240,11 +240,11 @@ class MetaHandlerComposeTest {
 
 	}
 
-	public static class CountHandler implements ValueHandler {
+	public static class CountSupplier implements ValueSupplier {
 
 		private final AtomicInteger count;
 
-		public CountHandler(int initValue) {
+		public CountSupplier(int initValue) {
 			this.count = new AtomicInteger(initValue);
 		}
 

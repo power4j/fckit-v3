@@ -6,12 +6,17 @@
 - 基于`@FillWith`注解实现不同的字段由不同的类来填充
 - 兼容原生注解:只有`@TableField(fill = XXX)` 但是没有`@FillWith`
 
+核心原理:
+- `@FillWith` 声明填充行为
+- `ValueSupplier` 负责提供填充值
+- `ValueSupplierResolver` 负责查找`ValueSupplier`
+
 ### 使用方法(示例)
 
 ValueHandler
 
 ```java
-public static class CountHandler implements ValueHandler {
+public static class CountSupplier implements ValueHandler {
 
     private final AtomicInteger count;
 
@@ -37,15 +42,15 @@ public static class CountHandler implements ValueHandler {
 public class MyEntity {
 
     // 注意,需要和 @TableField(fill = XXX) 搭配使用
-    @FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
+    @FillWith(supplier = CountSupplier.class, order = FillWith.LOWEST_ORDER)
     @TableField(fill = FieldFill.INSERT)
     private String insertMeta;
 
-    @FillWith(handler = CountHandler.class, order = FillWith.LOWEST_ORDER)
+    @FillWith(supplier = CountSupplier.class, order = FillWith.LOWEST_ORDER)
     @TableField(fill = FieldFill.UPDATE)
     private String updateMeta;
 
-    @FillWith(handler = CountHandler.class)
+    // 没有写@FillWith 则使用globalHandler
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String allMeta;
 
@@ -63,25 +68,27 @@ public class MybatisAutoConfiguration implements ApplicationContextAware {
 	private ApplicationContext applicationContext;
 
 	@Bean
-	public ValueHandlerResolver valueHandlerResolver() {
+	public ValueSupplierResolver valueSupplierResolver() {
 		if (applicationContext == null) {
 			throw new IllegalStateException("ApplicationContext is null");
 		}
-		return new ValueHandlerBeanResolver(applicationContext);
+        // 使用Spring的Bean工厂查找 ValueSupplier
+		return new ValueSupplierBeanResolver(applicationContext);
 	}
 
 	@Bean
-	public MetaHandlerCompose metaHandlerCompose(ValueHandlerResolver valueHandlerResolver) {
+	public MetaHandlerCompose metaHandlerCompose(ValueSupplierResolver resolver) {
         // globalHandler的用处: 兼容原生注解,也就是写了@TableField(fill = XXX) 但是没有@FillWith
-        ValueHandler globalHandler = ...;
-		return new MetaHandlerCompose(valueHandlerResolver, globalHandler);
+        ValueSupplier globalHandler = ...;
+		return new MetaHandlerCompose(resolver, globalHandler);
 	}
-
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
+    @Bean
+    public ValueSupplierResolver valueSupplierResolver() {
+        if (applicationContext == null) {
+            throw new IllegalStateException("ApplicationContext is null");
+        }
+        return new ValueSupplierBeanResolver(applicationContext);
+    }
 
 }
 ```

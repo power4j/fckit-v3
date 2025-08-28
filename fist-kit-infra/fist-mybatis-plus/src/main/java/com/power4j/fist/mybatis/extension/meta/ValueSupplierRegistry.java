@@ -26,9 +26,9 @@ import java.util.function.Consumer;
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
-public class ValueHandlerRegistry implements ValueHandlerResolver {
+public class ValueSupplierRegistry implements ValueSupplierResolver {
 
-	private final Map<Class<? extends ValueHandler>, ValueHandler> registry = new ConcurrentHashMap<>();
+	private final Map<Class<? extends ValueSupplier>, ValueSupplier> registry = new ConcurrentHashMap<>();
 
 	/**
 	 * 注册,如果已经注册,则覆盖
@@ -36,7 +36,7 @@ public class ValueHandlerRegistry implements ValueHandlerResolver {
 	 * @param signer 注册的实例
 	 * @param <T> 类型
 	 */
-	public <T extends ValueHandler> void register(Class<T> cls, T signer) {
+	public <T extends ValueSupplier> void register(Class<T> cls, T signer) {
 		registry.put(cls, signer);
 	}
 
@@ -46,7 +46,7 @@ public class ValueHandlerRegistry implements ValueHandlerResolver {
 	 * @param signer 注册的实例
 	 * @param <T> 类型
 	 */
-	public <T extends ValueHandler> void registerIfAbsent(Class<T> cls, T signer) {
+	public <T extends ValueSupplier> void registerIfAbsent(Class<T> cls, T signer) {
 		registry.putIfAbsent(cls, signer);
 	}
 
@@ -54,7 +54,7 @@ public class ValueHandlerRegistry implements ValueHandlerResolver {
 	 * 更新注册表
 	 * @param consumer 更新函数
 	 */
-	public void updateRegistry(Consumer<Map<Class<? extends ValueHandler>, ValueHandler>> consumer) {
+	public void updateRegistry(Consumer<Map<Class<? extends ValueSupplier>, ValueSupplier>> consumer) {
 		consumer.accept(registry);
 	}
 
@@ -62,12 +62,12 @@ public class ValueHandlerRegistry implements ValueHandlerResolver {
 	 * 内部Map的拷贝
 	 * @return Map
 	 */
-	public Map<Class<? extends ValueHandler>, ValueHandler> copiedMap() {
+	public Map<Class<? extends ValueSupplier>, ValueSupplier> copiedMap() {
 		return new HashMap<>(registry);
 	}
 
 	@Override
-	public Optional<ValueHandler> resolve(Class<?> cls) {
+	public Optional<ValueSupplier> resolve(Class<?> cls) {
 		return Optional.ofNullable(registry.get(cls));
 	}
 

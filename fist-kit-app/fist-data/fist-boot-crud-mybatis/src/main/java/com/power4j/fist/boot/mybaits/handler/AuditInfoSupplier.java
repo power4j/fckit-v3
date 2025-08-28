@@ -20,7 +20,7 @@ import com.power4j.fist.boot.mybaits.entity.AuditEntity;
 import com.power4j.fist.boot.security.core.UserInfo;
 import com.power4j.fist.boot.security.core.UserInfoSupplier;
 import com.power4j.fist.data.constant.DataConstant;
-import com.power4j.fist.mybatis.extension.meta.ValueHandler;
+import com.power4j.fist.mybatis.extension.meta.ValueSupplier;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
-public class AuditEntityFiller implements ValueHandler {
+public class AuditInfoSupplier implements ValueSupplier {
 
 	private final static long UID_FALLBACK = -1L;
 
@@ -40,7 +40,7 @@ public class AuditEntityFiller implements ValueHandler {
 	@Setter
 	private Supplier<LocalDateTime> dateTimeSupplier = LocalDateTime::now;
 
-	public AuditEntityFiller(UserInfoSupplier userInfoSupplier) {
+	public AuditInfoSupplier(UserInfoSupplier userInfoSupplier) {
 		this.userInfoSupplier = userInfoSupplier;
 	}
 

@@ -16,7 +16,7 @@
 
 package com.power4j.fist.mybatis.extension.meta.annotation;
 
-import com.power4j.fist.mybatis.extension.meta.ValueHandler;
+import com.power4j.fist.mybatis.extension.meta.ValueSupplier;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -38,7 +38,7 @@ public @interface FillWith {
 	int HIGHEST_ORDER = Integer.MIN_VALUE;
 
 	/**
-	 * The priority order for filling this field
+	 * The priority order (Ascending)for filling this field
 	 * <p>
 	 * The lower the value, the higher the priority,{@code LOWEST_ORDER} is the highest
 	 * priority
@@ -46,7 +46,9 @@ public @interface FillWith {
 	 */
 	int order() default 0;
 
-	/** Handler class */
-	Class<? extends ValueHandler> handler();
+	/**
+	 * Supplier class
+	 */
+	Class<? extends ValueSupplier> supplier();
 
 }

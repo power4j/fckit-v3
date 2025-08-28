@@ -22,10 +22,10 @@ import com.power4j.fist.mybatis.extension.exception.MetaHandlerException;
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
-public interface ValueHandler {
+public interface ValueSupplier {
 
 	/**
-	 * Field value evaluation
+	 * Field value supplier
 	 * @param root root object(entity)
 	 * @param fieldName field name
 	 * @param fieldType field class

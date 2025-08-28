@@ -22,13 +22,13 @@ import java.util.Optional;
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
-public interface ValueHandlerResolver {
+public interface ValueSupplierResolver {
 
 	/**
 	 * 根据类型查找MetaHandler
 	 * @param cls 类型
 	 * @return 返回Signer实例
 	 */
-	Optional<ValueHandler> resolve(Class<?> cls);
+	Optional<ValueSupplier> resolve(Class<?> cls);
 
 }

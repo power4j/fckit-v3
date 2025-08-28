@@ -16,8 +16,8 @@
 
 package com.power4j.fist.boot.autoconfigure.mybatis;
 
-import com.power4j.fist.mybatis.extension.meta.ValueHandler;
-import com.power4j.fist.mybatis.extension.meta.ValueHandlerResolver;
+import com.power4j.fist.mybatis.extension.meta.ValueSupplier;
+import com.power4j.fist.mybatis.extension.meta.ValueSupplierResolver;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.util.Optional;
@@ -26,17 +26,17 @@ import java.util.Optional;
  * @author CJ (power4j@outlook.com)
  * @since 1.0
  */
-public class ValueHandlerBeanResolver implements ValueHandlerResolver {
+public class ValueSupplierBeanResolver implements ValueSupplierResolver {
 
 	private final BeanFactory beanFactory;
 
-	public ValueHandlerBeanResolver(BeanFactory beanFactory) {
+	public ValueSupplierBeanResolver(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
 	@Override
-	public Optional<ValueHandler> resolve(Class<?> cls) {
-		return Optional.of((ValueHandler) beanFactory.getBean(cls));
+	public Optional<ValueSupplier> resolve(Class<?> cls) {
+		return Optional.of((ValueSupplier) beanFactory.getBean(cls));
 	}
 
 }
