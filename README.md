@@ -2,6 +2,6 @@
 ## 主要版本
 
 - JDK: `17`
-- spring-boot: `3.4`
-- spring-cloud: `2024`
+- spring-boot: `3.5`
+- spring-cloud: `2025`
 - spring-cloud-alibaba: `2023`
