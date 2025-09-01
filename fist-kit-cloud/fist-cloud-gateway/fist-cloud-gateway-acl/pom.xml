@@ -51,11 +51,6 @@
       <artifactId>caffeine</artifactId>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>com.bucket4j</groupId>
-      <artifactId>bucket4j_jdk17-core</artifactId>
-      <optional>true</optional>
-    </dependency>
     <!-- provided libs -->
     <dependency>
       <groupId>org.springframework.cloud</groupId>
