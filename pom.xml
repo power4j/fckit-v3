@@ -96,7 +96,7 @@
     <spring-security-jwt.version>1.1.1.RELEASE</spring-security-jwt.version>
     <oauth2-oidc-sdk.version>11.27.1</oauth2-oidc-sdk.version>
     <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-    <excel-spring-boot-starter.version>3.4.1</excel-spring-boot-starter.version>
+    <excel-spring-boot-starter.version>3.4.2</excel-spring-boot-starter.version>
     <seancfoley.ipaddress.version>5.5.1</seancfoley.ipaddress.version>
     <bucket4j.version>8.15.0</bucket4j.version>
 
