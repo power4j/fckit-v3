@@ -1,4 +1,5 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist3/fist-kit-dependencies/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.power4j.fist3/fist-kit-dependencies)
+[![Maven Central](https://img.shields.io/maven-central/v/com.power4j.fist3/fist-kit-dependencies)](https://central.sonatype.com/search?namespace=com.power4j.fist3&name=fist-kit-dependencies)
+
 ## 主要版本
 
 - JDK: `17`
