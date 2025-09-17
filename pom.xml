@@ -78,7 +78,7 @@
     <commons-collections4.version>4.5.0</commons-collections4.version>
     <coca-kit.version>0.4.1</coca-kit.version>
     <tile.version>1.7.0</tile.version>
-    <guava.version>33.4.8-jre</guava.version>
+    <guava.version>33.5.0-jre</guava.version>
     <redisson.version>3.51.0</redisson.version>
     <okhttp3.version>4.12.0</okhttp3.version>
     <ez-captcha.version>0.1.1</ez-captcha.version>
