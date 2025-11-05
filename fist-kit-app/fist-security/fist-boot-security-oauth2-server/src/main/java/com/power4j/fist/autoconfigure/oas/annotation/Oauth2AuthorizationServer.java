@@ -26,6 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Use this annotation if you want to import {@link AuthorizationServerAutoConfiguration}
+ * manually
+ *
  * @author CJ (power4j@outlook.com)
  * @since 3.1
  */
