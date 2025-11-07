@@ -74,7 +74,7 @@
     <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
     <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
     <!-- libs -->
-    <commons-io.version>2.20.0</commons-io.version>
+    <commons-io.version>2.21.0</commons-io.version>
     <commons-collections4.version>4.5.0</commons-collections4.version>
     <coca-kit.version>0.4.1</coca-kit.version>
     <tile.version>1.7.0</tile.version>
