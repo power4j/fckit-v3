@@ -130,7 +130,7 @@
           <includeLicenseText>false</includeLicenseText>
           <outputReactorProjects>true</outputReactorProjects>
           <outputFormat>all</outputFormat>
-          <outputName>bom-${project.artifactId}-${project.version}</outputName>
+          <outputName>${project.artifactId}-${project.version}.bom</outputName>
           <outputDirectory>${project.build.directory}</outputDirectory>
           <verbose>false</verbose>
         </configuration>
