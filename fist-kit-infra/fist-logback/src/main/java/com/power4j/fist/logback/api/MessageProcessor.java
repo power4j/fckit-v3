@@ -61,11 +61,17 @@ public interface MessageProcessor {
 	}
 
 	/**
-	 * 对消息内容进行加工。
+	 * 对消息内容进行加工。禁止返回 {@code null}；无变化时返回原始 message。
 	 * @param message 待处理的消息文本
 	 * @param context 消息处理上下文
-	 * @return 加工后的消息文本
+	 * @return 加工后的消息文本，不得为 {@code null}
 	 */
 	String process(String message, LogMessageContext context);
+
+	/**
+	 * 释放资源，由框架在 {@code SensitiveConverter.stop()} 时调用一次。
+	 */
+	default void destroy() {
+	}
 
 }
