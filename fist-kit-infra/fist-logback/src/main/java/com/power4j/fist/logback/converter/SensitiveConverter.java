@@ -76,6 +76,10 @@ public class SensitiveConverter extends ClassicConverter {
 		ServiceLoader<MessageProcessor> loader = ServiceLoader.load(MessageProcessor.class);
 		for (MessageProcessor processor : loader) {
 			processors.add(processor);
+			addInfo("[SPI] Loaded MessageProcessor: " + processor.getClass().getName());
+		}
+		if (processors.isEmpty()) {
+			addInfo("[SPI] No MessageProcessor found");
 		}
 		return processors;
 	}

@@ -54,10 +54,10 @@ public interface MessageProcessor {
 	}
 
 	/**
-	 * 接收来自 Converter 的配置参数（如 configFile 路径）。由 {@code SensitiveConverter} 在启动时调用。
-	 * @param options 从 pattern 选项解析出的键值对，例如 {@code %mask{configFile=path}}
+	 * 初始化处理器，由框架在启动时调用一次。实现类需保证初始化后线程安全。
+	 * @param options 从 pattern 选项解析出的键值对，例如 {@code %mask{configFile=path}}，不可修改
 	 */
-	default void configure(Map<String, String> options) {
+	default void init(Map<String, String> options) {
 	}
 
 	/**
