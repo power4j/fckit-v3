@@ -16,6 +16,8 @@
 
 package com.power4j.fist.logback.api;
 
+import java.util.Map;
+
 /**
  * 日志消息处理器，对消息内容进行加工（脱敏、归一化、裁剪等）。
  * <p>
@@ -49,6 +51,13 @@ public interface MessageProcessor {
 	 */
 	default boolean supports(LogMessageContext context) {
 		return true;
+	}
+
+	/**
+	 * 接收来自 Converter 的配置参数（如 configFile 路径）。由 {@code SensitiveConverter} 在启动时调用。
+	 * @param options 从 pattern 选项解析出的键值对，例如 {@code %mask{configFile=path}}
+	 */
+	default void configure(Map<String, String> options) {
 	}
 
 	/**

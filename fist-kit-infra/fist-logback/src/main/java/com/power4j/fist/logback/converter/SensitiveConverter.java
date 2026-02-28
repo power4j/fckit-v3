@@ -24,7 +24,9 @@ import com.power4j.fist.logback.core.ProcessorChain;
 import org.slf4j.MDC;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
@@ -54,7 +56,12 @@ public class SensitiveConverter extends ClassicConverter {
 
 	@Override
 	public void start() {
-		processorChain = new ProcessorChain(loadProcessors());
+		List<MessageProcessor> processors = loadProcessors();
+		Map<String, String> options = parseOptions(getOptionList());
+		for (MessageProcessor p : processors) {
+			p.configure(options);
+		}
+		processorChain = new ProcessorChain(processors);
 		processorChain.setContext(getContext());
 		processorChain.start();
 		super.start();
@@ -71,6 +78,19 @@ public class SensitiveConverter extends ClassicConverter {
 			processors.add(processor);
 		}
 		return processors;
+	}
+
+	private Map<String, String> parseOptions(List<String> optionList) {
+		Map<String, String> options = new LinkedHashMap<>();
+		if (optionList != null) {
+			for (String opt : optionList) {
+				int idx = opt.indexOf('=');
+				if (idx > 0) {
+					options.put(opt.substring(0, idx).trim(), opt.substring(idx + 1).trim());
+				}
+			}
+		}
+		return options;
 	}
 
 	@Override
