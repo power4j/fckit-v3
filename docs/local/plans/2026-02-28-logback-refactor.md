@@ -774,4 +774,25 @@ test(fist-logback): add integration tests for full masking pipeline
 
 ## 当前停点/下一步
 
-下一步：执行 Task 1（清理旧代码）
+**完成（2026-03-02）：所有 Task 1-11 已提交，59 个测试全部通过**
+
+### 已完成（已提交）
+- Task 1：清理旧代码
+- Task 2-3：新增 API 接口 + 更新 MessageProcessor
+- Task 4-5：更新 ProcessorChain + SensitiveConverter
+- Task 6：ProcessingRule
+- Task 7：builtin 实现（RegexDetector/MaskMiddle/MaskAll/Replace + Providers）
+- Task 8：RuleEngineLoader
+- Task 9：RuleEngine + ProcessorChain context 传播修复
+- Task 10：SPI 注册文件
+- Task 11：集成测试
+
+### 根因说明
+集成测试失败的根本原因：`.properties` 文件中 `\d` 被 Java `Properties.load()` 解析为 `d`，
+导致手机号正则 `1[3-9]\d{9}` 变为 `1[3-9]d{9}`，无法匹配手机号。
+修复：将 `.properties` 文件中的 `\d` 改为 `\\d`。
+
+另修复：在 `ProcessorChain.start()` 中对 `ContextAware` 的 processor 传播 context。
+
+### 下一步
+重构完成，分支 `logback-p2` 可以合并到主分支。
