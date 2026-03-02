@@ -16,11 +16,10 @@
 
 package com.power4j.fist.logback.core;
 
+import ch.qos.logback.core.spi.ContextAware;
 import ch.qos.logback.core.spi.ContextAwareBase;
 import com.power4j.fist.logback.api.LogMessageContext;
 import com.power4j.fist.logback.api.MessageProcessor;
-
-import ch.qos.logback.core.spi.ContextAware;
 
 import java.util.ArrayList;
 import java.util.Collections;

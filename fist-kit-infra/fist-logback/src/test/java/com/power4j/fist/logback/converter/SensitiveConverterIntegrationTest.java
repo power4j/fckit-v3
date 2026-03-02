@@ -21,12 +21,14 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.power4j.fist.logback.api.LogMessageContext;
+import com.power4j.fist.logback.api.MessageProcessor;
 import com.power4j.fist.logback.core.RuleEngine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -67,7 +69,7 @@ class SensitiveConverterIntegrationTest {
 	private SensitiveConverter buildConverter(String configFile) {
 		SensitiveConverter c = new SensitiveConverter() {
 			@Override
-			protected java.util.List<com.power4j.fist.logback.api.MessageProcessor> loadProcessors() {
+			protected java.util.List<MessageProcessor> loadProcessors() {
 				RuleEngine engine = new RuleEngine();
 				return java.util.List.of(engine);
 			}
@@ -120,7 +122,7 @@ class SensitiveConverterIntegrationTest {
 	void noProcessor_passThrough() {
 		SensitiveConverter c = new SensitiveConverter() {
 			@Override
-			protected java.util.List<com.power4j.fist.logback.api.MessageProcessor> loadProcessors() {
+			protected java.util.List<MessageProcessor> loadProcessors() {
 				return java.util.List.of();
 			}
 		};
@@ -135,7 +137,7 @@ class SensitiveConverterIntegrationTest {
 	@Test
 	void customProcessorAndRuleEngine_orderRespected() {
 		// custom processor prepends "[P1]", RuleEngine masks phone
-		com.power4j.fist.logback.api.MessageProcessor custom = new com.power4j.fist.logback.api.MessageProcessor() {
+		MessageProcessor custom = new MessageProcessor() {
 			@Override
 			public String name() {
 				return "custom";
@@ -147,16 +149,16 @@ class SensitiveConverterIntegrationTest {
 			}
 
 			@Override
-			public String process(String message, com.power4j.fist.logback.api.LogMessageContext ctx) {
+			public String process(String message, LogMessageContext ctx) {
 				return "[P1] " + message;
 			}
 		};
 
 		SensitiveConverter c = new SensitiveConverter() {
 			@Override
-			protected java.util.List<com.power4j.fist.logback.api.MessageProcessor> loadProcessors() {
+			protected List<MessageProcessor> loadProcessors() {
 				RuleEngine engine = new RuleEngine();
-				return java.util.List.of(custom, engine);
+				return List.of(custom, engine);
 			}
 		};
 		c.setContext(context);
