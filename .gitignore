@@ -42,6 +42,7 @@ target/
 
 # flattened pom
 .flattened-pom.xml
+dependency-reduced-pom.xml
 
 ### Qodana
 .qodana
