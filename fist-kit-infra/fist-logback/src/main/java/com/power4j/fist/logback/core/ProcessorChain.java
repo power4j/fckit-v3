@@ -20,6 +20,8 @@ import ch.qos.logback.core.spi.ContextAwareBase;
 import com.power4j.fist.logback.api.LogMessageContext;
 import com.power4j.fist.logback.api.MessageProcessor;
 
+import ch.qos.logback.core.spi.ContextAware;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +67,9 @@ public class ProcessorChain extends ContextAwareBase {
 		List<MessageProcessor> initialized = new ArrayList<>();
 		for (MessageProcessor p : sorted) {
 			try {
+				if (p instanceof ContextAware ca) {
+					ca.setContext(getContext());
+				}
 				p.init(buildOptions(p.name()));
 				initialized.add(p);
 				addInfo("[init] " + p.name() + " ok");
