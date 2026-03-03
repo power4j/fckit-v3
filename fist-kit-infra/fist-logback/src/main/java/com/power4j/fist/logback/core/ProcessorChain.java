@@ -66,8 +66,8 @@ public class ProcessorChain extends ContextAwareBase {
 		List<MessageProcessor> initialized = new ArrayList<>();
 		for (MessageProcessor p : sorted) {
 			try {
-				if (p instanceof ContextAware ca) {
-					ca.setContext(getContext());
+				if (p instanceof ContextAware) {
+					((ContextAware) p).setContext(getContext());
 				}
 				p.init(buildOptions(p.name()));
 				initialized.add(p);
