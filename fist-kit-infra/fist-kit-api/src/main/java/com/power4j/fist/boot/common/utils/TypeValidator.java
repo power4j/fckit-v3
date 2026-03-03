@@ -2,7 +2,7 @@ package com.power4j.fist.boot.common.utils;
 
 import lombok.Getter;
 import org.apache.commons.lang3.ClassUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author CJ (power4j@outlook.com)

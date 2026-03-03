@@ -19,9 +19,8 @@ package com.power4j.fist.boot.security.core;
 import com.power4j.fist.boot.common.utils.MapKit;
 import lombok.Data;
 import org.apache.commons.lang3.reflect.Typed;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,21 +37,17 @@ import java.util.Optional;
 @Data
 public class UserInfo implements Serializable {
 
-	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private Long userId;
 
 	private String username;
 
-	@Nullable
-	private String nickName;
+	private @Nullable String nickName;
 
-	@Nullable
-	private String avatarUrl;
+	private @Nullable String avatarUrl;
 
-	@Nullable
-	private Map<String, Object> meta;
+	private @Nullable Map<String, Object> meta;
 
 	/**
 	 * 获取扩展属性,并进行类型转换
@@ -82,13 +77,11 @@ public class UserInfo implements Serializable {
 		return Optional.ofNullable(meta.get(key));
 	}
 
-	@Nullable
-	public Object putMetaProp(String key, Object value) {
+	public @Nullable Object putMetaProp(String key, Object value) {
 		return useMeta().put(key, value);
 	}
 
-	@Nullable
-	public Object putMetaPropIfAbsent(String key, Object value) {
+	public @Nullable Object putMetaPropIfAbsent(String key, Object value) {
 		return useMeta().putIfAbsent(key, value);
 	}
 
