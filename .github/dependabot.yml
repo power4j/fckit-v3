@@ -35,9 +35,9 @@ updates:
       # Spring Security 7.x -> 对应 Boot 4.x
       - dependency-name: "org.springframework.security:*"
         versions: ["[7.0,)"]
-      # Spring Cloud 2026.x Release Train -> 预计对应 Boot 4.x
+      # Spring Cloud 2025.1.x Release Train -> 对应 Boot 4.0.x
       - dependency-name: "org.springframework.cloud:*"
-        versions: ["[2026.0,)"]
+        versions: ["[2025.1,)"]
       # OAuth2 Authorization Server 2.x -> Spring Security 7.x / Boot 4.x
       - dependency-name: "org.springframework.security:spring-security-oauth2-authorization-server"
         versions: ["[2.0,)"]
