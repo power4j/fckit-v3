@@ -1,0 +1,3 @@
+com.power4j.fist.logback.builtin.MaskMiddleTransformerProvider
+com.power4j.fist.logback.builtin.MaskAllTransformerProvider
+com.power4j.fist.logback.builtin.ReplaceTransformerProvider
