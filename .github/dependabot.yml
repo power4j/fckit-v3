@@ -53,6 +53,12 @@ updates:
       # Spring Cloud Alibaba 2024.x Release Train -> 预计对应 Boot 4.x
       - dependency-name: "com.alibaba.cloud:*"
         versions: ["[2024.0,)"]
+      # Redisson 4.x -> 不兼容 Boot 3.x 生态
+      - dependency-name: "org.redisson:*"
+        versions: ["[4.0,)"]
+      # OkHttp 5.x -> 不兼容当前生态，仅接受 4.x
+      - dependency-name: "com.squareup.okhttp3:*"
+        versions: ["[5.0,)"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
