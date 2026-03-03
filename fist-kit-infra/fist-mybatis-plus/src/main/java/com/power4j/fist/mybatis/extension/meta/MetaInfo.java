@@ -18,7 +18,7 @@ package com.power4j.fist.mybatis.extension.meta;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
