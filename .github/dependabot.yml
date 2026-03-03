@@ -1,14 +1,61 @@
 # see https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
 version: 2
 updates:
-- package-ecosystem: maven
-  directory: "/"
-  target-branch: "dev"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 20
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
-    # Check for updates to GitHub Actions every week
-    interval: "weekly"
+  - package-ecosystem: maven
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      spring-ecosystem:
+        patterns:
+          - "org.springframework*"
+          - "de.codecentric:spring-boot-admin*"
+          - "io.spring.javaformat:*"
+          - "com.alibaba.cloud:*"
+      spring-oauth2:
+        patterns:
+          - "org.springframework.security:spring-security-oauth2-authorization-server"
+      springdoc:
+        patterns:
+          - "org.springdoc:*"
+      mybatis:
+        patterns:
+          - "org.mybatis:*"
+          - "com.baomidou:mybatis-plus*"
+    ignore:
+      # Spring Boot 4.x -> 不兼容 Boot 3.x 生态
+      - dependency-name: "org.springframework.boot:*"
+        versions: ["[4.0,)"]
+      # Spring Framework 7.x -> 对应 Boot 4.x
+      - dependency-name: "org.springframework:*"
+        versions: ["[7.0,)"]
+      # Spring Security 7.x -> 对应 Boot 4.x
+      - dependency-name: "org.springframework.security:*"
+        versions: ["[7.0,)"]
+      # Spring Cloud 2026.x Release Train -> 预计对应 Boot 4.x
+      - dependency-name: "org.springframework.cloud:*"
+        versions: ["[2026.0,)"]
+      # OAuth2 Authorization Server 2.x -> Spring Security 7.x / Boot 4.x
+      - dependency-name: "org.springframework.security:spring-security-oauth2-authorization-server"
+        versions: ["[2.0,)"]
+      # Spring Boot Admin 4.x -> Boot 4.x
+      - dependency-name: "de.codecentric:spring-boot-admin*"
+        versions: ["[4.0,)"]
+      # springdoc-openapi 3.x -> Boot 4.x
+      - dependency-name: "org.springdoc:*"
+        versions: ["[3.0,)"]
+      # mybatis-spring 4.x -> Spring Framework 7.x / Boot 4.x
+      - dependency-name: "org.mybatis:mybatis-spring"
+        versions: ["[4.0,)"]
+      # Spring Cloud Alibaba 2024.x Release Train -> 预计对应 Boot 4.x
+      - dependency-name: "com.alibaba.cloud:*"
+        versions: ["[2024.0,)"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
