@@ -16,7 +16,7 @@
 
 package com.power4j.fist.boot.security.core;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;

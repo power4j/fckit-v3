@@ -19,6 +19,7 @@ package com.power4j.fist.logback.builtin;
 import com.power4j.fist.logback.api.LogMessageContext;
 import com.power4j.fist.logback.api.Transformer;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -41,7 +42,9 @@ public class MaskAllTransformer implements Transformer {
 
 	@Override
 	public String transform(String value, LogMessageContext context) {
-		return String.valueOf(maskChar).repeat(value.length());
+		char[] chars = new char[value.length()];
+		Arrays.fill(chars, maskChar);
+		return new String(chars);
 	}
 
 }
