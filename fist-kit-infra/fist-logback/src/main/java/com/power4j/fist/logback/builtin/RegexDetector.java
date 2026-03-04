@@ -41,7 +41,7 @@ public class RegexDetector implements Detector {
 	@Override
 	public void init(Map<String, String> props) {
 		String p = props.get("pattern");
-		if (p == null || p.isBlank()) {
+		if (p == null || p.trim().isEmpty()) {
 			throw new IllegalArgumentException("RegexDetector: 'pattern' is required");
 		}
 		this.pattern = Pattern.compile(p);

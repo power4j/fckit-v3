@@ -19,9 +19,7 @@
  * @date 2021/6/2
  * @since 1.0
  */
-@NonNullApi
-@NonNullFields
+@NullMarked
 package com.power4j.fist.boot.security.core;
 
-import org.springframework.lang.NonNullApi;
-import org.springframework.lang.NonNullFields;
+import org.jspecify.annotations.NullMarked;

@@ -40,7 +40,7 @@ public class ReplaceTransformer implements Transformer {
 	public void init(Map<String, String> props) {
 		String p = props.get("pattern");
 		replacement = props.get("replacement");
-		if (p == null || p.isBlank()) {
+		if (p == null || p.trim().isEmpty()) {
 			throw new IllegalArgumentException("ReplaceTransformer: 'pattern' is required");
 		}
 		if (replacement == null) {

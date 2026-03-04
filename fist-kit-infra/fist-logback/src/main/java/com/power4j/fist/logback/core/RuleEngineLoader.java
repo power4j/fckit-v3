@@ -170,7 +170,7 @@ public class RuleEngineLoader {
 
 	private String decodeUri(String raw) {
 		try {
-			return URLDecoder.decode(raw, StandardCharsets.UTF_8);
+			return URLDecoder.decode(raw, StandardCharsets.UTF_8.name());
 		}
 		catch (Exception e) {
 			return raw;
@@ -207,11 +207,11 @@ public class RuleEngineLoader {
 			}
 		}
 
-		if (detectorType == null || detectorType.isBlank()) {
+		if (detectorType == null || detectorType.trim().isEmpty()) {
 			warnLogger.accept("[RuleEngineLoader] rule '" + ruleName + "' missing 'detector', skipped");
 			return null;
 		}
-		if (transformerType == null || transformerType.isBlank()) {
+		if (transformerType == null || transformerType.trim().isEmpty()) {
 			warnLogger.accept("[RuleEngineLoader] rule '" + ruleName + "' missing 'transformer', skipped");
 			return null;
 		}

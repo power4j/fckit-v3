@@ -84,7 +84,7 @@ public class ObfuscatedStringDeserializer extends StdDeserializer<String> implem
 		}
 		String mode = annotation.mode();
 		Optional<StringObfuscate> processor = resolver.getInstance(mode);
-		if (processor.isEmpty()) {
+		if (!processor.isPresent()) {
 			throw new IllegalStateException(String.format("Obfuscation processor not registered: %s", mode));
 		}
 		return new ObfuscatedStringDeserializer(processor.get(), resolver);

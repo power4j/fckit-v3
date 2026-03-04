@@ -3,7 +3,7 @@ package com.power4j.fist.boot.common.utils;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.commons.lang3.reflect.Typed;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;

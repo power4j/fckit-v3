@@ -18,9 +18,7 @@
  * @author CJ (power4j@outlook.com)
  * @since 3.9
  */
-@NonNullApi
-@NonNullFields
+@NullMarked
 package com.power4j.fist.mybatis.extension.meta;
 
-import org.springframework.lang.NonNullApi;
-import org.springframework.lang.NonNullFields;
+import org.jspecify.annotations.NullMarked;
