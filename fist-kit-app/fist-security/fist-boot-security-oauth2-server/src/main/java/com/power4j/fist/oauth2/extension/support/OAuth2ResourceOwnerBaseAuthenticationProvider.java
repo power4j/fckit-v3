@@ -23,6 +23,7 @@ import com.power4j.fist.oauth2.extension.service.ManagedOAuth2AuthorizationServi
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -321,34 +322,40 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 		}
 
 		if (authenticationException instanceof UsernameNotFoundException) {
-			String msg = String.format("Username %s not found", authentication.getName());
+			String msg = fallbackMessage(authenticationException,
+					String.format("Username %s not found", authentication.getName()));
 			return new OAuth2AuthenticationException(
 					new OAuth2Error(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND, msg, ""));
 		}
 		if (authenticationException instanceof BadCredentialsException) {
-			return new OAuth2AuthenticationException(
-					new OAuth2Error(OAuth2ErrorCodesExpand.BAD_CREDENTIALS, "Bad credentials", ""));
+			return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.BAD_CREDENTIALS,
+					fallbackMessage(authenticationException, "Bad credentials"), ""));
 		}
 		if (authenticationException instanceof LockedException) {
-			return new OAuth2AuthenticationException(
-					new OAuth2Error(OAuth2ErrorCodesExpand.USER_LOCKED, "User account is locked", ""));
+			return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USER_LOCKED,
+					fallbackMessage(authenticationException, "User account is locked"), ""));
 		}
 		if (authenticationException instanceof DisabledException) {
-			return new OAuth2AuthenticationException(
-					new OAuth2Error(OAuth2ErrorCodesExpand.USER_DISABLE, "User is disabled", ""));
+			return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USER_DISABLE,
+					fallbackMessage(authenticationException, "User is disabled"), ""));
 		}
 		if (authenticationException instanceof AccountExpiredException) {
-			return new OAuth2AuthenticationException(
-					new OAuth2Error(OAuth2ErrorCodesExpand.USER_EXPIRED, "User account has expired", ""));
+			return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USER_EXPIRED,
+					fallbackMessage(authenticationException, "User account has expired"), ""));
 		}
 		if (authenticationException instanceof CredentialsExpiredException) {
-			return new OAuth2AuthenticationException(
-					new OAuth2Error(OAuth2ErrorCodesExpand.CREDENTIALS_EXPIRED, "User credentials have expired", ""));
+			return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.CREDENTIALS_EXPIRED,
+					fallbackMessage(authenticationException, "User credentials have expired"), ""));
 		}
 
 		log.error(authenticationException.getLocalizedMessage());
 		return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR),
 				authenticationException.getLocalizedMessage(), authenticationException);
+	}
+
+	private String fallbackMessage(AuthenticationException authenticationException, String fallback) {
+		return ObjectUtils.defaultIfNull(
+				StringUtils.defaultIfBlank(authenticationException.getLocalizedMessage(), fallback), fallback);
 	}
 
 	private OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(
