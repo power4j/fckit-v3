@@ -65,9 +65,7 @@ public class DefaultOauthFailureHandler implements AuthenticationFailureHandler 
 		httpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
 		String errorMessage;
 		if (exception instanceof OAuth2AuthenticationException authorizationException) {
-			errorMessage = StringUtils.isBlank(authorizationException.getError().getDescription())
-					? authorizationException.getError().getErrorCode()
-					: authorizationException.getError().getDescription();
+			errorMessage = resolveOauthErrorMessage(authorizationException);
 
 			ERROR_RESPONSE_CONVERTER.write(
 					Result.create(authorizationException.getError().getErrorCode(), errorMessage, null),
@@ -79,6 +77,16 @@ public class DefaultOauthFailureHandler implements AuthenticationFailureHandler 
 			ERROR_RESPONSE_CONVERTER.write(Results.clientError(errorMessage, null), MediaType.APPLICATION_JSON,
 					httpResponse);
 		}
+	}
+
+	private String resolveOauthErrorMessage(OAuth2AuthenticationException authorizationException) {
+		if (StringUtils.isNotBlank(authorizationException.getError().getDescription())) {
+			return authorizationException.getError().getDescription();
+		}
+		if (StringUtils.isNotBlank(authorizationException.getLocalizedMessage())) {
+			return authorizationException.getLocalizedMessage();
+		}
+		return authorizationException.getError().getErrorCode();
 	}
 
 }
