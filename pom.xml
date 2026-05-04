@@ -99,7 +99,7 @@
     <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
     <excel-spring-boot-starter.version>3.4.2</excel-spring-boot-starter.version>
     <seancfoley.ipaddress.version>5.6.2</seancfoley.ipaddress.version>
-    <bucket4j.version>8.17.0</bucket4j.version>
+    <bucket4j.version>8.18.0</bucket4j.version>
     <jspecify.version>1.0.0</jspecify.version>
 
     <junit-pioneer.version>2.3.0</junit-pioneer.version>
