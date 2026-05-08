@@ -108,3 +108,9 @@
 - 产物：`InMemoryReplayGuard` 优先使用 exchange 上下文时间窗口，并将 nonce 记录过期时间改为 `timestamp + effectiveWindow`；新增测试覆盖 exchange 窗口覆盖默认窗口。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am "-Dtest=InMemoryReplayGuardTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
   摘要：ReplayGuard 修复验证通过；目标测试 2 个通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，extra 6 个测试、boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；默认 fork 模式在当前 Windows 跨盘环境仍触发 surefire fork classpath 问题。
+- 工具：`Get-Content`、`rg`、`git diff`
+  摘要：继续对照 1.4 方案复查 `fist-sde-extra` 国密默认实现，确认已有 `Sm4CryptoHandler` 占位不可用，`HmacSm3SignatureHandler` 尚未实现，缺少 Provider 存在和 Provider 缺失路径测试。
+- 产物：新增 `Sm4GcmCryptoHandler`，实现基于 JCA `SM4/GCM/NoPadding` 的 Base64URL payload 加解密；实现 `HmacSm3SignatureHandler`，基于 JCA `HmacSM3` 生成和校验 Base64URL 签名；生产代码不注册 Bouncy Castle Provider。
+- 产物：新增 `Sm4GcmCryptoHandlerTest` 和 `HmacSm3SignatureHandlerTest`，覆盖 Provider 存在时可用、Provider 缺失时抛出 `SecureAlgorithmUnavailableException`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am "-Dtest=Sm4GcmCryptoHandlerTest,HmacSm3SignatureHandlerTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
+  摘要：国密 extra 实现验证通过；目标测试 4 个通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，extra 10 个测试、boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
