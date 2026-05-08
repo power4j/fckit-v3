@@ -16,6 +16,7 @@ import com.power4j.fist.sde.core.crypto.CryptoContext;
 import com.power4j.fist.sde.core.crypto.CryptoHandler;
 import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
 import com.power4j.fist.sde.core.exception.SecureExchangeException;
+import com.power4j.fist.sde.core.exception.SecureKeyResolveException;
 import com.power4j.fist.sde.core.exception.SecureSignatureException;
 import com.power4j.fist.sde.core.json.SecureJsonCodec;
 import com.power4j.fist.sde.core.key.SecureKeyContext;
@@ -101,9 +102,26 @@ public class SecureWebExchangeService {
 		return new SecureRequestBody(plain, envelope.getKeyRef());
 	}
 
+	boolean isSecureRequestEnvelope(byte[] input, SecurePolicy policy) {
+		try {
+			SecureEnvelopeContext envelopeContext = this.policyRegistry.getEnvelopeContext(policy.getEnvelopeName());
+			SecureEnvelope envelope = this.envelopeCodec.decode(input, envelopeContext);
+			return SecureScope.BODY.getValue().equals(envelope.getScope()) && StringUtils.hasText(envelope.getVersion())
+					&& StringUtils.hasText(envelope.getPayload()) && StringUtils.hasText(envelope.getSignature())
+					&& StringUtils.hasText(envelope.getTimestamp()) && StringUtils.hasText(envelope.getNonce())
+					&& StringUtils.hasText(envelope.getKeyRef());
+		}
+		catch (SecureEnvelopeException ex) {
+			return false;
+		}
+	}
+
 	Object writeSecureResponse(Object body, Type bodyType, Class<?> converterType, SecurePolicy policy, String keyRef) {
 		byte[] plain = this.jsonCodec.serialize(body, bodyType);
-		String resolvedKeyRef = StringUtils.hasText(keyRef) ? keyRef : "tenant-a";
+		if (!StringUtils.hasText(keyRef)) {
+			throw new SecureKeyResolveException("response keyRef is required for secure response");
+		}
+		String resolvedKeyRef = keyRef;
 		SecureExchangeContext exchange = new SecureExchangeContext(SecureScope.RESPONSE_BODY, SecureDirection.OUTBOUND,
 				policy.getId(), null, resolvedKeyRef, policy.getTimestampWindow(), null);
 		SecureKey encryptKey = key(policy, exchange, resolvedKeyRef, SecureKeyUsage.ENCRYPT);

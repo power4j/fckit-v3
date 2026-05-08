@@ -46,6 +46,16 @@ public class SecureRequestBodyAdvice extends RequestBodyAdviceAdapter {
 			}
 			return new SecureHttpInputMessage(input, inputMessage.getHeaders());
 		}
+		if (policy.getRequestBodyMode() == SecureInputMode.PLAIN) {
+			if (this.service.isSecureRequestEnvelope(input, policy)) {
+				throw new SecureEnvelopeException("secure request body is not allowed");
+			}
+			return new SecureHttpInputMessage(input, inputMessage.getHeaders());
+		}
+		if (policy.getRequestBodyMode() == SecureInputMode.OPTIONAL
+				&& !this.service.isSecureRequestEnvelope(input, policy)) {
+			return new SecureHttpInputMessage(input, inputMessage.getHeaders());
+		}
 		SecureWebExchangeService.SecureRequestBody secureBody = this.service.readSecureRequest(input, policy);
 		org.springframework.web.context.request.RequestAttributes attributes = org.springframework.web.context.request.RequestContextHolder
 			.getRequestAttributes();

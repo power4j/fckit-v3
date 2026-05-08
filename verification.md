@@ -48,3 +48,29 @@
 
 - Feign 技术验证已以测试原型形式完成，结论是当前技术方案可以支撑 Feign 注解式 Body/Response Body 加密处理；本阶段未交付正式 Feign 生产代码。
 - Query 加密、Query 签名和正式 Feign 集成留待后续阶段。
+
+## 追加验证
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcOptionalModeTest,SdeWebMvcPlainModeTest,SdeWebMvcResponseKeyRefTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 修复前执行失败，失败点符合预期：
+  - `OPTIONAL` 模式明文请求被当作 secure envelope 解码。
+  - `PLAIN` 模式未拒绝 secure envelope。
+  - 响应封装缺少请求 `keyRef` 时未抛出预期异常。
+- 修复后执行通过：4 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- 放行后执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`
+
+- 放行后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
+- `fist-sde-boot-starter`：9 个测试通过，覆盖新增 Web MVC 模式回归。
+
+### `.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
+
+- 放行后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-cloud-rpc-feign`：Feign SDE 原型测试 7 个通过，0 failures，0 errors，0 skipped。

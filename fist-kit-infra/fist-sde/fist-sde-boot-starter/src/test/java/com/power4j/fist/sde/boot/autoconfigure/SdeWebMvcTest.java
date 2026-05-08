@@ -114,7 +114,7 @@ class SdeWebMvcTest {
 			.andExpect(content().string("upload"));
 	}
 
-	private static byte[] envelope(String plain) {
+	static byte[] envelope(String plain) {
 		AesGcmCryptoHandler crypto = new AesGcmCryptoHandler();
 		HmacSha256SignatureHandler signatureHandler = new HmacSha256SignatureHandler();
 		SecureKey key = new SecureKey("tenant-a", "AES", KEY);

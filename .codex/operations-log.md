@@ -36,3 +36,10 @@
 - 工具：`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
   摘要：放行后 `fist-cloud-rpc-feign` 及其依赖模块测试通过，其中 Feign SDE 原型 7 个测试通过，Reactor `BUILD SUCCESS`；Maven 生命周期中执行了相关模块的 `spring-javaformat:validate`。
 - 产物：新增 `docs/local/plans/20260508-sde/fist-sde-feign-technical-validation.md`，记录 Feign 注解式 Body / Response Body 加密的技术验证结论、测试覆盖和正式实现前的剩余风险。
+- 工具：`Get-Content`、`rg`、`git diff`
+  摘要：提交后复查 `SecureRequestBodyAdvice`、`SecureResponseBodyAdvice`、`SecureWebExchangeService`、自动配置和 MVC 测试，确认 `OPTIONAL`、`PLAIN` 和响应 `keyRef` 处理存在边界缺口。
+- 产物：修复 `SecureRequestBodyAdvice` 的 `OPTIONAL` 明文放行和 `PLAIN` 安全报文拒绝逻辑；移除响应加密路径中的硬编码 `tenant-a` 回退，缺少响应 `keyRef` 时抛出明确 `SecureKeyResolveException`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcOptionalModeTest,SdeWebMvcPlainModeTest,SdeWebMvcResponseKeyRefTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：新增回归测试修复前失败，修复后 4 个测试通过，覆盖 `OPTIONAL` 明文、`OPTIONAL` 安全请求响应封装、`PLAIN` 拒绝安全 envelope 和响应缺少 `keyRef`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
+  摘要：全部放行后通过；`fist-sde` 全模块格式校验和测试 `BUILD SUCCESS`，Feign 原型模块及依赖测试 `BUILD SUCCESS`。
