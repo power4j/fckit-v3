@@ -373,3 +373,32 @@
 ### `git diff --check`
 
 - 删除 SM4 占位实现后执行通过，无空白错误。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- 最终验收复查执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`
+
+- 最终验收复查执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 9 个主源码文件，12 个测试通过。
+- `fist-sde-boot-starter`：24 个测试通过。
+- 继续使用 `-DforkCount=0` 避免当前 Windows 跨盘环境下 surefire fork classpath 问题。
+
+### `.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
+
+- 最终验收复查执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-cloud-rpc-feign` 中 SDE Feign 原型测试 7 个通过，覆盖注解元数据、Encoder、Decoder、Response 重构和原型自动配置。
+
+### `rg -n "payloadDigest|keyId|@SecureQuery|SecureQuery|spring\.factories|List\.of|Map\.of|Set\.of|Stream\.toList|\bvar\b|\brecord\b" fist-kit-infra/fist-sde/fist-sde-core/src/main fist-kit-infra/fist-sde/fist-sde-extra/src/main fist-kit-infra/fist-sde/fist-sde-web/src/main fist-kit-infra/fist-sde/fist-sde-boot-starter/src/main`
+
+- 最终验收复查执行无命中，退出码 1 表示未发现匹配项。
+
+### `rg -n "com\.power4j\.fist\.sde|SecureFeign|SdeFeign|sde" fist-kit-cloud/fist-cloud-rpc-feign/src/main`
+
+- 最终验收复查执行无命中，退出码 1 表示 Feign 生产源码未包含正式 SDE 实现。
+
+### `git diff --check`
+
+- 最终验收复查执行通过，无空白错误。

@@ -135,3 +135,5 @@
 - 产物：删除 `Sm4CryptoHandler`，避免不可用占位 API 进入首阶段交付。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am test`、`rg`、`git diff --check`
   摘要：删除占位实现后验证通过；extra 全测试 12 个通过，extra 主源码以 `release 8` 编译，约束扫描无命中，diff 空白检查通过。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`、`rg`、`git diff --check`
+  摘要：最终验收复查通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，Feign 原型模块及依赖测试 `BUILD SUCCESS` 且 SDE Feign 原型测试 7 个通过；SDE 主源码约束扫描无命中，Feign 生产源码 SDE 扫描无命中，工作区保持清洁。
