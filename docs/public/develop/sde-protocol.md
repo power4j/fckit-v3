@@ -177,7 +177,7 @@ body = jsonDeserialize(plain)
 | 解密失败 | 加密算法、IV / tag 编码、密钥材料和 payload 编码是否一致。 |
 | 时间戳过期 | 双方时钟和策略中的 timestamp window 是否符合预期。 |
 | 重放请求 | `keyRef + policyId + scope + nonce` 是否重复。 |
-| Provider 缺失 | 使用 SM4 或 HMAC-SM3 时，是否显式引入并注册对应 JCA Provider。 |
+| Provider 缺失 | 使用 SM4、SM3 或 HMAC-SM3 时，是否显式引入并注册对应 JCA Provider。 |
 | Nonce 生成失败 | `NonceGenerator` Bean 是否存在，随机源是否可用。 |
 
 ## 首阶段边界

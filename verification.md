@@ -319,3 +319,39 @@
 - `fist-sde-extra`：以 `release 8` 重新编译 9 个主源码文件，10 个测试通过。
 - `fist-sde-boot-starter`：24 个测试通过。
 - 继续使用 `-DforkCount=0` 避免当前 Windows 跨盘环境下 surefire fork classpath 问题。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am "-Dtest=Sm3DigestTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 红测阶段执行失败，失败点符合预期：`Sm3Digest` 类缺失导致 testCompile 失败。
+- 实现后执行通过：`Sm3DigestTest` 2 个测试通过，0 failures，0 errors，0 skipped。
+- 覆盖 Provider 存在时标准 SM3 摘要，以及 Provider 缺失时的明确异常。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am test`
+
+- SM3 摘要适配后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：4 个测试通过。
+- `fist-sde-extra`：12 个测试通过，新增覆盖 `Sm3DigestTest`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- SM3 摘要适配后执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `rg -n "payloadDigest|keyId|@SecureQuery|SecureQuery|spring\.factories|List\.of|Map\.of|Set\.of|Stream\.toList|\bvar\b|\brecord\b" fist-kit-infra/fist-sde/fist-sde-core/src/main fist-kit-infra/fist-sde/fist-sde-extra/src/main fist-kit-infra/fist-sde/fist-sde-web/src/main fist-kit-infra/fist-sde/fist-sde-boot-starter/src/main`
+
+- 执行无命中，退出码 1 表示未发现匹配项。
+
+### `rg -n '你|您|同学|“|”|keyId|@SecureQuery|SecureQuery|spring\.factories' docs/public/develop/sde-protocol.md fist-kit-infra/fist-sde/README.md CHANGELOG.md`
+
+- 执行无命中，退出码 1 表示未发现匹配项。
+
+### `git diff --check`
+
+- SM3 摘要适配后执行通过，无空白错误。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`
+
+- SM3 摘要适配后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 10 个主源码文件，12 个测试通过。
+- `fist-sde-boot-starter`：24 个测试通过。
+- 继续使用 `-DforkCount=0` 避免当前 Windows 跨盘环境下 surefire fork classpath 问题。

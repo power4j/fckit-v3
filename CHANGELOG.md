@@ -13,6 +13,7 @@
 - 新增 `fist-sde` 首阶段 artifact 的 BOM 版本管理条目。
 - 新增 `fist-sde-extra` 国密 SM4-GCM 加解密和 HMAC-SM3 签名实现。
 - 新增 `fist-sde` 模块接入说明，覆盖服务端启用、默认算法、国密 Provider、必需 Bean、异常转换和首阶段边界。
+- 新增 `fist-sde-extra` SM3 摘要适配实现。
 
 ### Fixed
 

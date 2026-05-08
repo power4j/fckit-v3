@@ -123,3 +123,10 @@
   摘要：红测阶段失败原因符合预期：`version=2` 请求返回 200；修复后目标测试 1 个通过，Reactor `BUILD SUCCESS`。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
   摘要：版本校验修复验证通过；`SdeWebMvcTest` 7 个测试通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，boot-starter 24 个测试通过；约束扫描无命中，diff 空白检查通过。
+- 工具：`rg`、`Get-ChildItem`
+  摘要：继续复查 extra 国密默认能力，确认方案要求 SM4、SM3、HMAC-SM3 在 Provider 存在时可用；当前已有 SM4-GCM 和 HMAC-SM3，缺少单独 SM3 摘要适配。
+- 产物：新增 `Sm3Digest`，基于 JCA `MessageDigest.getInstance("SM3")` 返回原始摘要字节；生产代码不注册 Bouncy Castle Provider。新增 `Sm3DigestTest` 覆盖标准 `abc` 摘要和 Provider 缺失异常。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am "-Dtest=Sm3DigestTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：红测阶段因 `Sm3Digest` 缺失编译失败；实现后 2 个测试通过，extra 主源码以 `release 8` 编译。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
+  摘要：SM3 摘要适配提交前验证通过；extra 全测试 12 个通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，boot-starter 24 个测试通过；约束扫描和文档扫描均无命中，diff 空白检查通过。
