@@ -90,3 +90,32 @@
 - `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
 - `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
 - `fist-sde-boot-starter`：10 个测试通过，覆盖 `policyId` 不匹配拒绝场景。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 修复前执行失败，失败点符合预期：`cryptoEnabled=true` 且 `signatureEnabled=false`、安全交换下两者都关闭时仍可启动。
+- 修复后执行通过：6 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcSignOnlyTest,SdeAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 修复前执行失败，失败点符合预期：sign-only Web 管线仍尝试解析 `CryptoHandler`。
+- 修复后执行通过：7 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- 本轮沙箱内首次执行失败：Maven Central 访问被拒，父级 BOM 无法解析。
+- 放行后执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`
+
+- 放行后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
+- `fist-sde-web`：重新编译 4 个主源码文件，无独立测试类。
+- `fist-sde-boot-starter`：15 个测试通过，覆盖策略开关组合、sign-only Web MVC、`OPTIONAL`、`PLAIN`、响应 `keyRef` 和 `policyId` 不匹配拒绝场景。
+
+### `.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
+
+- 放行后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-cloud-rpc-feign`：Feign SDE 原型测试 7 个通过，0 failures，0 errors，0 skipped。
+- 本阶段仍未新增正式 Feign 生产代码，原型代码仅用于技术验证测试。

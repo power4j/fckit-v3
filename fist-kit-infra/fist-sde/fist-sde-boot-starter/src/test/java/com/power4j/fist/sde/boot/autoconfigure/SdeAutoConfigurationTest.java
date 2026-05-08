@@ -40,6 +40,49 @@ class SdeAutoConfigurationTest {
 				.hasSingleBean(SecureResponseBodyAdvice.class));
 	}
 
+	@Test
+	void shouldRejectCryptoWithoutSignature() {
+		this.runner
+			.withPropertyValues("fist.sde.enabled=true", "fist.sde.web.default-policy-id=invalid-v1",
+					"fist.sde.policies.invalid-v1.request-body-mode=required",
+					"fist.sde.policies.invalid-v1.crypto-enabled=true",
+					"fist.sde.policies.invalid-v1.signature-enabled=false")
+			.run((context) -> assertThat(context).hasFailed()
+				.getFailure()
+				.hasMessageContaining("signature must be enabled when crypto is enabled"));
+	}
+
+	@Test
+	void shouldRejectDisabledCryptoAndSignatureForSecureExchange() {
+		this.runner
+			.withPropertyValues("fist.sde.enabled=true", "fist.sde.web.default-policy-id=invalid-v1",
+					"fist.sde.policies.invalid-v1.request-body-mode=required",
+					"fist.sde.policies.invalid-v1.crypto-enabled=false",
+					"fist.sde.policies.invalid-v1.signature-enabled=false")
+			.run((context) -> assertThat(context).hasFailed()
+				.getFailure()
+				.hasMessageContaining("crypto and signature cannot both be disabled for secure exchange"));
+	}
+
+	@Test
+	void shouldAllowSignOnlyPolicy() {
+		this.runner
+			.withPropertyValues("fist.sde.enabled=true", "fist.sde.web.default-policy-id=sign-only-v1",
+					"fist.sde.policies.sign-only-v1.request-body-mode=required",
+					"fist.sde.policies.sign-only-v1.crypto-enabled=false",
+					"fist.sde.policies.sign-only-v1.signature-enabled=true")
+			.run((context) -> assertThat(context).hasNotFailed());
+	}
+
+	@Test
+	void shouldAllowPlainPolicyWithoutCryptoAndSignature() {
+		this.runner.withPropertyValues("fist.sde.enabled=true", "fist.sde.web.default-policy-id=plain-v1",
+				"fist.sde.policies.plain-v1.request-body-mode=plain",
+				"fist.sde.policies.plain-v1.response-body-mode=disabled",
+				"fist.sde.policies.plain-v1.crypto-enabled=false", "fist.sde.policies.plain-v1.signature-enabled=false")
+			.run((context) -> assertThat(context).hasNotFailed());
+	}
+
 	@Configuration(proxyBeanMethods = false)
 	static class UserBeans {
 

@@ -1,13 +1,31 @@
 package com.power4j.fist.sde.boot.autoconfigure;
 
+import com.power4j.fist.sde.core.SecureEnvelope;
+import com.power4j.fist.sde.core.SecureExchangeContext;
+import com.power4j.fist.sde.core.SecureKey;
+import com.power4j.fist.sde.core.SecureScope;
+import com.power4j.fist.sde.core.codec.JacksonSecureEnvelopeCodec;
+import com.power4j.fist.sde.core.codec.SecureEnvelopeContext;
 import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
+import com.power4j.fist.sde.core.signature.DefaultSignatureCanonicalizer;
+import com.power4j.fist.sde.extra.key.StaticSecureKeyResolver;
+import com.power4j.fist.sde.extra.nonce.SecureRandomNonceGenerator;
+import com.power4j.fist.sde.extra.replay.InMemoryReplayGuard;
+import com.power4j.fist.sde.extra.signature.HmacSha256SignatureHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -90,6 +108,87 @@ class SdeWebMvcResponseKeyRefTest {
 		assertThatThrownBy(() -> this.mockMvc
 			.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"plain\"}")))
 			.hasRootCauseInstanceOf(com.power4j.fist.sde.core.exception.SecureKeyResolveException.class);
+	}
+
+}
+
+@SpringBootTest(classes = SdeWebMvcSignOnlyTest.SignOnlyApplication.class,
+		properties = { "fist.sde.enabled=true", "fist.sde.web.enabled=true",
+				"fist.sde.web.default-policy-id=body-sign-only-v1",
+				"fist.sde.policies.body-sign-only-v1.request-body-mode=required",
+				"fist.sde.policies.body-sign-only-v1.response-body-mode=follow_request",
+				"fist.sde.policies.body-sign-only-v1.crypto-enabled=false",
+				"fist.sde.policies.body-sign-only-v1.signature-enabled=true" })
+@AutoConfigureMockMvc
+@Import(SdeWebMvcTest.TestController.class)
+class SdeWebMvcSignOnlyTest {
+
+	private static final byte[] KEY = "0123456789abcdef".getBytes(StandardCharsets.UTF_8);
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	void shouldProcessSignOnlyRequestAndResponseWithoutCryptoHandler() throws Exception {
+		String response = this.mockMvc
+			.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
+				.content(signOnlyEnvelope("{\"name\":\"fist\"}")))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+
+		com.fasterxml.jackson.databind.JsonNode node = new com.fasterxml.jackson.databind.ObjectMapper()
+			.readTree(response);
+		assertThat(node.get("scope").asText()).isEqualTo("responseBody");
+		assertThat(node.get("data").asText()).isEqualTo("{\"name\":\"fist\"}");
+		assertThat(node.get("sign").asText()).isNotBlank();
+	}
+
+	private static byte[] signOnlyEnvelope(String plain) {
+		HmacSha256SignatureHandler signatureHandler = new HmacSha256SignatureHandler();
+		SecureKey key = new SecureKey("tenant-a", "HmacSHA256", KEY);
+		SecureEnvelope envelope = new SecureEnvelope();
+		envelope.setVersion("1");
+		envelope.setScope("body");
+		envelope.setPayload(plain);
+		envelope.setTimestamp(Instant.now().toString());
+		envelope.setNonce("nonce-" + System.nanoTime());
+		envelope.setKeyRef("tenant-a");
+		envelope.setPolicyId("body-sign-only-v1");
+		byte[] input = new DefaultSignatureCanonicalizer().canonicalize(envelope,
+				SecureExchangeContext.outbound(SecureScope.BODY));
+		envelope.setSignature(new String(
+				signatureHandler.sign(input,
+						com.power4j.fist.sde.core.signature.SignContext.outbound(SecureScope.BODY, key)),
+				StandardCharsets.UTF_8));
+		return new JacksonSecureEnvelopeCodec().encodeToBytes(envelope, SecureEnvelopeContext.defaults());
+	}
+
+	@SpringBootConfiguration
+	@EnableAutoConfiguration
+	static class SignOnlyApplication {
+
+		@Bean
+		HmacSha256SignatureHandler hmacSha256SignatureHandler() {
+			return new HmacSha256SignatureHandler();
+		}
+
+		@Bean
+		SecureRandomNonceGenerator secureRandomNonceGenerator() {
+			return new SecureRandomNonceGenerator();
+		}
+
+		@Bean
+		InMemoryReplayGuard replayGuard() {
+			return new InMemoryReplayGuard(Duration.ofMinutes(5));
+		}
+
+		@Bean
+		StaticSecureKeyResolver staticSecureKeyResolver() {
+			return StaticSecureKeyResolver.symmetric("tenant-a", KEY);
+		}
+
 	}
 
 }

@@ -48,3 +48,14 @@
 - 产物：新增 `SdeWebMvcOptionalModeTest.shouldRejectEnvelopeWhenPolicyIdDoesNotMatchCurrentPolicy`，并修复 `SecureWebExchangeService`：当入站 envelope 显式携带 `policyId` 时必须匹配当前策略 ID；未携带时仍允许固定服务端策略处理。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcOptionalModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
   摘要：修复前新增测试失败并复现策略不匹配仍被放行；修复后 3 个测试通过，Reactor `BUILD SUCCESS`。
+- 工具：`rg`、`Get-Content`
+  摘要：继续复查 `cryptoEnabled` / `signatureEnabled`，确认策略开关已绑定但缺少 1.4 方案要求的组合校验和 sign-only 运行期语义。
+- 产物：新增 `SdeAutoConfigurationTest` 策略开关组合测试；新增 `SdeWebMvcSignOnlyTest` 验证无 `CryptoHandler` 时签名-only 请求和响应仍可处理；修复 `SdeCoreAutoConfiguration` 策略校验和 `SecureWebExchangeService` sign-only 路径。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：修复前非法策略组合测试失败，证明当前实现未拒绝；修复后 6 个测试通过，Reactor `BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcSignOnlyTest,SdeAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：修复前 sign-only MVC 测试因缺少 `CryptoHandler` 失败；修复后 7 个测试通过，Reactor `BUILD SUCCESS`。
+- 工具：`rg`、`git diff --check`
+  摘要：复查 SDE 生产源码未发现 `payloadDigest`、`keyId`、`@SecureQuery`、`SecureQuery`、新增 `spring.factories` 或 Java 9+ API / 语法；`fist-sde-extra` 仅作为 boot-starter 测试依赖出现；diff 空白检查通过。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
+  摘要：提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过并确认 core/extra 主源码 `release 8` 编译，Feign 模块全量测试通过且原型测试 7 个通过。

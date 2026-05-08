@@ -90,18 +90,22 @@ public class SecureWebExchangeService {
 		}
 		SecureExchangeContext exchange = new SecureExchangeContext(SecureScope.BODY, SecureDirection.INBOUND,
 				policy.getId(), envelope.getAlgorithm(), envelope.getKeyRef(), policy.getTimestampWindow(), null);
-		byte[] signingInput = this.canonicalizer.canonicalize(envelope, exchange);
-		SecureKey verifyKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.VERIFY);
-		boolean verified = signature(policy).verify(signingInput,
-				envelope.getSignature().getBytes(StandardCharsets.UTF_8), new SignContext(exchange, verifyKey));
-		if (!verified) {
-			throw new SecureSignatureException("secure request signature verification failed");
+		if (policy.isSignatureEnabled()) {
+			byte[] signingInput = this.canonicalizer.canonicalize(envelope, exchange);
+			SecureKey verifyKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.VERIFY);
+			boolean verified = signature(policy).verify(signingInput,
+					envelope.getSignature().getBytes(StandardCharsets.UTF_8), new SignContext(exchange, verifyKey));
+			if (!verified) {
+				throw new SecureSignatureException("secure request signature verification failed");
+			}
 		}
 		replay(policy).checkAndMark(new ReplayContext(exchange, envelope.getKeyRef(), policy.getId(),
 				envelope.getNonce(), envelope.getTimestamp()));
-		SecureKey decryptKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.DECRYPT);
-		byte[] plain = crypto(policy).decrypt(envelope.getPayload().getBytes(StandardCharsets.UTF_8),
-				new CryptoContext(exchange, decryptKey));
+		byte[] plain = envelope.getPayload().getBytes(StandardCharsets.UTF_8);
+		if (policy.isCryptoEnabled()) {
+			SecureKey decryptKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.DECRYPT);
+			plain = crypto(policy).decrypt(plain, new CryptoContext(exchange, decryptKey));
+		}
 		return new SecureRequestBody(plain, envelope.getKeyRef());
 	}
 
@@ -127,9 +131,12 @@ public class SecureWebExchangeService {
 		String resolvedKeyRef = keyRef;
 		SecureExchangeContext exchange = new SecureExchangeContext(SecureScope.RESPONSE_BODY, SecureDirection.OUTBOUND,
 				policy.getId(), null, resolvedKeyRef, policy.getTimestampWindow(), null);
-		SecureKey encryptKey = key(policy, exchange, resolvedKeyRef, SecureKeyUsage.ENCRYPT);
-		String payload = new String(crypto(policy).encrypt(plain, new CryptoContext(exchange, encryptKey)),
-				StandardCharsets.UTF_8);
+		String payload = new String(plain, StandardCharsets.UTF_8);
+		if (policy.isCryptoEnabled()) {
+			SecureKey encryptKey = key(policy, exchange, resolvedKeyRef, SecureKeyUsage.ENCRYPT);
+			payload = new String(crypto(policy).encrypt(plain, new CryptoContext(exchange, encryptKey)),
+					StandardCharsets.UTF_8);
+		}
 		SecureEnvelope envelope = new SecureEnvelope();
 		envelope.setVersion("1");
 		envelope.setScope(SecureScope.RESPONSE_BODY.getValue());
@@ -138,9 +145,11 @@ public class SecureWebExchangeService {
 		envelope.setNonce(nonce(policy).generate(new NonceContext(exchange)));
 		envelope.setKeyRef(resolvedKeyRef);
 		envelope.setPolicyId(policy.getId());
-		SecureKey signKey = key(policy, exchange, resolvedKeyRef, SecureKeyUsage.SIGN);
-		envelope.setSignature(new String(signature(policy).sign(this.canonicalizer.canonicalize(envelope, exchange),
-				new SignContext(exchange, signKey)), StandardCharsets.UTF_8));
+		if (policy.isSignatureEnabled()) {
+			SecureKey signKey = key(policy, exchange, resolvedKeyRef, SecureKeyUsage.SIGN);
+			envelope.setSignature(new String(signature(policy).sign(this.canonicalizer.canonicalize(envelope, exchange),
+					new SignContext(exchange, signKey)), StandardCharsets.UTF_8));
+		}
 		SecureEnvelopeContext envelopeContext = this.policyRegistry.getEnvelopeContext(policy.getEnvelopeName())
 			.withSelectedConverterType(converterType);
 		if (converterType != null && StringHttpMessageConverter.class.isAssignableFrom(converterType)) {

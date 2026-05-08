@@ -2,6 +2,8 @@ package com.power4j.fist.sde.boot.autoconfigure;
 
 import com.power4j.fist.sde.core.SecurePolicy;
 import com.power4j.fist.sde.core.SecurePolicyRegistry;
+import com.power4j.fist.sde.core.SecureInputMode;
+import com.power4j.fist.sde.core.SecureResponseMode;
 import com.power4j.fist.sde.core.SimpleSecurePolicyRegistry;
 import com.power4j.fist.sde.core.codec.SecureEnvelopeContext;
 import com.power4j.fist.sde.core.codec.SecureEnvelopeFieldMapping;
@@ -64,7 +66,27 @@ public class SdeCoreAutoConfiguration {
 		policy.setReplayGuardName(source.getReplayGuard());
 		policy.setEnvelopeName(source.getEnvelope());
 		policy.setTimestampWindow(source.getTimestampWindow());
+		validatePolicy(policy);
 		return policy;
+	}
+
+	private void validatePolicy(SecurePolicy policy) {
+		if (policy.isCryptoEnabled() && !policy.isSignatureEnabled()) {
+			throw new IllegalStateException("signature must be enabled when crypto is enabled: " + policy.getId());
+		}
+		if (!policy.isCryptoEnabled() && !policy.isSignatureEnabled() && requiresSecureExchange(policy)) {
+			throw new IllegalStateException(
+					"crypto and signature cannot both be disabled for secure exchange: " + policy.getId());
+		}
+	}
+
+	private boolean requiresSecureExchange(SecurePolicy policy) {
+		return !(isPlainRequest(policy.getRequestBodyMode())
+				&& policy.getResponseBodyMode() == SecureResponseMode.DISABLED);
+	}
+
+	private boolean isPlainRequest(SecureInputMode mode) {
+		return mode == SecureInputMode.DISABLED || mode == SecureInputMode.PLAIN;
 	}
 
 }
