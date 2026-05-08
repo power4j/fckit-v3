@@ -59,3 +59,11 @@
   摘要：复查 SDE 生产源码未发现 `payloadDigest`、`keyId`、`@SecureQuery`、`SecureQuery`、新增 `spring.factories` 或 Java 9+ API / 语法；`fist-sde-extra` 仅作为 boot-starter 测试依赖出现；diff 空白检查通过。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
   摘要：提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过并确认 core/extra 主源码 `release 8` 编译，Feign 模块全量测试通过且原型测试 7 个通过。
+- 工具：`rg`、`Get-Content`
+  摘要：继续对照 1.4 方案复查注解优先级，确认 `@SecureBody` / `@SecureExchange` 已定义但 Web Advice 始终使用默认策略，未实现方法级、类级注解选择和冲突处理。
+- 产物：新增 `SdeWebMvcAnnotationModeTest` 红测，覆盖方法级 `@SecureBody` 覆盖类级 `@SecureExchange` 以及同一方法注解冲突。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcAnnotationModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：红测阶段失败原因符合预期：明文请求仍被默认 required 策略当作 envelope，冲突注解未返回冲突错误；实现 `SecureWebExchangeService.policy(MethodParameter)` 后 2 个测试通过，Reactor `BUILD SUCCESS`。
+- 产物：修复 `SecureRequestBodyAdvice` 和 `SecureResponseBodyAdvice`，按方案优先级解析方法/类级 `@SecureBody`、`@SecureExchange`，并在选中策略基础上应用 request / response 显式覆盖；同一层级双注解抛出明确 `SecureEnvelopeException`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`、`git diff --check`
+  摘要：注解策略修复提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过，boot-starter 17 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。

@@ -37,7 +37,7 @@ public class SecureResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 		if (body == null || returnType.hasMethodAnnotation(ExceptionHandler.class)) {
 			return body;
 		}
-		SecurePolicy policy = this.service.defaultPolicy();
+		SecurePolicy policy = this.service.policy(returnType);
 		RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
 		String keyRef = attributes == null ? null : (String) attributes
 			.getAttribute(SecureWebExchangeService.REQUEST_SECURE_KEY_REF, RequestAttributes.SCOPE_REQUEST);

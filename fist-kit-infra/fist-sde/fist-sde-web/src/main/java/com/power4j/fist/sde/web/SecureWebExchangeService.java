@@ -10,6 +10,8 @@ import com.power4j.fist.sde.core.SecurePolicy;
 import com.power4j.fist.sde.core.SecurePolicyRegistry;
 import com.power4j.fist.sde.core.SecureResponseMode;
 import com.power4j.fist.sde.core.SecureScope;
+import com.power4j.fist.sde.core.annotation.SecureBody;
+import com.power4j.fist.sde.core.annotation.SecureExchange;
 import com.power4j.fist.sde.core.codec.SecureEnvelopeCodec;
 import com.power4j.fist.sde.core.codec.SecureEnvelopeContext;
 import com.power4j.fist.sde.core.crypto.CryptoContext;
@@ -28,12 +30,15 @@ import com.power4j.fist.sde.core.replay.ReplayGuard;
 import com.power4j.fist.sde.core.signature.SignContext;
 import com.power4j.fist.sde.core.signature.SignatureCanonicalizer;
 import com.power4j.fist.sde.core.signature.SignatureHandler;
+import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Type;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Map;
@@ -77,6 +82,69 @@ public class SecureWebExchangeService {
 
 	SecurePolicy defaultPolicy() {
 		return this.policyRegistry.getPolicy(this.policyRegistry.getDefaultPolicyId());
+	}
+
+	SecurePolicy policy(MethodParameter parameter) {
+		Method method = parameter.getMethod();
+		Class<?> containingClass = parameter.getContainingClass();
+		if (method != null) {
+			SecureBody methodBody = AnnotatedElementUtils.findMergedAnnotation(method, SecureBody.class);
+			SecureExchange methodExchange = AnnotatedElementUtils.findMergedAnnotation(method, SecureExchange.class);
+			if (methodBody != null && methodExchange != null) {
+				throw new SecureEnvelopeException("conflicting SDE annotations on method: " + method);
+			}
+			if (methodBody != null) {
+				return policy(methodBody.value(), methodBody.request(), methodBody.response());
+			}
+			if (methodExchange != null) {
+				return policy(methodExchange.value(), methodExchange.requestBody(), methodExchange.responseBody());
+			}
+		}
+		SecureBody classBody = AnnotatedElementUtils.findMergedAnnotation(containingClass, SecureBody.class);
+		SecureExchange classExchange = AnnotatedElementUtils.findMergedAnnotation(containingClass,
+				SecureExchange.class);
+		if (classBody != null && classExchange != null) {
+			throw new SecureEnvelopeException("conflicting SDE annotations on class: " + containingClass.getName());
+		}
+		if (classBody != null) {
+			return policy(classBody.value(), classBody.request(), classBody.response());
+		}
+		if (classExchange != null) {
+			return policy(classExchange.value(), classExchange.requestBody(), classExchange.responseBody());
+		}
+		return defaultPolicy();
+	}
+
+	private SecurePolicy policy(String policyId, SecureInputMode requestMode, SecureResponseMode responseMode) {
+		SecurePolicy source = StringUtils.hasText(policyId) ? this.policyRegistry.getPolicy(policyId) : defaultPolicy();
+		if (requestMode == SecureInputMode.INHERIT && responseMode == SecureResponseMode.INHERIT) {
+			return source;
+		}
+		SecurePolicy policy = copy(source);
+		if (requestMode != SecureInputMode.INHERIT) {
+			policy.setRequestBodyMode(requestMode);
+		}
+		if (responseMode != SecureResponseMode.INHERIT) {
+			policy.setResponseBodyMode(responseMode);
+		}
+		return policy;
+	}
+
+	private SecurePolicy copy(SecurePolicy source) {
+		SecurePolicy policy = new SecurePolicy();
+		policy.setId(source.getId());
+		policy.setRequestBodyMode(source.getRequestBodyMode());
+		policy.setResponseBodyMode(source.getResponseBodyMode());
+		policy.setCryptoEnabled(source.isCryptoEnabled());
+		policy.setSignatureEnabled(source.isSignatureEnabled());
+		policy.setCryptoHandlerName(source.getCryptoHandlerName());
+		policy.setSignatureHandlerName(source.getSignatureHandlerName());
+		policy.setKeyResolverName(source.getKeyResolverName());
+		policy.setNonceGeneratorName(source.getNonceGeneratorName());
+		policy.setReplayGuardName(source.getReplayGuardName());
+		policy.setEnvelopeName(source.getEnvelopeName());
+		policy.setTimestampWindow(source.getTimestampWindow());
+		return policy;
 	}
 
 	SecureRequestBody readSecureRequest(byte[] input, SecurePolicy policy) {

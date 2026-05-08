@@ -2,8 +2,12 @@ package com.power4j.fist.sde.boot.autoconfigure;
 
 import com.power4j.fist.sde.core.SecureEnvelope;
 import com.power4j.fist.sde.core.SecureExchangeContext;
+import com.power4j.fist.sde.core.SecureInputMode;
 import com.power4j.fist.sde.core.SecureKey;
+import com.power4j.fist.sde.core.SecureResponseMode;
 import com.power4j.fist.sde.core.SecureScope;
+import com.power4j.fist.sde.core.annotation.SecureBody;
+import com.power4j.fist.sde.core.annotation.SecureExchange;
 import com.power4j.fist.sde.core.codec.JacksonSecureEnvelopeCodec;
 import com.power4j.fist.sde.core.codec.SecureEnvelopeContext;
 import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
@@ -22,10 +26,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -187,6 +196,59 @@ class SdeWebMvcSignOnlyTest {
 		@Bean
 		StaticSecureKeyResolver staticSecureKeyResolver() {
 			return StaticSecureKeyResolver.symmetric("tenant-a", KEY);
+		}
+
+	}
+
+}
+
+@SpringBootTest(classes = SdeWebMvcTest.TestApplication.class,
+		properties = { "fist.sde.enabled=true", "fist.sde.web.enabled=true",
+				"fist.sde.web.default-policy-id=body-strict-v1",
+				"fist.sde.policies.body-strict-v1.request-body-mode=required",
+				"fist.sde.policies.body-strict-v1.response-body-mode=enabled",
+				"fist.sde.policies.body-plain-v1.request-body-mode=plain",
+				"fist.sde.policies.body-plain-v1.response-body-mode=disabled" })
+@AutoConfigureMockMvc
+@Import(SdeWebMvcAnnotationModeTest.AnnotationController.class)
+class SdeWebMvcAnnotationModeTest {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	void shouldUseMethodSecureBodyPolicyBeforeClassSecureExchange() throws Exception {
+		this.mockMvc
+			.perform(post("/sde/annotation/plain").contentType(MediaType.APPLICATION_JSON)
+				.content("{\"name\":\"plain\"}"))
+			.andExpect(status().isOk())
+			.andExpect(content().json("{\"name\":\"plain\"}"));
+	}
+
+	@Test
+	void shouldRejectMethodAnnotationConflict() {
+		assertThatThrownBy(
+				() -> this.mockMvc.perform(post("/sde/annotation/conflict").contentType(MediaType.APPLICATION_JSON)
+					.content("{\"name\":\"plain\"}")))
+			.hasRootCauseInstanceOf(SecureEnvelopeException.class)
+			.hasMessageContaining("conflicting SDE annotations");
+	}
+
+	@RestController
+	@SecureExchange("body-strict-v1")
+	static class AnnotationController {
+
+		@PostMapping("/sde/annotation/plain")
+		@SecureBody(value = "body-plain-v1", request = SecureInputMode.PLAIN, response = SecureResponseMode.DISABLED)
+		Map<String, String> plain(@RequestBody Map<String, String> body) {
+			return Collections.singletonMap("name", body.get("name"));
+		}
+
+		@PostMapping("/sde/annotation/conflict")
+		@SecureBody("body-plain-v1")
+		@SecureExchange("body-strict-v1")
+		Map<String, String> conflict(@RequestBody Map<String, String> body) {
+			return Collections.singletonMap("name", body.get("name"));
 		}
 
 	}

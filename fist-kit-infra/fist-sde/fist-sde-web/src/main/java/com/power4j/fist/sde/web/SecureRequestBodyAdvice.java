@@ -28,7 +28,7 @@ public class SecureRequestBodyAdvice extends RequestBodyAdviceAdapter {
 	public boolean supports(MethodParameter methodParameter, Type targetType,
 			Class<? extends HttpMessageConverter<?>> converterType) {
 		return methodParameter.hasParameterAnnotation(RequestBody.class)
-				&& this.service.shouldRead(this.service.defaultPolicy());
+				&& this.service.shouldRead(this.service.policy(methodParameter));
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class SecureRequestBodyAdvice extends RequestBodyAdviceAdapter {
 		if (contentType != null && MediaType.MULTIPART_FORM_DATA.isCompatibleWith(contentType)) {
 			return inputMessage;
 		}
-		SecurePolicy policy = this.service.defaultPolicy();
+		SecurePolicy policy = this.service.policy(parameter);
 		byte[] input = StreamUtils.copyToByteArray(inputMessage.getBody());
 		if (input.length == 0) {
 			if (policy.getRequestBodyMode() == SecureInputMode.REQUIRED) {
