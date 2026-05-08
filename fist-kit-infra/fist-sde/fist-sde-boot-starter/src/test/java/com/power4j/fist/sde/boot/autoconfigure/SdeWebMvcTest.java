@@ -138,6 +138,14 @@ class SdeWebMvcTest {
 			.hasMessageContaining("secure request signature verification failed");
 	}
 
+	@Test
+	void shouldRejectUnsupportedRequestEnvelopeVersion() {
+		assertThatThrownBy(() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
+			.content(unsupportedVersionEnvelope("{\"name\":\"fist\"}"))))
+			.hasRootCauseInstanceOf(com.power4j.fist.sde.core.exception.SecureEnvelopeException.class)
+			.hasMessageContaining("unsupported request envelope version");
+	}
+
 	static byte[] envelope(String plain) {
 		return envelope(plain, "body-strict-v1");
 	}
@@ -175,6 +183,20 @@ class SdeWebMvcTest {
 	static byte[] wrongSignatureEnvelope(String plain) {
 		SecureEnvelope envelope = read(envelope(plain));
 		envelope.setSignature("wrong-signature");
+		return encode(envelope);
+	}
+
+	static byte[] unsupportedVersionEnvelope(String plain) {
+		SecureEnvelope envelope = read(envelope(plain));
+		envelope.setVersion("2");
+		HmacSha256SignatureHandler signatureHandler = new HmacSha256SignatureHandler();
+		SecureKey key = new SecureKey("tenant-a", "AES", KEY);
+		byte[] input = new DefaultSignatureCanonicalizer().canonicalize(envelope,
+				SecureExchangeContext.outbound(SecureScope.BODY));
+		envelope.setSignature(new String(
+				signatureHandler.sign(input,
+						com.power4j.fist.sde.core.signature.SignContext.outbound(SecureScope.BODY, key)),
+				StandardCharsets.UTF_8));
 		return encode(envelope);
 	}
 

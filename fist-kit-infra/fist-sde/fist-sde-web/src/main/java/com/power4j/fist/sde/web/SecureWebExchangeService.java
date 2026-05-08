@@ -48,6 +48,8 @@ public class SecureWebExchangeService {
 
 	static final String REQUEST_SECURE_KEY_REF = SecureWebExchangeService.class.getName() + ".KEY_REF";
 
+	private static final String ENVELOPE_VERSION = "1";
+
 	private final SecurePolicyRegistry policyRegistry;
 
 	private final SecureEnvelopeCodec envelopeCodec;
@@ -197,6 +199,9 @@ public class SecureWebExchangeService {
 
 	private void validateRequestEnvelope(SecureEnvelope envelope, SecurePolicy policy) {
 		required("version", envelope.getVersion());
+		if (!ENVELOPE_VERSION.equals(envelope.getVersion())) {
+			throw new SecureEnvelopeException("unsupported request envelope version: " + envelope.getVersion());
+		}
 		required("payload", envelope.getPayload());
 		required("timestamp", envelope.getTimestamp());
 		required("nonce", envelope.getNonce());
@@ -227,7 +232,7 @@ public class SecureWebExchangeService {
 					StandardCharsets.UTF_8);
 		}
 		SecureEnvelope envelope = new SecureEnvelope();
-		envelope.setVersion("1");
+		envelope.setVersion(ENVELOPE_VERSION);
 		envelope.setScope(SecureScope.RESPONSE_BODY.getValue());
 		envelope.setPayload(payload);
 		envelope.setTimestamp(Instant.now().toString());

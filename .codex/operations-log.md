@@ -116,3 +116,10 @@
   摘要：国密 extra 实现验证通过；目标测试 4 个通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，extra 10 个测试、boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
 - 工具：`Get-Content`、`Test-Path`、`rg`、`git diff --check`
   摘要：补充 `fist-sde` 模块 README 接入说明，覆盖服务端依赖、最小配置、必需 Bean、默认算法、国密 Provider、注解策略、异常转换、首阶段边界和常见问题；文档链接存在，文档扫描未发现第二人称、中文双引号、禁用协议字段、Query 或正式 Feign 代码入口。
+- 工具：`rg`、`Get-Content`
+  摘要：继续对照 1.4 方案复查 `version` 语义，确认响应固定写出 `version=1`，但入站请求只做非空校验，导致已重新签名的 `version=2` 请求可以被处理。
+- 产物：新增 `SdeWebMvcTest.shouldRejectUnsupportedRequestEnvelopeVersion` 红测，修复 `SecureWebExchangeService` 入站 envelope 版本校验，当前只接受协议格式版本 `1`；同步更新协议文档、模块 README 和 changelog。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcTest#shouldRejectUnsupportedRequestEnvelopeVersion" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：红测阶段失败原因符合预期：`version=2` 请求返回 200；修复后目标测试 1 个通过，Reactor `BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
+  摘要：版本校验修复验证通过；`SdeWebMvcTest` 7 个测试通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，boot-starter 24 个测试通过；约束扫描无命中，diff 空白检查通过。

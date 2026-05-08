@@ -43,6 +43,7 @@
 - `keyRef` 只表示密钥引用，不承载密钥材料。
 - `policyId` 指向本地安全处理策略，不表示接口资源名。
 - `version` 不表示算法版本或密钥版本。
+- 当前实现只接受 `version` 为 `1` 的请求 envelope。
 - `algorithm`、`policyId`、`metadata` 如果出现在 envelope 中，必须参与签名。
 
 ## Payload 编码

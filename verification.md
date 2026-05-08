@@ -286,3 +286,36 @@
 ### `git diff --check`
 
 - 模块 README 接入说明补充后执行通过，无空白错误。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcTest#shouldRejectUnsupportedRequestEnvelopeVersion" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 红测阶段执行失败，失败点符合预期：`version=2` 且重新签名的请求被正常处理并返回 200。
+- 修复后执行通过：1 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 版本校验修复后执行通过：`SdeWebMvcTest` 7 个测试通过，0 failures，0 errors，0 skipped。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- 版本校验修复后执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `rg -n "payloadDigest|keyId|@SecureQuery|SecureQuery|spring\.factories|List\.of|Map\.of|Set\.of|Stream\.toList|\bvar\b|\brecord\b" fist-kit-infra/fist-sde/fist-sde-core/src/main fist-kit-infra/fist-sde/fist-sde-extra/src/main fist-kit-infra/fist-sde/fist-sde-web/src/main fist-kit-infra/fist-sde/fist-sde-boot-starter/src/main`
+
+- 执行无命中，退出码 1 表示未发现匹配项。
+
+### `git diff --check`
+
+- 版本校验修复后执行通过，无空白错误。
+
+### `rg -n '你|您|同学|“|”|keyId|@SecureQuery|SecureQuery|spring\.factories' docs/public/develop/sde-protocol.md fist-kit-infra/fist-sde/README.md CHANGELOG.md`
+
+- 版本说明文档补充后执行无命中，退出码 1 表示未发现匹配项。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`
+
+- 版本校验修复后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 9 个主源码文件，10 个测试通过。
+- `fist-sde-boot-starter`：24 个测试通过。
+- 继续使用 `-DforkCount=0` 避免当前 Windows 跨盘环境下 surefire fork classpath 问题。

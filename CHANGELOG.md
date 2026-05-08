@@ -16,4 +16,5 @@
 
 ### Fixed
 
+- 修正 `fist-sde-web` 入站请求未校验 envelope 协议格式版本的问题，当前实现只接受 `version` 为 `1` 的请求。
 - 修正 `fist-sde-extra` 测试级内存重放校验器，使其优先使用当前交换上下文的时间窗口。
