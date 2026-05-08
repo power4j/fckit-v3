@@ -74,3 +74,19 @@
 
 - 放行后执行通过：Reactor 输出 `BUILD SUCCESS`。
 - `fist-cloud-rpc-feign`：Feign SDE 原型测试 7 个通过，0 failures，0 errors，0 skipped。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcOptionalModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 修复前执行失败，失败点符合预期：入站 envelope 携带不匹配的 `policyId` 时仍被当前策略处理。
+- 修复后执行通过：3 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- 追加修复后再次执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`
+
+- 追加修复后再次执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
+- `fist-sde-boot-starter`：10 个测试通过，覆盖 `policyId` 不匹配拒绝场景。

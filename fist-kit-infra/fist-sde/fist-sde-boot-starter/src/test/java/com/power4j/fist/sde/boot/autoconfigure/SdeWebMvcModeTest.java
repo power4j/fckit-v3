@@ -38,9 +38,16 @@ class SdeWebMvcOptionalModeTest {
 	void shouldWrapResponseOnlyWhenOptionalRequestIsSecure() throws Exception {
 		this.mockMvc
 			.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
-				.content(SdeWebMvcTest.envelope("{\"name\":\"fist\"}")))
+				.content(SdeWebMvcTest.envelope("{\"name\":\"fist\"}", "body-optional-v1")))
 			.andExpect(status().isOk())
 			.andExpect((result) -> assertThat(result.getResponse().getContentAsString()).contains("\"scope\""));
+	}
+
+	@Test
+	void shouldRejectEnvelopeWhenPolicyIdDoesNotMatchCurrentPolicy() {
+		assertThatThrownBy(() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
+			.content(SdeWebMvcTest.envelope("{\"name\":\"fist\"}", "other-policy-v1"))))
+			.hasRootCauseInstanceOf(SecureEnvelopeException.class);
 	}
 
 }

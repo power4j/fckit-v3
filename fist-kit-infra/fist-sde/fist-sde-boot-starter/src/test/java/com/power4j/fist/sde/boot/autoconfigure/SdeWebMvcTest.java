@@ -115,6 +115,10 @@ class SdeWebMvcTest {
 	}
 
 	static byte[] envelope(String plain) {
+		return envelope(plain, "body-strict-v1");
+	}
+
+	static byte[] envelope(String plain, String policyId) {
 		AesGcmCryptoHandler crypto = new AesGcmCryptoHandler();
 		HmacSha256SignatureHandler signatureHandler = new HmacSha256SignatureHandler();
 		SecureKey key = new SecureKey("tenant-a", "AES", KEY);
@@ -128,7 +132,7 @@ class SdeWebMvcTest {
 		envelope.setTimestamp(Instant.now().toString());
 		envelope.setNonce("nonce-" + System.nanoTime());
 		envelope.setKeyRef("tenant-a");
-		envelope.setPolicyId("body-strict-v1");
+		envelope.setPolicyId(policyId);
 		byte[] input = new DefaultSignatureCanonicalizer().canonicalize(envelope,
 				SecureExchangeContext.outbound(SecureScope.BODY));
 		envelope.setSignature(new String(

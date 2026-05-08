@@ -43,3 +43,8 @@
   摘要：新增回归测试修复前失败，修复后 4 个测试通过，覆盖 `OPTIONAL` 明文、`OPTIONAL` 安全请求响应封装、`PLAIN` 拒绝安全 envelope 和响应缺少 `keyRef`。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
   摘要：全部放行后通过；`fist-sde` 全模块格式校验和测试 `BUILD SUCCESS`，Feign 原型模块及依赖测试 `BUILD SUCCESS`。
+- 工具：`Get-Content`、`rg`
+  摘要：继续复查 `policyId` 入站处理，确认 envelope 中已签名的 `policyId` 未与当前处理策略校验。
+- 产物：新增 `SdeWebMvcOptionalModeTest.shouldRejectEnvelopeWhenPolicyIdDoesNotMatchCurrentPolicy`，并修复 `SecureWebExchangeService`：当入站 envelope 显式携带 `policyId` 时必须匹配当前策略 ID；未携带时仍允许固定服务端策略处理。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcOptionalModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：修复前新增测试失败并复现策略不匹配仍被放行；修复后 3 个测试通过，Reactor `BUILD SUCCESS`。

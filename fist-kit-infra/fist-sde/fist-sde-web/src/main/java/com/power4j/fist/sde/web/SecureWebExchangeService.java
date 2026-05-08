@@ -85,6 +85,9 @@ public class SecureWebExchangeService {
 		if (!SecureScope.BODY.getValue().equals(envelope.getScope())) {
 			throw new SecureEnvelopeException("request envelope scope must be body");
 		}
+		if (StringUtils.hasText(envelope.getPolicyId()) && !policy.getId().equals(envelope.getPolicyId())) {
+			throw new SecureEnvelopeException("request envelope policyId does not match current policy");
+		}
 		SecureExchangeContext exchange = new SecureExchangeContext(SecureScope.BODY, SecureDirection.INBOUND,
 				policy.getId(), envelope.getAlgorithm(), envelope.getKeyRef(), policy.getTimestampWindow(), null);
 		byte[] signingInput = this.canonicalizer.canonicalize(envelope, exchange);
