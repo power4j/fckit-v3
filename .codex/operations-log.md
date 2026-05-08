@@ -96,5 +96,5 @@
   摘要：红测阶段先因测试辅助方法误 catch `IOException` 编译失败，修正后新增空 body 用例失败并复现 Spring MVC 默认返回 `HttpMessageNotReadableException`；实现 `handleEmptyBody` 后 6 个测试通过，Reactor `BUILD SUCCESS`。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcModeTest,SdeWebMvcPlainModeTest,SdeWebMvcOptionalModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
   摘要：mode 相关回归测试通过，6 个测试通过，0 failures，0 errors，Reactor `BUILD SUCCESS`。
-- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`、`git diff --check`
-  摘要：提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过，boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-Dsurefire.useManifestOnlyJar=false" clean test`、`rg`、`git diff --check`
+  摘要：提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`；默认 `clean test` 在当前 Windows 跨盘环境触发 surefire manifest-only jar classpath 问题，追加 `-Dsurefire.useManifestOnlyJar=false` 后 SDE `clean test` 通过，boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。

@@ -194,6 +194,12 @@
 
 ### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`
 
+- required body 失败分支修复后按默认参数执行失败。
+- 根因定位为当前 Windows 跨盘环境触发 surefire manifest-only jar classpath 问题：dumpstream 输出 `Boot Manifest-JAR contains absolute paths`、`'other' has different root`。
+- 单独执行 `SdeWebMvcTest` 可通过，说明不是代码路径或新增用例本身失败。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-Dsurefire.useManifestOnlyJar=false" clean test`
+
 - required body 失败分支修复后执行通过：Reactor 输出 `BUILD SUCCESS`。
 - `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
 - `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
