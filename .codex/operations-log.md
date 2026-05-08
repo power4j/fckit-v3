@@ -20,3 +20,19 @@
   摘要：读取 `fist-sde-technical-solution-1.3-review.md`，核对 1.3 评审新增的 5 条建议。
 - 决策：1.4 只收敛 1.3 评审新增建议，不改变 1.3 主体架构；清理旧版本方案和评审报告，只保留 1.4 方案。
 - 产物：新增 `docs/local/plans/20260508-sde/fist-sde-technical-solution-1.4.md`，删除 1.1、1.2、1.3 旧文档和评审报告。
+- 工具：`git branch --show-current`、`git status --short`、`Get-Content`、`rg`
+  摘要：在 worktree `D:\git-repo\fist-dev\fist-cloud-kit-v3\.worktrees\cj-fist-sde` 确认分支为 `cj/fist-sde`，读取根 `AGENTS.md`、`fist-kit-infra/pom.xml`、1.4 技术方案和新增 `fist-sde` POM，复查无 `payloadDigest`、`keyId`、`@SecureQuery`、正式 Feign 代码或 `spring.factories`。
+- 产物：更新 `CHANGELOG.md` 的 `Unreleased` 区段，记录 `fist-sde` 首阶段用户可见新增能力；新增 `.codex/testing.md` 记录本地验证结果。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+  摘要：沙箱内首次因 Maven Central 访问被拒失败；放行后 `fist-sde` reactor 全模块 `SUCCESS`，`BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml test`
+  摘要：沙箱内首次因 Maven Central 访问被拒失败；放行后测试通过，core 4 个、extra 5 个、boot-starter 5 个测试均 0 failures，`BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`
+  摘要：沙箱内首次因 Maven Central 访问被拒失败；放行后从干净 target 重新编译并测试通过，其中 core 43 个主源码文件和 extra 8 个主源码文件均以 `release 8` 编译。复查新增 Java 主源码未发现 `List.of`、`Map.of`、`Stream.toList`、`record`、`var` 等 Java 9+ API 或语法。
+- 工具：`rg`
+  摘要：复查 `fist-sde` 内未发现 `payloadDigest`、`keyId`、`@SecureQuery`、`SecureQuery` 或新 `spring.factories`；Feign SDE 相关新增代码仅位于 `fist-cloud-rpc-feign` 的测试原型包。
+- 工具：`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am "-Dtest=*PrototypeTest,FeignResponseRebuildTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：沙箱内首次因 Maven Central 访问被拒失败；放行后 Feign SDE 原型 7 个测试通过，覆盖注解元数据、Encoder、Decoder、Response 重建和原型自动配置，Reactor `BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -U -pl fist-kit-cloud/fist-cloud-rpc-feign -am test`
+  摘要：放行后 `fist-cloud-rpc-feign` 及其依赖模块测试通过，其中 Feign SDE 原型 7 个测试通过，Reactor `BUILD SUCCESS`；Maven 生命周期中执行了相关模块的 `spring-javaformat:validate`。
+- 产物：新增 `docs/local/plans/20260508-sde/fist-sde-feign-technical-validation.md`，记录 Feign 注解式 Body / Response Body 加密的技术验证结论、测试覆盖和正式实现前的剩余风险。

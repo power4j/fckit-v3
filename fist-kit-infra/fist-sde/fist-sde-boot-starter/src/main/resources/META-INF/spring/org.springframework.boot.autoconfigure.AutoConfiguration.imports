@@ -1,0 +1,3 @@
+com.power4j.fist.sde.boot.autoconfigure.SdeCoreAutoConfiguration
+com.power4j.fist.sde.boot.autoconfigure.SdeCodecAutoConfiguration
+com.power4j.fist.sde.boot.autoconfigure.SdeWebAutoConfiguration

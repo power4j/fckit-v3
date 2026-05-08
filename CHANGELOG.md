@@ -6,4 +6,6 @@
 
 ## [Unreleased]
 
-暂无用户可见变更。
+### Added
+
+- 新增 `fist-sde` 首阶段模块，提供安全 envelope 编解码、签名输入规范化、基础加密签名扩展、Spring MVC Request Body 解密验签、Response Body 加密签名，以及 Spring Boot 3 自动配置入口。

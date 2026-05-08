@@ -59,5 +59,17 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-loadbalancer</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-sde-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-sde-extra</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
