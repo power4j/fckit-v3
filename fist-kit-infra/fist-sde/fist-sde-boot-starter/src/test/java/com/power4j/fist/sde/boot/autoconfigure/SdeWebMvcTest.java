@@ -114,6 +114,30 @@ class SdeWebMvcTest {
 			.andExpect(content().string("upload"));
 	}
 
+	@Test
+	void shouldRejectEmptyRequiredBody() {
+		assertThatThrownBy(
+				() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON).content("")))
+			.hasRootCauseInstanceOf(com.power4j.fist.sde.core.exception.SecureEnvelopeException.class)
+			.hasMessageContaining("secure request body is required");
+	}
+
+	@Test
+	void shouldRejectRequiredEnvelopeWithoutSignature() {
+		assertThatThrownBy(() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
+			.content(missingSignatureEnvelope("{\"name\":\"fist\"}"))))
+			.hasRootCauseInstanceOf(com.power4j.fist.sde.core.exception.SecureEnvelopeException.class)
+			.hasMessageContaining("request envelope signature is required");
+	}
+
+	@Test
+	void shouldRejectRequiredEnvelopeWithWrongSignature() throws Exception {
+		assertThatThrownBy(() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
+			.content(wrongSignatureEnvelope("{\"name\":\"fist\"}"))))
+			.hasRootCauseInstanceOf(com.power4j.fist.sde.core.exception.SecureSignatureException.class)
+			.hasMessageContaining("secure request signature verification failed");
+	}
+
 	static byte[] envelope(String plain) {
 		return envelope(plain, "body-strict-v1");
 	}
@@ -139,6 +163,26 @@ class SdeWebMvcTest {
 				signatureHandler.sign(input,
 						com.power4j.fist.sde.core.signature.SignContext.outbound(SecureScope.BODY, key)),
 				StandardCharsets.UTF_8));
+		return encode(envelope);
+	}
+
+	static byte[] missingSignatureEnvelope(String plain) {
+		SecureEnvelope envelope = read(envelope(plain));
+		envelope.setSignature(null);
+		return encode(envelope);
+	}
+
+	static byte[] wrongSignatureEnvelope(String plain) {
+		SecureEnvelope envelope = read(envelope(plain));
+		envelope.setSignature("wrong-signature");
+		return encode(envelope);
+	}
+
+	private static SecureEnvelope read(byte[] body) {
+		return new JacksonSecureEnvelopeCodec().decode(body, SecureEnvelopeContext.defaults());
+	}
+
+	private static byte[] encode(SecureEnvelope envelope) {
 		return new JacksonSecureEnvelopeCodec().encodeToBytes(envelope, SecureEnvelopeContext.defaults());
 	}
 

@@ -160,3 +160,50 @@
 
 - 文档排版和禁用术语扫描仅命中 `payloadDigest` 的否定说明：`不使用 payloadDigest`。
 - 未发现第二人称、中文双引号、`keyId`、`@SecureQuery` 或 `SecureQuery`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcOptionalModeTest,SdeWebMvcPlainModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 红测阶段执行失败，失败点符合预期：`OPTIONAL` 和 `PLAIN` 模式会把缺少 `sign` 的 envelope-like JSON 当作明文放行到控制器。
+- 修复后执行通过：6 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- envelope-like 缺字段修复后执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`
+
+- envelope-like 缺字段修复后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
+- `fist-sde-boot-starter`：20 个测试通过，新增覆盖 `OPTIONAL` 和 `PLAIN` 模式拒绝缺字段 envelope-like 请求。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 红测阶段先因测试辅助方法误 catch `IOException` 编译失败，修正测试后空 body 用例失败，失败点符合预期：Spring MVC 直接返回 `HttpMessageNotReadableException`，未走 SDE required body 异常。
+- 修复后执行通过：6 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+- 新增覆盖 required 模式空 body、缺少 `sign` 字段和错误签名。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcModeTest,SdeWebMvcPlainModeTest,SdeWebMvcOptionalModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- 执行通过：6 个测试通过，0 failures，0 errors，0 skipped，Reactor 输出 `BUILD SUCCESS`。
+- 覆盖 `OPTIONAL`、`PLAIN` 及 envelope-like 缺字段拒绝回归。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- required body 失败分支修复后执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`
+
+- required body 失败分支修复后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
+- `fist-sde-boot-starter`：23 个测试通过，新增覆盖 required 模式空 body、缺签名和错误签名。
+
+### `rg -n "payloadDigest|keyId|@SecureQuery|SecureQuery|spring\.factories|List\.of|Map\.of|Set\.of|Stream\.toList|\bvar\b|\brecord\b" fist-kit-infra/fist-sde/fist-sde-core/src/main fist-kit-infra/fist-sde/fist-sde-extra/src/main fist-kit-infra/fist-sde/fist-sde-web/src/main fist-kit-infra/fist-sde/fist-sde-boot-starter/src/main`
+
+- 执行无命中，退出码 1 表示未发现匹配项。
+- 未发现禁用术语、正式 Query、正式 Feign 注册入口、新增 `spring.factories` 或 core/extra 主源码 Java 9+ API / 语法。
+
+### `git diff --check`
+
+- 执行通过，无空白错误。

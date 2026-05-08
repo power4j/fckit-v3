@@ -80,3 +80,21 @@
 - 产物：新增 `docs/public/develop/sde-protocol.md`，覆盖 envelope 字段、`version` / `scope` / `keyRef` / `policyId` / `algorithm` 语义、payload 编码、canonical text、签名伪代码、Request Body / Response Body 示例、错误排查和首阶段边界；更新 `CHANGELOG.md` 的 `Unreleased`。
 - 工具：`git diff --check`、`rg`
   摘要：文档提交前验证通过；无空白错误，未发现第二人称、中文双引号、`keyId`、`@SecureQuery` 或 `SecureQuery`；`payloadDigest` 仅作为否定说明出现。
+- 工具：`rg`、`Get-Content`
+  摘要：继续复查 Web 模式边界，确认 `OPTIONAL` 与 `PLAIN` 通过完整字段判断 secure envelope，缺少 `sign` 的 envelope-like JSON 会被当作明文放行。
+- 产物：新增 `SdeWebMvcOptionalModeTest.shouldRejectIncompleteEnvelopeInOptionalMode` 和 `SdeWebMvcPlainModeTest.shouldRejectIncompleteEnvelopeInPlainMode`；修复 `SecureWebExchangeService`，将 envelope 候选识别与 secure request 必填字段校验拆开，缺字段请求进入 secure 路径后抛出明确 `SecureEnvelopeException`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcOptionalModeTest,SdeWebMvcPlainModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：红测阶段 2 个新增测试失败并复现误放行；修复后 6 个测试通过，Reactor `BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`
+  摘要：提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过，boot-starter 20 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中。
+- 工具：`git status --short --untracked-files=all`、`git log --oneline -10`、`git diff`
+  摘要：继续在 worktree `D:\git-repo\fist-dev\fist-cloud-kit-v3\.worktrees\cj-fist-sde`、分支 `cj/fist-sde` 上工作，确认上一任务后存在未提交的 envelope-like 缺字段修复改动，未混入无关模块。
+- 工具：`Get-Content`、`rg`
+  摘要：复查 `SecureRequestBodyAdvice`、`SecureWebExchangeService` 和 Web MVC 测试，确认 required 模式缺少空 body、缺 `sign` 和错误签名的失败分支覆盖。
+- 产物：新增 `SdeWebMvcTest` 覆盖 required 空 body、缺少 `sign`、错误签名；新增请求空 body 处理，`SecureRequestBodyAdvice.handleEmptyBody` 在 required 模式抛出明确 `SecureEnvelopeException`；保留上一任务的 envelope 候选识别与必填字段校验。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：红测阶段先因测试辅助方法误 catch `IOException` 编译失败，修正后新增空 body 用例失败并复现 Spring MVC 默认返回 `HttpMessageNotReadableException`；实现 `handleEmptyBody` 后 6 个测试通过，Reactor `BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcModeTest,SdeWebMvcPlainModeTest,SdeWebMvcOptionalModeTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：mode 相关回归测试通过，6 个测试通过，0 failures，0 errors，Reactor `BUILD SUCCESS`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`、`git diff --check`
+  摘要：提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过，boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。

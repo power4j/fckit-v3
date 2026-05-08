@@ -158,6 +158,7 @@ public class SecureWebExchangeService {
 		if (!SecureScope.BODY.getValue().equals(envelope.getScope())) {
 			throw new SecureEnvelopeException("request envelope scope must be body");
 		}
+		validateRequestEnvelope(envelope, policy);
 		if (StringUtils.hasText(envelope.getPolicyId()) && !policy.getId().equals(envelope.getPolicyId())) {
 			throw new SecureEnvelopeException("request envelope policyId does not match current policy");
 		}
@@ -187,12 +188,27 @@ public class SecureWebExchangeService {
 			SecureEnvelopeContext envelopeContext = this.policyRegistry.getEnvelopeContext(policy.getEnvelopeName());
 			SecureEnvelope envelope = this.envelopeCodec.decode(input, envelopeContext);
 			return SecureScope.BODY.getValue().equals(envelope.getScope()) && StringUtils.hasText(envelope.getVersion())
-					&& StringUtils.hasText(envelope.getPayload()) && StringUtils.hasText(envelope.getSignature())
-					&& StringUtils.hasText(envelope.getTimestamp()) && StringUtils.hasText(envelope.getNonce())
-					&& StringUtils.hasText(envelope.getKeyRef());
+					&& StringUtils.hasText(envelope.getPayload());
 		}
 		catch (SecureEnvelopeException ex) {
 			return false;
+		}
+	}
+
+	private void validateRequestEnvelope(SecureEnvelope envelope, SecurePolicy policy) {
+		required("version", envelope.getVersion());
+		required("payload", envelope.getPayload());
+		required("timestamp", envelope.getTimestamp());
+		required("nonce", envelope.getNonce());
+		required("keyRef", envelope.getKeyRef());
+		if (policy.isSignatureEnabled()) {
+			required("signature", envelope.getSignature());
+		}
+	}
+
+	private void required(String field, String value) {
+		if (!StringUtils.hasText(value)) {
+			throw new SecureEnvelopeException("request envelope " + field + " is required");
 		}
 	}
 

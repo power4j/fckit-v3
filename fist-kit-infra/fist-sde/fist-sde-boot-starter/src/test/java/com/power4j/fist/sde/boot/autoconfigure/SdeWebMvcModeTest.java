@@ -78,6 +78,14 @@ class SdeWebMvcOptionalModeTest {
 			.hasRootCauseInstanceOf(SecureEnvelopeException.class);
 	}
 
+	@Test
+	void shouldRejectIncompleteEnvelopeInOptionalMode() {
+		assertThatThrownBy(() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
+			.content("{\"version\":\"1\",\"scope\":\"body\",\"data\":\"abc\",\"timestamp\":\"2026-05-08T12:00:00Z\","
+					+ "\"nonce\":\"n\",\"keyRef\":\"tenant-a\",\"policyId\":\"body-optional-v1\"}")))
+			.hasRootCauseInstanceOf(SecureEnvelopeException.class);
+	}
+
 }
 
 @SpringBootTest(classes = SdeWebMvcTest.TestApplication.class,
@@ -96,6 +104,14 @@ class SdeWebMvcPlainModeTest {
 	void shouldRejectSecureEnvelopeInPlainMode() {
 		assertThatThrownBy(() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
 			.content(SdeWebMvcTest.envelope("{\"name\":\"fist\"}"))))
+			.hasRootCauseInstanceOf(SecureEnvelopeException.class);
+	}
+
+	@Test
+	void shouldRejectIncompleteEnvelopeInPlainMode() {
+		assertThatThrownBy(() -> this.mockMvc.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON)
+			.content("{\"version\":\"1\",\"scope\":\"body\",\"data\":\"abc\",\"timestamp\":\"2026-05-08T12:00:00Z\","
+					+ "\"nonce\":\"n\",\"keyRef\":\"tenant-a\",\"policyId\":\"body-plain-v1\"}")))
 			.hasRootCauseInstanceOf(SecureEnvelopeException.class);
 	}
 

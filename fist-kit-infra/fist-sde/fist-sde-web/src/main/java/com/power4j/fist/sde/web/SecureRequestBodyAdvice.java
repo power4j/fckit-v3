@@ -82,4 +82,20 @@ public class SecureRequestBodyAdvice extends RequestBodyAdviceAdapter {
 		}
 	}
 
+	@Override
+	public Object handleEmptyBody(Object body, HttpInputMessage inputMessage, MethodParameter parameter,
+			Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+		SecurePolicy policy = null;
+		try {
+			policy = this.service.policy(parameter);
+			if (policy.getRequestBodyMode() == SecureInputMode.REQUIRED) {
+				throw new SecureEnvelopeException("secure request body is required");
+			}
+			return body;
+		}
+		catch (SecureExchangeException ex) {
+			throw this.service.translate(ex, policy, SecureScope.BODY, SecureDirection.INBOUND, null);
+		}
+	}
+
 }
