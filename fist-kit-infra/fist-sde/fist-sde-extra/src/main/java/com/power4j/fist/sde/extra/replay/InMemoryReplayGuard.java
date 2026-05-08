@@ -22,18 +22,26 @@ public class InMemoryReplayGuard implements ReplayGuard {
 
 	@Override
 	public void checkAndMark(ReplayContext context) {
+		Duration effectiveWindow = window(context);
 		Instant timestamp = parseTimestamp(context.getTimestamp());
 		Instant now = Instant.now();
-		if (timestamp.isBefore(now.minus(this.window)) || timestamp.isAfter(now.plus(this.window))) {
+		if (timestamp.isBefore(now.minus(effectiveWindow)) || timestamp.isAfter(now.plus(effectiveWindow))) {
 			throw new SecureReplayException("timestamp is outside replay window");
 		}
 		cleanup(now);
 		String key = context.getKeyRef() + "|" + context.getPolicyId() + "|"
 				+ context.getExchangeContext().getScope().getValue() + "|" + context.getNonce();
-		Instant previous = this.seen.putIfAbsent(key, timestamp);
+		Instant previous = this.seen.putIfAbsent(key, timestamp.plus(effectiveWindow));
 		if (previous != null) {
 			throw new SecureReplayException("replayed secure envelope nonce");
 		}
+	}
+
+	private Duration window(ReplayContext context) {
+		if (context.getExchangeContext() != null && context.getExchangeContext().getTimestampWindow() != null) {
+			return context.getExchangeContext().getTimestampWindow();
+		}
+		return this.window;
 	}
 
 	private Instant parseTimestamp(String timestamp) {
@@ -49,7 +57,7 @@ public class InMemoryReplayGuard implements ReplayGuard {
 		Iterator<Map.Entry<String, Instant>> iterator = this.seen.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, Instant> entry = iterator.next();
-			if (entry.getValue().isBefore(now.minus(this.window))) {
+			if (entry.getValue().isBefore(now)) {
 				iterator.remove();
 			}
 		}

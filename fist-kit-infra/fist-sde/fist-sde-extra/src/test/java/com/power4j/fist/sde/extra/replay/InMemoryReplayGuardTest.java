@@ -29,4 +29,16 @@ class InMemoryReplayGuardTest {
 			.hasMessageContaining("timestamp");
 	}
 
+	@Test
+	void shouldUseExchangeTimestampWindowWhenPresent() {
+		InMemoryReplayGuard guard = new InMemoryReplayGuard(Duration.ofMinutes(5));
+		SecureExchangeContext exchange = SecureExchangeContext.inbound(SecureScope.BODY)
+			.withPolicy("strict-policy", null, "key-ref", Duration.ofSeconds(1));
+		ReplayContext expired = new ReplayContext(exchange, "key-ref", "strict-policy", "nonce-3",
+				Instant.now().minus(Duration.ofSeconds(3)).toString());
+
+		assertThatThrownBy(() -> guard.checkAndMark(expired)).isInstanceOf(SecureReplayException.class)
+			.hasMessageContaining("timestamp");
+	}
+
 }

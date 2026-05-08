@@ -103,3 +103,8 @@
 - 产物：在 `fist-kit-dependencies` BOM 中新增 `fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 版本管理条目，并同步更新 `CHANGELOG.md`。
 - 工具：`.\mvnw.cmd -pl fist-kit-dependencies validate`、`git diff --check`、`rg`
   摘要：BOM 集成验证通过；`fist-kit-dependencies` Maven `validate` 输出 `BUILD SUCCESS`，空白检查通过，BOM 条目扫描命中四个 SDE artifact，禁用术语与 Java 9+ API 扫描无异常命中。
+- 工具：`git diff`、`Get-Content`
+  摘要：继续处理剩余未提交改动，确认 `InMemoryReplayGuard` 尚未使用 `SecureExchangeContext.timestampWindow`，会导致按策略配置的时间窗口无法约束测试级 replay guard。
+- 产物：`InMemoryReplayGuard` 优先使用 exchange 上下文时间窗口，并将 nonce 记录过期时间改为 `timestamp + effectiveWindow`；新增测试覆盖 exchange 窗口覆盖默认窗口。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am "-Dtest=InMemoryReplayGuardTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
+  摘要：ReplayGuard 修复验证通过；目标测试 2 个通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，extra 6 个测试、boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；默认 fork 模式在当前 Windows 跨盘环境仍触发 surefire fork classpath 问题。

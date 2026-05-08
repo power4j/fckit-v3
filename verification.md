@@ -226,3 +226,23 @@
 ### `git diff --check`
 
 - BOM 集成修复后执行通过，无空白错误。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am "-Dtest=InMemoryReplayGuardTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+
+- ReplayGuard 时间窗口修复后执行通过：`InMemoryReplayGuardTest` 2 个测试通过，0 failures，0 errors，0 skipped。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`
+
+- ReplayGuard 时间窗口修复后执行通过：`fist-sde`、`fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 全部 `SUCCESS`，Maven 输出 `BUILD SUCCESS`。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-Dsurefire.useManifestOnlyJar=false" clean test`
+
+- ReplayGuard 时间窗口修复后按该参数执行失败。
+- 失败点为当前 Windows 跨盘环境下 surefire fork 加载测试 classpath：报告包含 `ClassNotFoundException: com.power4j.fist.sde.boot.autoconfigure.SdeWebMvcTest`，并非 ReplayGuard 断言失败。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`
+
+- ReplayGuard 时间窗口修复后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，6 个测试通过。
+- `fist-sde-boot-starter`：23 个测试通过。
