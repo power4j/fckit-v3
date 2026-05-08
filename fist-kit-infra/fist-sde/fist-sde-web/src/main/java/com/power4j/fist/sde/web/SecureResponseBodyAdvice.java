@@ -1,6 +1,9 @@
 package com.power4j.fist.sde.web;
 
+import com.power4j.fist.sde.core.SecureDirection;
 import com.power4j.fist.sde.core.SecurePolicy;
+import com.power4j.fist.sde.core.SecureScope;
+import com.power4j.fist.sde.core.exception.SecureExchangeException;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -37,16 +40,22 @@ public class SecureResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 		if (body == null || returnType.hasMethodAnnotation(ExceptionHandler.class)) {
 			return body;
 		}
-		SecurePolicy policy = this.service.policy(returnType);
 		RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
 		String keyRef = attributes == null ? null : (String) attributes
 			.getAttribute(SecureWebExchangeService.REQUEST_SECURE_KEY_REF, RequestAttributes.SCOPE_REQUEST);
-		if (!this.service.shouldWrite(policy, keyRef != null)) {
-			return body;
+		SecurePolicy policy = null;
+		try {
+			policy = this.service.policy(returnType);
+			if (!this.service.shouldWrite(policy, keyRef != null)) {
+				return body;
+			}
+			response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+			return this.service.writeSecureResponse(body, returnType.getGenericParameterType(), selectedConverterType,
+					policy, keyRef);
 		}
-		response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-		return this.service.writeSecureResponse(body, returnType.getGenericParameterType(), selectedConverterType,
-				policy, keyRef);
+		catch (SecureExchangeException ex) {
+			throw this.service.translate(ex, policy, SecureScope.RESPONSE_BODY, SecureDirection.OUTBOUND, keyRef);
+		}
 	}
 
 }

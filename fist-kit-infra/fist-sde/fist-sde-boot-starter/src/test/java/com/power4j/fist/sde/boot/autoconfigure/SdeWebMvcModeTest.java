@@ -11,6 +11,7 @@ import com.power4j.fist.sde.core.annotation.SecureExchange;
 import com.power4j.fist.sde.core.codec.JacksonSecureEnvelopeCodec;
 import com.power4j.fist.sde.core.codec.SecureEnvelopeContext;
 import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
+import com.power4j.fist.sde.core.exception.SecureExchangeExceptionTranslator;
 import com.power4j.fist.sde.core.signature.DefaultSignatureCanonicalizer;
 import com.power4j.fist.sde.extra.key.StaticSecureKeyResolver;
 import com.power4j.fist.sde.extra.nonce.SecureRandomNonceGenerator;
@@ -249,6 +250,39 @@ class SdeWebMvcAnnotationModeTest {
 		@SecureExchange("body-strict-v1")
 		Map<String, String> conflict(@RequestBody Map<String, String> body) {
 			return Collections.singletonMap("name", body.get("name"));
+		}
+
+	}
+
+}
+
+@SpringBootTest(classes = SdeWebMvcExceptionTranslatorTest.TranslatorApplication.class,
+		properties = { "fist.sde.enabled=true", "fist.sde.web.enabled=true",
+				"fist.sde.web.default-policy-id=body-strict-v1",
+				"fist.sde.policies.body-strict-v1.request-body-mode=required",
+				"fist.sde.policies.body-strict-v1.response-body-mode=disabled" })
+@AutoConfigureMockMvc
+@Import(SdeWebMvcTest.TestController.class)
+class SdeWebMvcExceptionTranslatorTest {
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Test
+	void shouldTranslateSecureExchangeExceptionWhenTranslatorBeanExists() {
+		assertThatThrownBy(() -> this.mockMvc
+			.perform(post("/sde/echo").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"plain\"}")))
+			.hasRootCauseInstanceOf(IllegalStateException.class)
+			.hasMessageContaining("translated: request envelope scope must be body");
+	}
+
+	@SpringBootConfiguration
+	@EnableAutoConfiguration
+	static class TranslatorApplication extends SdeWebMvcTest.TestApplication {
+
+		@Bean
+		SecureExchangeExceptionTranslator secureExchangeExceptionTranslator() {
+			return (exception, context) -> new IllegalStateException("translated: " + exception.getMessage());
 		}
 
 	}

@@ -3,6 +3,7 @@ package com.power4j.fist.sde.boot.autoconfigure;
 import com.power4j.fist.sde.core.SecurePolicyRegistry;
 import com.power4j.fist.sde.core.codec.SecureEnvelopeCodec;
 import com.power4j.fist.sde.core.crypto.CryptoHandler;
+import com.power4j.fist.sde.core.exception.SecureExchangeExceptionTranslator;
 import com.power4j.fist.sde.core.json.SecureJsonCodec;
 import com.power4j.fist.sde.core.key.SecureKeyResolver;
 import com.power4j.fist.sde.core.nonce.NonceGenerator;
@@ -19,6 +20,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration(after = { SdeCoreAutoConfiguration.class, SdeCodecAutoConfiguration.class })
@@ -32,9 +34,10 @@ public class SdeWebAutoConfiguration {
 			SecureEnvelopeCodec envelopeCodec, SignatureCanonicalizer canonicalizer, SecureJsonCodec jsonCodec,
 			Map<String, CryptoHandler> cryptoHandlers, Map<String, SignatureHandler> signatureHandlers,
 			Map<String, SecureKeyResolver> keyResolvers, Map<String, NonceGenerator> nonceGenerators,
-			Map<String, ReplayGuard> replayGuards) {
+			Map<String, ReplayGuard> replayGuards,
+			ObjectProvider<SecureExchangeExceptionTranslator> exceptionTranslator) {
 		return new SecureWebExchangeService(policyRegistry, envelopeCodec, canonicalizer, jsonCodec, cryptoHandlers,
-				signatureHandlers, keyResolvers, nonceGenerators, replayGuards);
+				signatureHandlers, keyResolvers, nonceGenerators, replayGuards, exceptionTranslator.getIfAvailable());
 	}
 
 	@Bean

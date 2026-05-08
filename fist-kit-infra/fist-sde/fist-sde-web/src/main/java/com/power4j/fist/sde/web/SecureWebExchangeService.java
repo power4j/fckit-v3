@@ -18,6 +18,7 @@ import com.power4j.fist.sde.core.crypto.CryptoContext;
 import com.power4j.fist.sde.core.crypto.CryptoHandler;
 import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
 import com.power4j.fist.sde.core.exception.SecureExchangeException;
+import com.power4j.fist.sde.core.exception.SecureExchangeExceptionTranslator;
 import com.power4j.fist.sde.core.exception.SecureKeyResolveException;
 import com.power4j.fist.sde.core.exception.SecureSignatureException;
 import com.power4j.fist.sde.core.json.SecureJsonCodec;
@@ -65,10 +66,13 @@ public class SecureWebExchangeService {
 
 	private final Map<String, ReplayGuard> replayGuards;
 
+	private final SecureExchangeExceptionTranslator exceptionTranslator;
+
 	public SecureWebExchangeService(SecurePolicyRegistry policyRegistry, SecureEnvelopeCodec envelopeCodec,
 			SignatureCanonicalizer canonicalizer, SecureJsonCodec jsonCodec, Map<String, CryptoHandler> cryptoHandlers,
 			Map<String, SignatureHandler> signatureHandlers, Map<String, SecureKeyResolver> keyResolvers,
-			Map<String, NonceGenerator> nonceGenerators, Map<String, ReplayGuard> replayGuards) {
+			Map<String, NonceGenerator> nonceGenerators, Map<String, ReplayGuard> replayGuards,
+			SecureExchangeExceptionTranslator exceptionTranslator) {
 		this.policyRegistry = policyRegistry;
 		this.envelopeCodec = envelopeCodec;
 		this.canonicalizer = canonicalizer;
@@ -78,6 +82,7 @@ public class SecureWebExchangeService {
 		this.keyResolvers = keyResolvers;
 		this.nonceGenerators = nonceGenerators;
 		this.replayGuards = replayGuards;
+		this.exceptionTranslator = exceptionTranslator;
 	}
 
 	SecurePolicy defaultPolicy() {
@@ -238,6 +243,18 @@ public class SecureWebExchangeService {
 	boolean shouldWrite(SecurePolicy policy, boolean requestWasSecure) {
 		return policy.getResponseBodyMode() == SecureResponseMode.ENABLED
 				|| (policy.getResponseBodyMode() == SecureResponseMode.FOLLOW_REQUEST && requestWasSecure);
+	}
+
+	RuntimeException translate(SecureExchangeException exception, SecurePolicy policy, SecureScope scope,
+			SecureDirection direction, String keyRef) {
+		if (this.exceptionTranslator == null) {
+			return exception;
+		}
+		SecureExchangeContext context = new SecureExchangeContext(scope, direction,
+				policy == null ? null : policy.getId(), null, keyRef,
+				policy == null ? null : policy.getTimestampWindow(), null);
+		RuntimeException translated = this.exceptionTranslator.translate(exception, context);
+		return translated == null ? exception : translated;
 	}
 
 	HttpHeaders secureHeaders(HttpHeaders original) {

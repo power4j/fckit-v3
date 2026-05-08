@@ -67,3 +67,11 @@
 - 产物：修复 `SecureRequestBodyAdvice` 和 `SecureResponseBodyAdvice`，按方案优先级解析方法/类级 `@SecureBody`、`@SecureExchange`，并在选中策略基础上应用 request / response 显式覆盖；同一层级双注解抛出明确 `SecureEnvelopeException`。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`、`git diff --check`
   摘要：注解策略修复提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过，boot-starter 17 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
+- 工具：`rg`、`Get-Content`
+  摘要：继续复查 `SecureExchangeExceptionTranslator`，确认 core 接口已定义且方案要求 Web 侧存在 translator Bean 时先转换异常，但自动配置和 Advice 尚未接入。
+- 产物：新增 `SdeWebMvcExceptionTranslatorTest` 红测，覆盖存在 translator Bean 时入站 SDE 异常应转换为应用异常。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-boot-starter -am "-Dtest=SdeWebMvcExceptionTranslatorTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`
+  摘要：红测阶段失败原因符合预期：根因仍为原始 `SecureEnvelopeException`；接入 translator 后 1 个测试通过，Reactor `BUILD SUCCESS`。
+- 产物：`SdeWebAutoConfiguration` 通过 `ObjectProvider<SecureExchangeExceptionTranslator>` 注入可选 translator；`SecureRequestBodyAdvice`、`SecureResponseBodyAdvice` 捕获 `SecureExchangeException` 后按当前报文域和方向交给 `SecureWebExchangeService.translate(...)`。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`、`git diff --check`
+  摘要：异常 translator 修复提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过，boot-starter 18 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
