@@ -355,3 +355,21 @@
 - `fist-sde-extra`：以 `release 8` 重新编译 10 个主源码文件，12 个测试通过。
 - `fist-sde-boot-starter`：24 个测试通过。
 - 继续使用 `-DforkCount=0` 避免当前 Windows 跨盘环境下 surefire fork classpath 问题。
+
+### `rg -n "Sm4CryptoHandler" fist-kit-infra/fist-sde docs CHANGELOG.md`
+
+- 删除占位实现前仅命中 `fist-sde-extra` 主源码中的 `Sm4CryptoHandler`，未发现引用方。
+
+### `.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am test`
+
+- 删除 SM4 占位实现后执行通过：Reactor 输出 `BUILD SUCCESS`。
+- `fist-sde-core`：4 个测试通过。
+- `fist-sde-extra`：以 `release 8` 重新编译 9 个主源码文件，12 个测试通过。
+
+### `rg -n "Sm4CryptoHandler|payloadDigest|keyId|@SecureQuery|SecureQuery|spring\.factories|List\.of|Map\.of|Set\.of|Stream\.toList|\bvar\b|\brecord\b" fist-kit-infra/fist-sde/fist-sde-core/src/main fist-kit-infra/fist-sde/fist-sde-extra/src/main fist-kit-infra/fist-sde/fist-sde-web/src/main fist-kit-infra/fist-sde/fist-sde-boot-starter/src/main`
+
+- 执行无命中，退出码 1 表示未发现匹配项。
+
+### `git diff --check`
+
+- 删除 SM4 占位实现后执行通过，无空白错误。

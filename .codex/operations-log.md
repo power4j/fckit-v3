@@ -130,3 +130,8 @@
   摘要：红测阶段因 `Sm3Digest` 缺失编译失败；实现后 2 个测试通过，extra 主源码以 `release 8` 编译。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
   摘要：SM3 摘要适配提交前验证通过；extra 全测试 12 个通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，boot-starter 24 个测试通过；约束扫描和文档扫描均无命中，diff 空白检查通过。
+- 工具：`rg`、`Get-Content`
+  摘要：验收扫描发现 `Sm4CryptoHandler` 是新分支内无引用占位实现，只抛出算法不可用异常；实际可用 SM4 实现为 `Sm4GcmCryptoHandler`。
+- 产物：删除 `Sm4CryptoHandler`，避免不可用占位 API 进入首阶段交付。
+- 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am test`、`rg`、`git diff --check`
+  摘要：删除占位实现后验证通过；extra 全测试 12 个通过，extra 主源码以 `release 8` 编译，约束扫描无命中，diff 空白检查通过。
