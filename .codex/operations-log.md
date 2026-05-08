@@ -98,3 +98,8 @@
   摘要：mode 相关回归测试通过，6 个测试通过，0 failures，0 errors，Reactor `BUILD SUCCESS`。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-Dsurefire.useManifestOnlyJar=false" clean test`、`rg`、`git diff --check`
   摘要：提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`；默认 `clean test` 在当前 Windows 跨盘环境触发 surefire manifest-only jar classpath 问题，追加 `-Dsurefire.useManifestOnlyJar=false` 后 SDE `clean test` 通过，boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
+- 工具：`rg`、`Select-String`
+  摘要：继续对照 1.4 验收标准复查 Maven 集成，确认 `fist-sde` 已纳入 `fist-kit-infra` reactor，但 `fist-kit-dependencies` BOM 尚未管理首阶段四个 artifact。
+- 产物：在 `fist-kit-dependencies` BOM 中新增 `fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 版本管理条目，并同步更新 `CHANGELOG.md`。
+- 工具：`.\mvnw.cmd -pl fist-kit-dependencies validate`、`git diff --check`、`rg`
+  摘要：BOM 集成验证通过；`fist-kit-dependencies` Maven `validate` 输出 `BUILD SUCCESS`，空白检查通过，BOM 条目扫描命中四个 SDE artifact，禁用术语与 Java 9+ API 扫描无异常命中。

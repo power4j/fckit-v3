@@ -213,3 +213,16 @@
 ### `git diff --check`
 
 - 执行通过，无空白错误。
+
+### BOM 集成复查
+
+- `fist-sde` 已纳入 `fist-kit-infra/pom.xml` reactor。
+- 补充 `fist-kit-dependencies/pom.xml` 中 `fist-sde-core`、`fist-sde-extra`、`fist-sde-web`、`fist-sde-boot-starter` 的 BOM 版本管理条目。
+
+### `.\mvnw.cmd -pl fist-kit-dependencies validate`
+
+- BOM 集成修复后执行通过：`fist-kit-dependencies` 输出 `BUILD SUCCESS`，并执行 `spring-javaformat:validate`。
+
+### `git diff --check`
+
+- BOM 集成修复后执行通过，无空白错误。
