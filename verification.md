@@ -272,3 +272,17 @@
 - `fist-sde-extra`：以 `release 8` 重新编译 9 个主源码文件，10 个测试通过。
 - `fist-sde-boot-starter`：23 个测试通过。
 - 继续使用 `-DforkCount=0` 避免当前 Windows 跨盘环境下 surefire fork classpath 问题。
+
+### `Test-Path fist-kit-infra/fist-sde/README.md, docs/public/develop/sde-protocol.md`
+
+- 模块 README 和链接目标均存在。
+
+### `rg -n "你|您|同学|“|”|payloadDigest|keyId|@SecureQuery|SecureQuery|spring\.factories" fist-kit-infra/fist-sde/README.md CHANGELOG.md`
+
+- 模块 README 接入说明补充后执行扫描。
+- 仅命中 `payloadDigest` 的否定说明：`不使用 payloadDigest`。
+- 未发现第二人称、中文双引号、`keyId`、`@SecureQuery`、`SecureQuery` 或 `spring.factories`。
+
+### `git diff --check`
+
+- 模块 README 接入说明补充后执行通过，无空白错误。

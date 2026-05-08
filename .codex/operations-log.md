@@ -114,3 +114,5 @@
 - 产物：新增 `Sm4GcmCryptoHandlerTest` 和 `HmacSm3SignatureHandlerTest`，覆盖 Provider 存在时可用、Provider 缺失时抛出 `SecureAlgorithmUnavailableException`。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml -pl fist-sde-extra -am "-Dtest=Sm4GcmCryptoHandlerTest,HmacSm3SignatureHandlerTest" "-Dsurefire.failIfNoSpecifiedTests=false" test`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml "-DforkCount=0" clean test`、`rg`、`git diff --check`
   摘要：国密 extra 实现验证通过；目标测试 4 个通过，SDE 全模块格式校验 `BUILD SUCCESS`，SDE 全模块 `clean test` 在 `-DforkCount=0` 下通过，extra 10 个测试、boot-starter 23 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
+- 工具：`Get-Content`、`Test-Path`、`rg`、`git diff --check`
+  摘要：补充 `fist-sde` 模块 README 接入说明，覆盖服务端依赖、最小配置、必需 Bean、默认算法、国密 Provider、注解策略、异常转换、首阶段边界和常见问题；文档链接存在，文档扫描未发现第二人称、中文双引号、禁用协议字段、Query 或正式 Feign 代码入口。
