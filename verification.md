@@ -151,3 +151,12 @@
 - `fist-sde-core`：以 `release 8` 重新编译 43 个主源码文件，4 个测试通过。
 - `fist-sde-extra`：以 `release 8` 重新编译 8 个主源码文件，5 个测试通过。
 - `fist-sde-boot-starter`：18 个测试通过，新增覆盖自定义 `SecureExchangeExceptionTranslator` 转换 Web 侧 SDE 异常。
+
+### `git diff --check`
+
+- 新增 `docs/public/develop/sde-protocol.md` 后执行通过，无空白错误。
+
+### `rg -n '你|您|同学|“|”|payloadDigest|keyId|@SecureQuery|SecureQuery' docs/public/develop/sde-protocol.md CHANGELOG.md`
+
+- 文档排版和禁用术语扫描仅命中 `payloadDigest` 的否定说明：`不使用 payloadDigest`。
+- 未发现第二人称、中文双引号、`keyId`、`@SecureQuery` 或 `SecureQuery`。

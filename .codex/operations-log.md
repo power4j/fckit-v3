@@ -75,3 +75,8 @@
 - 产物：`SdeWebAutoConfiguration` 通过 `ObjectProvider<SecureExchangeExceptionTranslator>` 注入可选 translator；`SecureRequestBodyAdvice`、`SecureResponseBodyAdvice` 捕获 `SecureExchangeException` 后按当前报文域和方向交给 `SecureWebExchangeService.translate(...)`。
 - 工具：`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml spring-javaformat:validate`、`.\mvnw.cmd -f fist-kit-infra/fist-sde/pom.xml clean test`、`rg`、`git diff --check`
   摘要：异常 translator 修复提交前验证通过；SDE 全模块格式校验 `BUILD SUCCESS`，SDE `clean test` 通过，boot-starter 18 个测试通过，core/extra 主源码仍以 `release 8` 编译；约束扫描无命中，diff 空白检查通过。
+- 工具：`rg`
+  摘要：对照 1.4 方案的协议规范文档要求，确认除本地技术方案和 Feign 验证报告外，尚无面向跨语言调用方的正式协议规范文档。
+- 产物：新增 `docs/public/develop/sde-protocol.md`，覆盖 envelope 字段、`version` / `scope` / `keyRef` / `policyId` / `algorithm` 语义、payload 编码、canonical text、签名伪代码、Request Body / Response Body 示例、错误排查和首阶段边界；更新 `CHANGELOG.md` 的 `Unreleased`。
+- 工具：`git diff --check`、`rg`
+  摘要：文档提交前验证通过；无空白错误，未发现第二人称、中文双引号、`keyId`、`@SecureQuery` 或 `SecureQuery`；`payloadDigest` 仅作为否定说明出现。
