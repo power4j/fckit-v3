@@ -4,6 +4,11 @@ import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 
+/**
+ * 描述一次 SDE 交换使用的策略配置。
+ * <p>
+ * 策略负责绑定请求/响应模式、算法处理器名称、密钥解析器、nonce 生成器、重放校验器和 envelope 编码配置。
+ */
 public class SecurePolicy {
 
 	private String id;

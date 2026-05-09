@@ -10,6 +10,11 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * SDE 自动配置属性。
+ * <p>
+ * 该属性对象只描述 starter 装配所需的开关、策略与 envelope 字段映射，不隐式提供生产密钥或测试级组件。
+ */
 @ConfigurationProperties(prefix = "fist.sde")
 public class SdeProperties {
 
@@ -47,6 +52,9 @@ public class SdeProperties {
 		return this.envelopes;
 	}
 
+	/**
+	 * 服务端 Spring MVC 接入配置。
+	 */
 	public static class Web {
 
 		private boolean enabled;
@@ -71,6 +79,9 @@ public class SdeProperties {
 
 	}
 
+	/**
+	 * HTTP 客户端接入配置。
+	 */
 	public static class Client {
 
 		private boolean enabled;
@@ -115,6 +126,9 @@ public class SdeProperties {
 
 	}
 
+	/**
+	 * 单个 SDE 策略配置。
+	 */
 	public static class Policy {
 
 		private SecureInputMode requestBodyMode = SecureInputMode.DISABLED;

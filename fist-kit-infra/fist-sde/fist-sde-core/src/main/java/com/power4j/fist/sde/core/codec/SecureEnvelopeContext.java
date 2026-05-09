@@ -7,6 +7,11 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * envelope 编解码上下文。
+ * <p>
+ * 上下文用于描述字段映射、字符集、媒体类型和 Spring MVC 选中的消息转换器类型。
+ */
 public class SecureEnvelopeContext {
 
 	private final String envelopeName;
@@ -33,6 +38,10 @@ public class SecureEnvelopeContext {
 		this.selectedConverterType = selectedConverterType;
 	}
 
+	/**
+	 * 创建默认 envelope 编解码上下文。
+	 * @return 默认上下文
+	 */
 	public static SecureEnvelopeContext defaults() {
 		return SecureEnvelopeContext.builder()
 			.envelopeName("default")
@@ -42,6 +51,11 @@ public class SecureEnvelopeContext {
 			.build();
 	}
 
+	/**
+	 * 基于当前上下文复制出带消息转换器类型的新上下文。
+	 * @param selectedConverterType Spring MVC 选中的消息转换器类型
+	 * @return 新上下文
+	 */
 	public SecureEnvelopeContext withSelectedConverterType(@Nullable Class<?> selectedConverterType) {
 		return SecureEnvelopeContext.builder()
 			.envelopeName(this.envelopeName)

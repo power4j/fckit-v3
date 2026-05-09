@@ -10,6 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * 默认签名规范化实现。
+ * <p>
+ * 签名输入按逻辑字段名的 ASCII 字典序排序，字段之间使用换行分隔；payload 直接使用 envelope 中的规范化密文值。
+ */
 public class DefaultSignatureCanonicalizer implements SignatureCanonicalizer {
 
 	@Override

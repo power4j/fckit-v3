@@ -14,6 +14,11 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 
+/**
+ * 国密 SM4-GCM payload 加解密实现。
+ * <p>
+ * 运行环境必须提供 {@code SM4/GCM/NoPadding} 算法，通常由 Bouncy Castle Provider 提供。
+ */
 public class Sm4GcmCryptoHandler implements CryptoHandler {
 
 	private static final int IV_LENGTH = 12;

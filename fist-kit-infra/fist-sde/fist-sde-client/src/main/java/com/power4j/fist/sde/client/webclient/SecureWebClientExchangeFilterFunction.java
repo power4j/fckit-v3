@@ -24,6 +24,11 @@ import reactor.core.publisher.Mono;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 
+/**
+ * WebClient 交换过滤器。
+ * <p>
+ * 过滤器在请求发送前捕获并封装非空、非 multipart 请求体，并在响应返回后解码响应 envelope。
+ */
 public class SecureWebClientExchangeFilterFunction implements ExchangeFilterFunction {
 
 	private final SecureExchangeOperations operations;

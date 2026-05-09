@@ -8,6 +8,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * 将解密后的 JSON 字节重新交给 Spring MVC 消息转换器读取的输入消息。
+ */
 class SecureHttpInputMessage implements HttpInputMessage {
 
 	private final byte[] body;

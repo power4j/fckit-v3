@@ -3,6 +3,9 @@ package com.power4j.fist.sde.core.key;
 import com.power4j.fist.sde.core.SecureExchangeContext;
 import com.power4j.fist.sde.core.SecureKeyUsage;
 
+/**
+ * 密钥解析器使用的上下文。
+ */
 public class SecureKeyContext {
 
 	private final SecureExchangeContext exchangeContext;

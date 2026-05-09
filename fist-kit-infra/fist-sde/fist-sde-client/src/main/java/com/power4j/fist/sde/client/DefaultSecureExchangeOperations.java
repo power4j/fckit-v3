@@ -33,6 +33,11 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * SDE 客户端交换操作的默认实现。
+ * <p>
+ * 该实现负责客户端请求封装、响应解封装、签名验签、加解密和重放校验。HTTP 客户端适配器应优先复用该实现， 避免重复实现 envelope 处理流程。
+ */
 public class DefaultSecureExchangeOperations implements SecureExchangeOperations {
 
 	private static final String ENVELOPE_VERSION = "1";

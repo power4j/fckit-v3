@@ -4,6 +4,9 @@ import com.power4j.fist.sde.core.SecureExchangeContext;
 import com.power4j.fist.sde.core.SecureKey;
 import com.power4j.fist.sde.core.SecureScope;
 
+/**
+ * 加解密处理器使用的上下文。
+ */
 public class CryptoContext {
 
 	private final SecureExchangeContext exchangeContext;

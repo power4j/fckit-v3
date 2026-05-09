@@ -8,6 +8,11 @@ import feign.codec.Encoder;
 
 import java.lang.reflect.Type;
 
+/**
+ * Feign 请求编码器。
+ * <p>
+ * 编码器委托原始 Feign 编码器生成业务请求体，再将非 multipart 请求体封装为 SDE envelope。
+ */
 public class SecureFeignEncoder implements Encoder {
 
 	private final Encoder delegate;

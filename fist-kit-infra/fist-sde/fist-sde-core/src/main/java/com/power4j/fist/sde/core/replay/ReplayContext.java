@@ -3,6 +3,9 @@ package com.power4j.fist.sde.core.replay;
 import com.power4j.fist.sde.core.SecureExchangeContext;
 import lombok.Builder;
 
+/**
+ * 重放校验器使用的上下文。
+ */
 public class ReplayContext {
 
 	private final SecureExchangeContext exchangeContext;

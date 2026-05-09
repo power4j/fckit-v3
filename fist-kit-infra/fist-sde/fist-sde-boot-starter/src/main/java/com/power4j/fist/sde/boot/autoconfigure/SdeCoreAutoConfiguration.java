@@ -20,17 +20,31 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * SDE 核心组件自动配置。
+ * <p>
+ * 负责注册签名规范化器和策略注册表，不注册算法、密钥解析或重放校验组件。
+ */
 @AutoConfiguration
 @EnableConfigurationProperties(SdeProperties.class)
 @ConditionalOnProperty(prefix = "fist.sde", name = "enabled", havingValue = "true")
 public class SdeCoreAutoConfiguration {
 
+	/**
+	 * 提供默认签名规范化器。
+	 * @return 签名输入规范化器
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public SignatureCanonicalizer signatureCanonicalizer() {
 		return new DefaultSignatureCanonicalizer();
 	}
 
+	/**
+	 * 根据配置属性构造 SDE 策略注册表。
+	 * @param properties SDE 自动配置属性
+	 * @return 策略注册表
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public SecurePolicyRegistry securePolicyRegistry(SdeProperties properties) {

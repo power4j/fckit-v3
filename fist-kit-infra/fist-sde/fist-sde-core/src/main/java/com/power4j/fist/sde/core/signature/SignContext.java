@@ -4,6 +4,9 @@ import com.power4j.fist.sde.core.SecureExchangeContext;
 import com.power4j.fist.sde.core.SecureKey;
 import com.power4j.fist.sde.core.SecureScope;
 
+/**
+ * 签名和验签处理器使用的上下文。
+ */
 public class SignContext {
 
 	private final SecureExchangeContext exchangeContext;

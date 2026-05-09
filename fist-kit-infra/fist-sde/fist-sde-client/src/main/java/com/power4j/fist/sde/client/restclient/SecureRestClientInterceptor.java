@@ -15,6 +15,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * RestClient 请求拦截器。
+ * <p>
+ * 拦截器在请求发送前将非空、非 multipart 请求体封装为 SDE envelope，并在收到响应后解码响应 envelope。
+ */
 public class SecureRestClientInterceptor implements ClientHttpRequestInterceptor {
 
 	private final SecureExchangeOperations operations;

@@ -10,12 +10,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 基于本地内存的重放校验实现。
+ * <p>
+ * 该实现仅在单进程内记录已见 nonce，适合测试、示例和本地验证；多实例生产环境需要替换为共享存储实现。
+ */
 public class InMemoryReplayGuard implements ReplayGuard {
 
 	private final Duration window;
 
 	private final ConcurrentHashMap<String, Instant> seen = new ConcurrentHashMap<>();
 
+	/**
+	 * 创建内存重放校验器。
+	 * @param window 时间戳允许窗口，传入 {@code null} 时使用 5 分钟
+	 */
 	public InMemoryReplayGuard(Duration window) {
 		this.window = window == null ? Duration.ofMinutes(5) : window;
 	}

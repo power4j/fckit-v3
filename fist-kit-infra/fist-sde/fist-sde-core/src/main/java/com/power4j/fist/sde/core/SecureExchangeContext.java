@@ -8,6 +8,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * SDE 处理过程中的交换上下文。
+ * <p>
+ * 上下文在加解密、签名、密钥解析、nonce 和重放校验之间传递本次交换的方向、范围、策略和请求关联信息。
+ */
 public class SecureExchangeContext {
 
 	private final SecureScope scope;
@@ -38,6 +43,11 @@ public class SecureExchangeContext {
 				: Collections.unmodifiableMap(new LinkedHashMap<>(requestContext));
 	}
 
+	/**
+	 * 创建入站交换上下文。
+	 * @param scope 受保护的数据范围
+	 * @return 入站上下文
+	 */
 	public static SecureExchangeContext inbound(SecureScope scope) {
 		return SecureExchangeContext.builder()
 			.scope(scope)
@@ -46,6 +56,11 @@ public class SecureExchangeContext {
 			.build();
 	}
 
+	/**
+	 * 创建出站交换上下文。
+	 * @param scope 受保护的数据范围
+	 * @return 出站上下文
+	 */
 	public static SecureExchangeContext outbound(SecureScope scope) {
 		return SecureExchangeContext.builder()
 			.scope(scope)
@@ -54,6 +69,14 @@ public class SecureExchangeContext {
 			.build();
 	}
 
+	/**
+	 * 基于当前上下文复制出带策略信息的新上下文。
+	 * @param policyId 策略 ID
+	 * @param algorithm 算法标识
+	 * @param keyRef 密钥引用
+	 * @param timestampWindow 时间戳窗口
+	 * @return 带策略信息的新上下文
+	 */
 	public SecureExchangeContext withPolicy(@Nullable String policyId, @Nullable String algorithm,
 			@Nullable String keyRef, @Nullable Duration timestampWindow) {
 		return SecureExchangeContext.builder()

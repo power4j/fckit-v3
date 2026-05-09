@@ -1,5 +1,10 @@
 package com.power4j.fist.sde.core.codec;
 
+/**
+ * envelope 协议逻辑字段到传输字段名的映射配置。
+ * <p>
+ * 逻辑字段名保持稳定，字段映射只影响 JSON 或 Map 中实际使用的字段名。
+ */
 public class SecureEnvelopeFieldMapping {
 
 	private String versionField = "version";
@@ -22,6 +27,10 @@ public class SecureEnvelopeFieldMapping {
 
 	private String metadataField = "metadata";
 
+	/**
+	 * 创建默认字段映射。
+	 * @return 默认字段映射
+	 */
 	public static SecureEnvelopeFieldMapping defaults() {
 		return new SecureEnvelopeFieldMapping();
 	}

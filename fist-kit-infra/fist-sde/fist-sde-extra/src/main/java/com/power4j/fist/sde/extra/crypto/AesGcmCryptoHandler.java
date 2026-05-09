@@ -11,6 +11,11 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 
+/**
+ * 标准版 AES-GCM payload 加解密实现。
+ * <p>
+ * 加密结果使用 URL-safe Base64 编码，原始密文包格式为 IV、密文与认证标签的顺序拼接。
+ */
 public class AesGcmCryptoHandler implements CryptoHandler {
 
 	private static final int IV_LENGTH = 12;

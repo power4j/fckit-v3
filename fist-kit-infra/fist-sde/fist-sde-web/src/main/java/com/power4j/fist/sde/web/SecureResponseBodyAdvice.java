@@ -15,6 +15,11 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+/**
+ * 服务端响应体 SDE 处理入口。
+ * <p>
+ * Advice 在业务对象返回后生成响应 envelope，并保留 Spring MVC 对 String、byte[] 和 POJO 的消息转换行为。
+ */
 @ControllerAdvice
 public class SecureResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 

@@ -9,6 +9,11 @@ import feign.codec.Decoder;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+/**
+ * Feign 响应解码器。
+ * <p>
+ * 解码器先读取响应 envelope 并还原为明文响应体，再委托原始 Feign 解码器转换为业务对象。
+ */
 public class SecureFeignDecoder implements Decoder {
 
 	private final Decoder delegate;

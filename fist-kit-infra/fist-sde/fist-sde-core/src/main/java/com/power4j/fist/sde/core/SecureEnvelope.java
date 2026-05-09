@@ -5,6 +5,12 @@ import org.jspecify.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * SDE envelope 的协议对象。
+ * <p>
+ * 该对象只表示传输格式字段，不承载验签、重放校验、加密或解密行为。字段名映射由
+ * {@link com.power4j.fist.sde.core.codec.SecureEnvelopeFieldMapping} 决定。
+ */
 public class SecureEnvelope {
 
 	private String version;

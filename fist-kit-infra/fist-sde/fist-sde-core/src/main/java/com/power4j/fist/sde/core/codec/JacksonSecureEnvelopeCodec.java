@@ -9,6 +9,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 基于 Jackson 的安全 envelope 编解码实现。
+ * <p>
+ * 该类只负责 envelope 字段与 JSON 结构之间的转换，不执行签名、重放校验、加密或解密。
+ */
 public class JacksonSecureEnvelopeCodec implements SecureEnvelopeCodec {
 
 	private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<Map<String, Object>>() {
@@ -16,10 +21,17 @@ public class JacksonSecureEnvelopeCodec implements SecureEnvelopeCodec {
 
 	private final ObjectMapper objectMapper;
 
+	/**
+	 * 使用独立的默认 {@link ObjectMapper} 创建编解码器。
+	 */
 	public JacksonSecureEnvelopeCodec() {
 		this(new ObjectMapper());
 	}
 
+	/**
+	 * 使用指定 {@link ObjectMapper} 创建编解码器。
+	 * @param objectMapper Jackson 对象映射器
+	 */
 	public JacksonSecureEnvelopeCodec(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}

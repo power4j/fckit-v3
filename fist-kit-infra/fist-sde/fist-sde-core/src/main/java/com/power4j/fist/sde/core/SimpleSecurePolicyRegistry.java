@@ -7,6 +7,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 基于本地 Map 的 SDE 策略注册表实现。
+ * <p>
+ * 该实现适合从配置文件或测试夹具构造策略集合，不负责动态刷新或远程配置读取。
+ */
 public class SimpleSecurePolicyRegistry implements SecurePolicyRegistry {
 
 	private final String defaultPolicyId;
@@ -15,6 +20,12 @@ public class SimpleSecurePolicyRegistry implements SecurePolicyRegistry {
 
 	private final Map<String, SecureEnvelopeContext> envelopes;
 
+	/**
+	 * 创建策略注册表。
+	 * @param defaultPolicyId 默认策略 ID
+	 * @param policies 策略集合，键为策略 ID
+	 * @param envelopes envelope 编解码上下文集合，键为 envelope 名称
+	 */
 	public SimpleSecurePolicyRegistry(String defaultPolicyId, Map<String, SecurePolicy> policies,
 			Map<String, SecureEnvelopeContext> envelopes) {
 		this.defaultPolicyId = defaultPolicyId;

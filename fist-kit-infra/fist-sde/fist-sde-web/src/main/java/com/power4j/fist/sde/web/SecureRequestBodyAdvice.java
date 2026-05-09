@@ -18,6 +18,11 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+/**
+ * 服务端请求体 SDE 处理入口。
+ * <p>
+ * Advice 在 Spring MVC 选择消息转换器之前读取并解密 envelope，之后继续交给原有 HttpMessageConverter 反序列化。
+ */
 @ControllerAdvice
 public class SecureRequestBodyAdvice extends RequestBodyAdviceAdapter {
 

@@ -6,6 +6,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 客户端发起 SDE 交换时传入的上下文。
+ * <p>
+ * 上下文可覆盖默认策略、指定 keyRef，并携带调用方自定义请求上下文。
+ */
 public class SecureExchangeClientContext {
 
 	private final String policyId;

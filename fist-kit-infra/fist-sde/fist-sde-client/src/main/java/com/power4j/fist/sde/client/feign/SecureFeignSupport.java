@@ -9,6 +9,9 @@ import feign.RequestTemplate;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+/**
+ * Feign 客户端适配的内部工具。
+ */
 final class SecureFeignSupport {
 
 	private static final String CONTENT_TYPE = "Content-Type";

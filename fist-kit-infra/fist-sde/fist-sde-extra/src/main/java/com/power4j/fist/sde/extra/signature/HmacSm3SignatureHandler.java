@@ -11,6 +11,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+/**
+ * 国密 HMAC-SM3 签名实现。
+ * <p>
+ * 运行环境必须提供 {@code HmacSM3} 算法，通常由 Bouncy Castle Provider 提供。
+ */
 public class HmacSm3SignatureHandler implements SignatureHandler {
 
 	@Override

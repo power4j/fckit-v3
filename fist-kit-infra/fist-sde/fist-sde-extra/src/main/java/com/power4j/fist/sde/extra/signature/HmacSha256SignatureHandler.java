@@ -9,6 +9,11 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
 import java.util.Base64;
 
+/**
+ * 标准版 HMAC-SHA256 签名实现。
+ * <p>
+ * 签名结果使用 URL-safe Base64 编码，验签时按常量时间比较结果。
+ */
 public class HmacSha256SignatureHandler implements SignatureHandler {
 
 	@Override

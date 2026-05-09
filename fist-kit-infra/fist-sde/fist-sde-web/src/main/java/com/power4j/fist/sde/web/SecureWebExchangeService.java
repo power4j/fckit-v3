@@ -46,6 +46,11 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Map;
 
+/**
+ * 服务端 SDE 请求读取和响应写出服务。
+ * <p>
+ * 该服务承载 MVC Advice 共享的 envelope 解码、验签、重放校验、解密、响应加密和签名流程。
+ */
 public class SecureWebExchangeService {
 
 	static final String REQUEST_SECURE_KEY_REF = SecureWebExchangeService.class.getName() + ".KEY_REF";

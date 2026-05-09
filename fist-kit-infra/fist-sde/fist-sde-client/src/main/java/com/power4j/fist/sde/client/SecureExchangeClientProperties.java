@@ -1,5 +1,8 @@
 package com.power4j.fist.sde.client;
 
+/**
+ * 客户端 SDE 默认配置。
+ */
 public class SecureExchangeClientProperties {
 
 	private String defaultPolicyId;

@@ -22,10 +22,20 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.Map;
 
+/**
+ * SDE HTTP 客户端通用自动配置。
+ * <p>
+ * 负责组装 {@link SecureExchangeOperations}，不主动导入测试级密钥解析器或默认算法实现。
+ */
 @AutoConfiguration(after = { SdeCoreAutoConfiguration.class, SdeCodecAutoConfiguration.class })
 @ConditionalOnProperty(prefix = "fist.sde", name = { "enabled", "client.enabled" }, havingValue = "true")
 public class SdeClientAutoConfiguration {
 
+	/**
+	 * 将 starter 属性转换为客户端运行属性。
+	 * @param properties SDE 自动配置属性
+	 * @return 客户端运行属性
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public SecureExchangeClientProperties secureExchangeClientProperties(SdeProperties properties) {
@@ -36,6 +46,20 @@ public class SdeClientAutoConfiguration {
 		return clientProperties;
 	}
 
+	/**
+	 * 组装客户端 SDE 编解码与加解密操作入口。
+	 * @param policyRegistry 策略注册表
+	 * @param envelopeCodec envelope 编解码器
+	 * @param canonicalizer 签名规范化器
+	 * @param cryptoHandlers 加解密处理器集合
+	 * @param signatureHandlers 签名处理器集合
+	 * @param keyResolvers 密钥解析器集合
+	 * @param nonceGenerators nonce 生成器集合
+	 * @param replayGuards 重放校验器集合
+	 * @param properties 客户端运行属性
+	 * @param logger 客户端日志扩展点
+	 * @return 客户端 SDE 操作入口
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public SecureExchangeOperations secureExchangeOperations(SecurePolicyRegistry policyRegistry,
