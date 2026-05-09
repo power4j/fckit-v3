@@ -1,0 +1,112 @@
+package com.power4j.fist.sde.core.codec;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.power4j.fist.sde.core.SecureEnvelope;
+import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
+import org.jspecify.annotations.Nullable;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * 基于 Jackson 的安全 envelope 编解码实现。
+ * <p>
+ * 该类只负责 envelope 字段与 JSON 结构之间的转换，不执行签名、重放校验、加密或解密。
+ */
+public class JacksonSecureEnvelopeCodec implements SecureEnvelopeCodec {
+
+	private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<Map<String, Object>>() {
+	};
+
+	private final ObjectMapper objectMapper;
+
+	/**
+	 * 使用独立的默认 {@link ObjectMapper} 创建编解码器。
+	 */
+	public JacksonSecureEnvelopeCodec() {
+		this(new ObjectMapper());
+	}
+
+	/**
+	 * 使用指定 {@link ObjectMapper} 创建编解码器。
+	 * @param objectMapper Jackson 对象映射器
+	 */
+	public JacksonSecureEnvelopeCodec(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
+
+	@Override
+	public SecureEnvelope decode(byte[] input, @Nullable SecureEnvelopeContext context) {
+		try {
+			Map<String, Object> body = this.objectMapper.readValue(input, MAP_TYPE);
+			SecureEnvelopeFieldMapping mapping = actual(context).getFieldMapping();
+			SecureEnvelope envelope = new SecureEnvelope();
+			envelope.setVersion(text(body.get(mapping.getVersionField())));
+			envelope.setScope(text(body.get(mapping.getScopeField())));
+			envelope.setPayload(text(body.get(mapping.getPayloadField())));
+			envelope.setSignature(text(body.get(mapping.getSignatureField())));
+			envelope.setTimestamp(text(body.get(mapping.getTimestampField())));
+			envelope.setNonce(text(body.get(mapping.getNonceField())));
+			envelope.setKeyRef(text(body.get(mapping.getKeyRefField())));
+			envelope.setAlgorithm(text(body.get(mapping.getAlgorithmField())));
+			envelope.setPolicyId(text(body.get(mapping.getPolicyIdField())));
+			Object metadata = body.get(mapping.getMetadataField());
+			if (metadata instanceof Map) {
+				Map<String, String> converted = new LinkedHashMap<>();
+				for (Map.Entry<?, ?> entry : ((Map<?, ?>) metadata).entrySet()) {
+					converted.put(String.valueOf(entry.getKey()), text(entry.getValue()));
+				}
+				envelope.setMetadata(converted);
+			}
+			return envelope;
+		}
+		catch (Exception ex) {
+			throw new SecureEnvelopeException("failed to decode secure envelope", ex);
+		}
+	}
+
+	@Override
+	public byte[] encodeToBytes(SecureEnvelope envelope, @Nullable SecureEnvelopeContext context) {
+		try {
+			return this.objectMapper.writeValueAsBytes(encodeToBody(envelope, context));
+		}
+		catch (Exception ex) {
+			throw new SecureEnvelopeException("failed to encode secure envelope", ex);
+		}
+	}
+
+	@Override
+	public Object encodeToBody(SecureEnvelope envelope, @Nullable SecureEnvelopeContext context) {
+		SecureEnvelopeFieldMapping mapping = actual(context).getFieldMapping();
+		Map<String, Object> body = new LinkedHashMap<>();
+		put(body, mapping.getVersionField(), envelope.getVersion());
+		put(body, mapping.getScopeField(), envelope.getScope());
+		put(body, mapping.getPayloadField(), envelope.getPayload());
+		put(body, mapping.getSignatureField(), envelope.getSignature());
+		put(body, mapping.getTimestampField(), envelope.getTimestamp());
+		put(body, mapping.getNonceField(), envelope.getNonce());
+		put(body, mapping.getKeyRefField(), envelope.getKeyRef());
+		put(body, mapping.getAlgorithmField(), envelope.getAlgorithm());
+		put(body, mapping.getPolicyIdField(), envelope.getPolicyId());
+		if (envelope.getMetadata() != null && !envelope.getMetadata().isEmpty()) {
+			body.put(mapping.getMetadataField(), new LinkedHashMap<>(envelope.getMetadata()));
+		}
+		return body;
+	}
+
+	private static SecureEnvelopeContext actual(@Nullable SecureEnvelopeContext context) {
+		return context == null ? SecureEnvelopeContext.defaults() : context;
+	}
+
+	private static void put(Map<String, Object> body, @Nullable String field, @Nullable String value) {
+		if (field != null && value != null) {
+			body.put(field, value);
+		}
+	}
+
+	private static @Nullable String text(@Nullable Object value) {
+		return value == null ? null : String.valueOf(value);
+	}
+
+}

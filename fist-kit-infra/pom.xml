@@ -38,5 +38,6 @@
     <module>fist-mybatis-plus</module>
     <module>fist-support-test</module>
     <module>fist-support-spring</module>
+    <module>fist-sde</module>
   </modules>
 </project>

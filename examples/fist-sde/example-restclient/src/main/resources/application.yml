@@ -1,0 +1,35 @@
+server:
+  port: 18082
+
+sde:
+  example:
+    run-on-startup: true
+
+logging:
+  level:
+    com.power4j.fist3.examples.sde.restclient: DEBUG
+    com.power4j.fist.sde: DEBUG
+
+fist:
+  sde:
+    enabled: true
+    web:
+      enabled: true
+      default-policy-id: body-strict-v1
+    client:
+      enabled: true
+      default-policy-id: body-strict-v1
+      default-key-ref: tenant-a
+      log-payload: true
+    policies:
+      body-strict-v1:
+        request-body-mode: REQUIRED
+        response-body-mode: FOLLOW_REQUEST
+        crypto-enabled: true
+        signature-enabled: true
+        crypto-handler: aesGcmCryptoHandler
+        signature-handler: hmacSha256SignatureHandler
+        key-resolver: staticSecureKeyResolver
+        nonce-generator: secureRandomNonceGenerator
+        replay-guard: replayGuard
+        timestamp-window: 5m

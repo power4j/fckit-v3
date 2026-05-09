@@ -36,6 +36,7 @@ FIST Kit v3 是基于 Spring Boot 3.x / Spring Cloud 的 Java 基础框架库，
 
 - 构建：Maven Wrapper，优先使用 `./mvnw` 或 `.\mvnw.cmd`
 - 语言：Java 17，必要时使用 Groovy 测试
+- `fist-kit-infra` 下的基础设施模块如已声明 `maven.compiler.release=8`，新增生产代码必须保持 JDK 8 源码兼容；不得使用 Java 9+ API、`record`、`var`、`List.of`、`Map.of`、`Stream.toList` 等写法。
 - 框架：Spring Boot 3.5、Spring Cloud 2025、Spring Cloud Alibaba
 - 测试：JUnit 5、Mockito、Spock 2.4
 - 格式：`spring-javaformat-maven-plugin`
@@ -93,6 +94,10 @@ benchmarks/              基准测试工程
 - 源码注释使用中文，只解释意图、约束或非显然行为。
 - 禁止无意义注释、尾注释和装饰性符号。
 - 公共 API 需要稳定、清晰，并尽量减少暴露面。
+- 所有库模块中的接口、注解、抽象基类、扩展点和配置属性等「契约类」代码应编写必要的 Javadoc；类注释说明职责与适用边界，方法注释说明参数、返回值、异常和调用约束，避免只复述名称的空泛注释。
+- 公共接口、工具类包和面向扩展的 API 包应使用 jspecify 表达空值契约；包级默认非空优先使用 `@NullMarked` 的 `package-info.java`，可参考 `fist-kit-infra/fist-logback/src/main/java/com/power4j/fist/logback/api/package-info.java`。
+- 在 `@NullMarked` 作用范围内，允许传入或返回 `null` 的参数、返回值、字段和泛型类型参数必须显式标注 `@Nullable`；不得依赖实现细节或注释隐式表达可空。
+- 新增 jspecify 依赖时遵循 BOM 管理，子模块只声明 `org.jspecify:jspecify`，不重复声明版本号。
 - starter 和自动配置类必须遵循 Spring Boot 3 的自动配置注册方式。
 - 同时维护 `spring.factories` 与 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 时，不得破坏旧配置的加载预期。
 - 涉及日志脱敏、认证、授权、租户、网关、数据访问等能力时，必须保留既有安全语义和兼容约束。
