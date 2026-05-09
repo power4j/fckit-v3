@@ -17,6 +17,8 @@ public class SdeProperties {
 
 	private final Web web = new Web();
 
+	private final Client client = new Client();
+
 	private final Map<String, Policy> policies = new LinkedHashMap<>();
 
 	private final Map<String, SecureEnvelopeFieldMapping> envelopes = new LinkedHashMap<>();
@@ -31,6 +33,10 @@ public class SdeProperties {
 
 	public Web getWeb() {
 		return this.web;
+	}
+
+	public Client getClient() {
+		return this.client;
 	}
 
 	public Map<String, Policy> getPolicies() {
@@ -61,6 +67,50 @@ public class SdeProperties {
 
 		public void setDefaultPolicyId(String defaultPolicyId) {
 			this.defaultPolicyId = defaultPolicyId;
+		}
+
+	}
+
+	public static class Client {
+
+		private boolean enabled;
+
+		private String defaultPolicyId;
+
+		private String defaultKeyRef;
+
+		private boolean logPayload;
+
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+		public String getDefaultPolicyId() {
+			return this.defaultPolicyId;
+		}
+
+		public void setDefaultPolicyId(String defaultPolicyId) {
+			this.defaultPolicyId = defaultPolicyId;
+		}
+
+		public String getDefaultKeyRef() {
+			return this.defaultKeyRef;
+		}
+
+		public void setDefaultKeyRef(String defaultKeyRef) {
+			this.defaultKeyRef = defaultKeyRef;
+		}
+
+		public boolean isLogPayload() {
+			return this.logPayload;
+		}
+
+		public void setLogPayload(boolean logPayload) {
+			this.logPayload = logPayload;
 		}
 
 	}

@@ -1,3 +1,7 @@
 com.power4j.fist.sde.boot.autoconfigure.SdeCoreAutoConfiguration
 com.power4j.fist.sde.boot.autoconfigure.SdeCodecAutoConfiguration
 com.power4j.fist.sde.boot.autoconfigure.SdeWebAutoConfiguration
+com.power4j.fist.sde.boot.autoconfigure.client.SdeClientAutoConfiguration
+com.power4j.fist.sde.boot.autoconfigure.client.SdeFeignClientAutoConfiguration
+com.power4j.fist.sde.boot.autoconfigure.client.SdeRestClientAutoConfiguration
+com.power4j.fist.sde.boot.autoconfigure.client.SdeWebClientAutoConfiguration
