@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- 将 `tile-crypto` 升级到 `1.8.2`，并调整 `fist-support-security` 的 Bouncy Castle Provider 传递依赖排除项。
+
 ## [3.13.0] - 2026-05-09
 
 ### Added
