@@ -15,6 +15,10 @@
 - 新增 `fist-sde` 模块接入说明，覆盖服务端启用、默认算法、国密 Provider、必需 Bean、异常转换和首阶段边界。
 - 新增 `fist-sde-extra` SM3 摘要适配实现。
 
+### Changed
+
+- 将 Bouncy Castle Provider 依赖从 `bcprov-jdk15to18` 切换为 `bcprov-jdk18on`，并排除 `tile-crypto` 传递带入的旧 Provider artifact。
+
 ### Fixed
 
 - 修正 `fist-sde-web` 入站请求未校验 envelope 协议格式版本的问题，当前实现只接受 `version` 为 `1` 的请求。
