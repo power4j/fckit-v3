@@ -22,12 +22,10 @@
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-extra</artifactId>
-      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -58,7 +56,6 @@
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-web</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

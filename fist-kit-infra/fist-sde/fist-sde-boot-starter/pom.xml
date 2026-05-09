@@ -17,17 +17,14 @@
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-web</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-client</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -51,7 +48,6 @@
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-extra</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

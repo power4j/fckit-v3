@@ -22,7 +22,6 @@
     <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
