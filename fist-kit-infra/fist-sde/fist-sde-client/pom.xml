@@ -25,6 +25,22 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-sde-extra</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
       <optional>true</optional>
@@ -38,12 +54,6 @@
       <groupId>io.github.openfeign</groupId>
       <artifactId>feign-core</artifactId>
       <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>com.power4j.fist3</groupId>
-      <artifactId>fist-sde-extra</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
