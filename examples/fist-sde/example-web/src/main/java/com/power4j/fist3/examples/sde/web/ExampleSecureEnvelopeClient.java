@@ -22,6 +22,8 @@ import com.power4j.fist.sde.core.replay.ReplayGuard;
 import com.power4j.fist.sde.core.signature.SignContext;
 import com.power4j.fist.sde.core.signature.SignatureCanonicalizer;
 import com.power4j.fist.sde.core.signature.SignatureHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -31,6 +33,8 @@ import java.time.Instant;
 
 @Component
 class ExampleSecureEnvelopeClient {
+
+	private static final Logger log = LoggerFactory.getLogger(ExampleSecureEnvelopeClient.class);
 
 	private static final Duration TIMESTAMP_WINDOW = Duration.ofMinutes(5);
 
@@ -65,6 +69,8 @@ class ExampleSecureEnvelopeClient {
 
 	String encodeRequest(Object body) throws IOException {
 		byte[] plain = this.objectMapper.writeValueAsBytes(body);
+		log.info("Web client raw request body:\n{}",
+				this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body));
 		SecureExchangeContext exchange = exchange(SecureScope.BODY, SecureDirection.OUTBOUND);
 		SecureKey encryptKey = key(exchange, SecureKeyUsage.ENCRYPT);
 		String payload = new String(this.cryptoHandler.encrypt(plain, new CryptoContext(exchange, encryptKey)),
@@ -80,8 +86,10 @@ class ExampleSecureEnvelopeClient {
 		SecureKey signKey = key(exchange, SecureKeyUsage.SIGN);
 		envelope.setSignature(new String(this.signatureHandler.sign(this.canonicalizer.canonicalize(envelope, exchange),
 				new SignContext(exchange, signKey)), StandardCharsets.UTF_8));
-		return new String(this.envelopeCodec.encodeToBytes(envelope, SecureEnvelopeContext.defaults()),
+		String encoded = new String(this.envelopeCodec.encodeToBytes(envelope, SecureEnvelopeContext.defaults()),
 				StandardCharsets.UTF_8);
+		log.info("Web client request envelope:\n{}", prettyJson(encoded));
+		return encoded;
 	}
 
 	<T> T decodeResponse(String responseBody, Class<T> responseType) throws IOException {
