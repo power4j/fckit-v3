@@ -17,6 +17,7 @@
   <modules>
     <module>fist-sde-core</module>
     <module>fist-sde-extra</module>
+    <module>fist-sde-client</module>
     <module>fist-sde-web</module>
     <module>fist-sde-boot-starter</module>
   </modules>
