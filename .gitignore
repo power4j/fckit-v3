@@ -103,9 +103,9 @@ docs/local/
 # temp files(e.g. test,analyze ...)
 temp/
 tmp/
+verification.md
 
 # AI
 .claude/
 .mcp.json
 .codex/
-
