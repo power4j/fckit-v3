@@ -4,6 +4,7 @@ import com.power4j.fist.sde.core.SecureEnvelope;
 import com.power4j.fist.sde.core.SecureExchangeContext;
 import com.power4j.fist.sde.core.SecureScope;
 import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class DefaultSignatureCanonicalizer implements SignatureCanonicalizer {
 		return builder.toString().getBytes(StandardCharsets.UTF_8);
 	}
 
-	private static String required(String name, String value) {
+	private static String required(String name, @Nullable String value) {
 		if (value == null || value.length() == 0) {
 			throw new SecureEnvelopeException("required envelope field is blank: " + name);
 		}
@@ -43,7 +44,7 @@ public class DefaultSignatureCanonicalizer implements SignatureCanonicalizer {
 		return value;
 	}
 
-	private static void optional(Map<String, String> fields, String name, String value) {
+	private static void optional(Map<String, String> fields, String name, @Nullable String value) {
 		if (value != null && value.length() > 0) {
 			rejectLineBreak(name, value);
 			fields.put(name, value);
@@ -56,7 +57,7 @@ public class DefaultSignatureCanonicalizer implements SignatureCanonicalizer {
 		}
 	}
 
-	private static String metadata(Map<String, String> metadata) {
+	private static @Nullable String metadata(@Nullable Map<String, String> metadata) {
 		if (metadata == null || metadata.isEmpty()) {
 			return null;
 		}

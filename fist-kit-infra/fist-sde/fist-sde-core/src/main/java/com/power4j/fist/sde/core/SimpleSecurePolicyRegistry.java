@@ -2,6 +2,7 @@ package com.power4j.fist.sde.core;
 
 import com.power4j.fist.sde.core.codec.SecureEnvelopeContext;
 import com.power4j.fist.sde.core.exception.SecurePolicyNotFoundException;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class SimpleSecurePolicyRegistry implements SecurePolicyRegistry {
 	}
 
 	@Override
-	public SecureEnvelopeContext getEnvelopeContext(String envelopeName) {
+	public SecureEnvelopeContext getEnvelopeContext(@Nullable String envelopeName) {
 		SecureEnvelopeContext context = this.envelopes.get(envelopeName);
 		return context == null ? SecureEnvelopeContext.defaults() : context;
 	}

@@ -1,5 +1,7 @@
 package com.power4j.fist.sde.core;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Arrays;
 
 public class SecureKey {
@@ -10,7 +12,7 @@ public class SecureKey {
 
 	private final byte[] encoded;
 
-	public SecureKey(String keyRef, String algorithm, byte[] encoded) {
+	public SecureKey(String keyRef, String algorithm, @Nullable byte[] encoded) {
 		this.keyRef = keyRef;
 		this.algorithm = algorithm;
 		this.encoded = encoded == null ? new byte[0] : Arrays.copyOf(encoded, encoded.length);

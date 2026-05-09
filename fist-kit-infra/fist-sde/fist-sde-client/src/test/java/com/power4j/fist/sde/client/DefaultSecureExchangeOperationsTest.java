@@ -88,9 +88,18 @@ class DefaultSecureExchangeOperationsTest {
 		nonceGenerators.put("secureRandomNonceGenerator", new SecureRandomNonceGenerator());
 		Map<String, ReplayGuard> replayGuards = new LinkedHashMap<>();
 		replayGuards.put("replayGuard", new InMemoryReplayGuard(Duration.ofMinutes(5)));
-		return new DefaultSecureExchangeOperations(policyRegistry(), this.envelopeCodec,
-				new DefaultSignatureCanonicalizer(), cryptoHandlers, signatureHandlers, keyResolvers, nonceGenerators,
-				replayGuards, properties, logger);
+		return DefaultSecureExchangeOperations.builder()
+			.policyRegistry(policyRegistry())
+			.envelopeCodec(this.envelopeCodec)
+			.canonicalizer(new DefaultSignatureCanonicalizer())
+			.cryptoHandlers(cryptoHandlers)
+			.signatureHandlers(signatureHandlers)
+			.keyResolvers(keyResolvers)
+			.nonceGenerators(nonceGenerators)
+			.replayGuards(replayGuards)
+			.properties(properties)
+			.logger(logger)
+			.build();
 	}
 
 	private SecurePolicyRegistry policyRegistry() {

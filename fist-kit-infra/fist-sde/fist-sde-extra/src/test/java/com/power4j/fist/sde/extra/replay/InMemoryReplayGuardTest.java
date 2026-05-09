@@ -16,15 +16,25 @@ class InMemoryReplayGuardTest {
 	@Test
 	void shouldRejectReplayAndExpiredTimestamp() {
 		InMemoryReplayGuard guard = new InMemoryReplayGuard(Duration.ofMinutes(5));
-		ReplayContext context = new ReplayContext(SecureExchangeContext.inbound(SecureScope.BODY), "key-ref", "policy",
-				"nonce-1", Instant.now().toString());
+		ReplayContext context = ReplayContext.builder()
+			.exchangeContext(SecureExchangeContext.inbound(SecureScope.BODY))
+			.keyRef("key-ref")
+			.policyId("policy")
+			.nonce("nonce-1")
+			.timestamp(Instant.now().toString())
+			.build();
 
 		guard.checkAndMark(context);
 
 		assertThatThrownBy(() -> guard.checkAndMark(context)).isInstanceOf(SecureReplayException.class);
 
-		ReplayContext expired = new ReplayContext(SecureExchangeContext.inbound(SecureScope.BODY), "key-ref", "policy",
-				"nonce-2", Instant.now().minus(Duration.ofMinutes(10)).toString());
+		ReplayContext expired = ReplayContext.builder()
+			.exchangeContext(SecureExchangeContext.inbound(SecureScope.BODY))
+			.keyRef("key-ref")
+			.policyId("policy")
+			.nonce("nonce-2")
+			.timestamp(Instant.now().minus(Duration.ofMinutes(10)).toString())
+			.build();
 		assertThatThrownBy(() -> guard.checkAndMark(expired)).isInstanceOf(SecureReplayException.class)
 			.hasMessageContaining("timestamp");
 	}
@@ -34,8 +44,13 @@ class InMemoryReplayGuardTest {
 		InMemoryReplayGuard guard = new InMemoryReplayGuard(Duration.ofMinutes(5));
 		SecureExchangeContext exchange = SecureExchangeContext.inbound(SecureScope.BODY)
 			.withPolicy("strict-policy", null, "key-ref", Duration.ofSeconds(1));
-		ReplayContext expired = new ReplayContext(exchange, "key-ref", "strict-policy", "nonce-3",
-				Instant.now().minus(Duration.ofSeconds(3)).toString());
+		ReplayContext expired = ReplayContext.builder()
+			.exchangeContext(exchange)
+			.keyRef("key-ref")
+			.policyId("strict-policy")
+			.nonce("nonce-3")
+			.timestamp(Instant.now().minus(Duration.ofSeconds(3)).toString())
+			.build();
 
 		assertThatThrownBy(() -> guard.checkAndMark(expired)).isInstanceOf(SecureReplayException.class)
 			.hasMessageContaining("timestamp");

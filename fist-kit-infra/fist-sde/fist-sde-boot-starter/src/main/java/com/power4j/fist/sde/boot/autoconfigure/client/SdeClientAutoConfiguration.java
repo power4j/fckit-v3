@@ -44,9 +44,18 @@ public class SdeClientAutoConfiguration {
 			Map<String, SecureKeyResolver> keyResolvers, Map<String, NonceGenerator> nonceGenerators,
 			Map<String, ReplayGuard> replayGuards, SecureExchangeClientProperties properties,
 			org.springframework.beans.factory.ObjectProvider<SecureExchangeClientLogger> logger) {
-		return new DefaultSecureExchangeOperations(policyRegistry, envelopeCodec, canonicalizer, cryptoHandlers,
-				signatureHandlers, keyResolvers, nonceGenerators, replayGuards, properties,
-				logger.getIfAvailable(() -> SecureExchangeClientLogger.NONE));
+		return DefaultSecureExchangeOperations.builder()
+			.policyRegistry(policyRegistry)
+			.envelopeCodec(envelopeCodec)
+			.canonicalizer(canonicalizer)
+			.cryptoHandlers(cryptoHandlers)
+			.signatureHandlers(signatureHandlers)
+			.keyResolvers(keyResolvers)
+			.nonceGenerators(nonceGenerators)
+			.replayGuards(replayGuards)
+			.properties(properties)
+			.logger(logger.getIfAvailable(() -> SecureExchangeClientLogger.NONE))
+			.build();
 	}
 
 }

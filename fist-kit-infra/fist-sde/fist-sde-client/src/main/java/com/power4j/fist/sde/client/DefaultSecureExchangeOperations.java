@@ -25,6 +25,8 @@ import com.power4j.fist.sde.core.replay.ReplayGuard;
 import com.power4j.fist.sde.core.signature.SignContext;
 import com.power4j.fist.sde.core.signature.SignatureCanonicalizer;
 import com.power4j.fist.sde.core.signature.SignatureHandler;
+import lombok.Builder;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -55,11 +57,12 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 
 	private final SecureExchangeClientLogger logger;
 
+	@Builder
 	public DefaultSecureExchangeOperations(SecurePolicyRegistry policyRegistry, SecureEnvelopeCodec envelopeCodec,
 			SignatureCanonicalizer canonicalizer, Map<String, CryptoHandler> cryptoHandlers,
 			Map<String, SignatureHandler> signatureHandlers, Map<String, SecureKeyResolver> keyResolvers,
 			Map<String, NonceGenerator> nonceGenerators, Map<String, ReplayGuard> replayGuards,
-			SecureExchangeClientProperties properties, SecureExchangeClientLogger logger) {
+			@Nullable SecureExchangeClientProperties properties, @Nullable SecureExchangeClientLogger logger) {
 		this.policyRegistry = policyRegistry;
 		this.envelopeCodec = envelopeCodec;
 		this.canonicalizer = canonicalizer;
@@ -73,17 +76,17 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 	}
 
 	@Override
-	public byte[] encodeRequest(byte[] body, SecureExchangeClientContext context) {
+	public byte[] encodeRequest(byte[] body, @Nullable SecureExchangeClientContext context) {
 		return encode(body, context, SecureScope.BODY);
 	}
 
 	@Override
-	public byte[] encodeResponse(byte[] body, SecureExchangeClientContext context) {
+	public byte[] encodeResponse(byte[] body, @Nullable SecureExchangeClientContext context) {
 		return encode(body, context, SecureScope.RESPONSE_BODY);
 	}
 
 	@Override
-	public byte[] decodeResponse(byte[] input, SecureExchangeClientContext context) {
+	public byte[] decodeResponse(byte[] input, @Nullable SecureExchangeClientContext context) {
 		if (this.properties.isLogPayload()) {
 			this.logger.responseEnvelope(input, context);
 		}
@@ -97,9 +100,15 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 		if (hasText(envelope.getPolicyId()) && !policy.getId().equals(envelope.getPolicyId())) {
 			throw new SecureEnvelopeException("response envelope policyId does not match current policy");
 		}
-		SecureExchangeContext exchange = new SecureExchangeContext(SecureScope.RESPONSE_BODY, SecureDirection.INBOUND,
-				policy.getId(), envelope.getAlgorithm(), envelope.getKeyRef(), policy.getTimestampWindow(),
-				context == null ? null : context.getRequestContext());
+		SecureExchangeContext exchange = SecureExchangeContext.builder()
+			.scope(SecureScope.RESPONSE_BODY)
+			.direction(SecureDirection.INBOUND)
+			.policyId(policy.getId())
+			.algorithm(envelope.getAlgorithm())
+			.keyRef(envelope.getKeyRef())
+			.timestampWindow(policy.getTimestampWindow())
+			.requestContext(context == null ? null : context.getRequestContext())
+			.build();
 		if (policy.isSignatureEnabled()) {
 			SecureKey verifyKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.VERIFY);
 			boolean verified = signature(policy).verify(this.canonicalizer.canonicalize(envelope, exchange),
@@ -108,8 +117,13 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 				throw new SecureSignatureException("secure response signature verification failed");
 			}
 		}
-		replay(policy).checkAndMark(new ReplayContext(exchange, envelope.getKeyRef(), policy.getId(),
-				envelope.getNonce(), envelope.getTimestamp()));
+		replay(policy).checkAndMark(ReplayContext.builder()
+			.exchangeContext(exchange)
+			.keyRef(envelope.getKeyRef())
+			.policyId(policy.getId())
+			.nonce(envelope.getNonce())
+			.timestamp(envelope.getTimestamp())
+			.build());
 		byte[] plain = envelope.getPayload().getBytes(StandardCharsets.UTF_8);
 		if (policy.isCryptoEnabled()) {
 			SecureKey decryptKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.DECRYPT);
@@ -121,7 +135,7 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 		return plain;
 	}
 
-	private byte[] encode(byte[] body, SecureExchangeClientContext context, SecureScope scope) {
+	private byte[] encode(byte[] body, @Nullable SecureExchangeClientContext context, SecureScope scope) {
 		SecurePolicy policy = policy(context);
 		String keyRef = keyRef(context);
 		if (!hasText(keyRef)) {
@@ -130,8 +144,14 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 		if (this.properties.isLogPayload() && scope == SecureScope.BODY) {
 			this.logger.requestPlain(body, context);
 		}
-		SecureExchangeContext exchange = new SecureExchangeContext(scope, SecureDirection.OUTBOUND, policy.getId(),
-				null, keyRef, policy.getTimestampWindow(), context == null ? null : context.getRequestContext());
+		SecureExchangeContext exchange = SecureExchangeContext.builder()
+			.scope(scope)
+			.direction(SecureDirection.OUTBOUND)
+			.policyId(policy.getId())
+			.keyRef(keyRef)
+			.timestampWindow(policy.getTimestampWindow())
+			.requestContext(context == null ? null : context.getRequestContext())
+			.build();
 		String payload = new String(body, StandardCharsets.UTF_8);
 		if (policy.isCryptoEnabled()) {
 			SecureKey encryptKey = key(policy, exchange, keyRef, SecureKeyUsage.ENCRYPT);
@@ -179,7 +199,7 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 		}
 	}
 
-	private SecurePolicy policy(SecureExchangeClientContext context) {
+	private SecurePolicy policy(@Nullable SecureExchangeClientContext context) {
 		String policyId = context == null ? null : context.getPolicyId();
 		if (!hasText(policyId)) {
 			policyId = this.properties.getDefaultPolicyId();
@@ -190,7 +210,7 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 		return this.policyRegistry.getPolicy(policyId);
 	}
 
-	private String keyRef(SecureExchangeClientContext context) {
+	private @Nullable String keyRef(@Nullable SecureExchangeClientContext context) {
 		if (context != null && hasText(context.getKeyRef())) {
 			return context.getKeyRef();
 		}
@@ -226,11 +246,11 @@ public class DefaultSecureExchangeOperations implements SecureExchangeOperations
 		return bean;
 	}
 
-	private static boolean hasText(String value) {
+	private static boolean hasText(@Nullable String value) {
 		return value != null && value.trim().length() > 0;
 	}
 
-	private static <K, V> Map<K, V> safeMap(Map<K, V> source) {
+	private static <K, V> Map<K, V> safeMap(@Nullable Map<K, V> source) {
 		return source == null ? Collections.<K, V>emptyMap() : source;
 	}
 

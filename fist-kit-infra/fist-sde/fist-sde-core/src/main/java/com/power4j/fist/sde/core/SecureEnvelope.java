@@ -1,5 +1,7 @@
 package com.power4j.fist.sde.core;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,75 +27,75 @@ public class SecureEnvelope {
 
 	private Map<String, String> metadata = new LinkedHashMap<>();
 
-	public String getVersion() {
+	public @Nullable String getVersion() {
 		return this.version;
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(@Nullable String version) {
 		this.version = version;
 	}
 
-	public String getScope() {
+	public @Nullable String getScope() {
 		return this.scope;
 	}
 
-	public void setScope(String scope) {
+	public void setScope(@Nullable String scope) {
 		this.scope = scope;
 	}
 
-	public String getPayload() {
+	public @Nullable String getPayload() {
 		return this.payload;
 	}
 
-	public void setPayload(String payload) {
+	public void setPayload(@Nullable String payload) {
 		this.payload = payload;
 	}
 
-	public String getSignature() {
+	public @Nullable String getSignature() {
 		return this.signature;
 	}
 
-	public void setSignature(String signature) {
+	public void setSignature(@Nullable String signature) {
 		this.signature = signature;
 	}
 
-	public String getTimestamp() {
+	public @Nullable String getTimestamp() {
 		return this.timestamp;
 	}
 
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(@Nullable String timestamp) {
 		this.timestamp = timestamp;
 	}
 
-	public String getNonce() {
+	public @Nullable String getNonce() {
 		return this.nonce;
 	}
 
-	public void setNonce(String nonce) {
+	public void setNonce(@Nullable String nonce) {
 		this.nonce = nonce;
 	}
 
-	public String getKeyRef() {
+	public @Nullable String getKeyRef() {
 		return this.keyRef;
 	}
 
-	public void setKeyRef(String keyRef) {
+	public void setKeyRef(@Nullable String keyRef) {
 		this.keyRef = keyRef;
 	}
 
-	public String getAlgorithm() {
+	public @Nullable String getAlgorithm() {
 		return this.algorithm;
 	}
 
-	public void setAlgorithm(String algorithm) {
+	public void setAlgorithm(@Nullable String algorithm) {
 		this.algorithm = algorithm;
 	}
 
-	public String getPolicyId() {
+	public @Nullable String getPolicyId() {
 		return this.policyId;
 	}
 
-	public void setPolicyId(String policyId) {
+	public void setPolicyId(@Nullable String policyId) {
 		this.policyId = policyId;
 	}
 
@@ -101,7 +103,7 @@ public class SecureEnvelope {
 		return this.metadata;
 	}
 
-	public void setMetadata(Map<String, String> metadata) {
+	public void setMetadata(@Nullable Map<String, String> metadata) {
 		this.metadata = metadata == null ? new LinkedHashMap<String, String>() : new LinkedHashMap<>(metadata);
 	}
 

@@ -31,6 +31,8 @@ import com.power4j.fist.sde.core.replay.ReplayGuard;
 import com.power4j.fist.sde.core.signature.SignContext;
 import com.power4j.fist.sde.core.signature.SignatureCanonicalizer;
 import com.power4j.fist.sde.core.signature.SignatureHandler;
+import lombok.Builder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpHeaders;
@@ -70,11 +72,12 @@ public class SecureWebExchangeService {
 
 	private final SecureExchangeExceptionTranslator exceptionTranslator;
 
+	@Builder
 	public SecureWebExchangeService(SecurePolicyRegistry policyRegistry, SecureEnvelopeCodec envelopeCodec,
 			SignatureCanonicalizer canonicalizer, SecureJsonCodec jsonCodec, Map<String, CryptoHandler> cryptoHandlers,
 			Map<String, SignatureHandler> signatureHandlers, Map<String, SecureKeyResolver> keyResolvers,
 			Map<String, NonceGenerator> nonceGenerators, Map<String, ReplayGuard> replayGuards,
-			SecureExchangeExceptionTranslator exceptionTranslator) {
+			@Nullable SecureExchangeExceptionTranslator exceptionTranslator) {
 		this.policyRegistry = policyRegistry;
 		this.envelopeCodec = envelopeCodec;
 		this.canonicalizer = canonicalizer;
@@ -164,8 +167,14 @@ public class SecureWebExchangeService {
 		if (StringUtils.hasText(envelope.getPolicyId()) && !policy.getId().equals(envelope.getPolicyId())) {
 			throw new SecureEnvelopeException("request envelope policyId does not match current policy");
 		}
-		SecureExchangeContext exchange = new SecureExchangeContext(SecureScope.BODY, SecureDirection.INBOUND,
-				policy.getId(), envelope.getAlgorithm(), envelope.getKeyRef(), policy.getTimestampWindow(), null);
+		SecureExchangeContext exchange = SecureExchangeContext.builder()
+			.scope(SecureScope.BODY)
+			.direction(SecureDirection.INBOUND)
+			.policyId(policy.getId())
+			.algorithm(envelope.getAlgorithm())
+			.keyRef(envelope.getKeyRef())
+			.timestampWindow(policy.getTimestampWindow())
+			.build();
 		if (policy.isSignatureEnabled()) {
 			byte[] signingInput = this.canonicalizer.canonicalize(envelope, exchange);
 			SecureKey verifyKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.VERIFY);
@@ -175,8 +184,13 @@ public class SecureWebExchangeService {
 				throw new SecureSignatureException("secure request signature verification failed");
 			}
 		}
-		replay(policy).checkAndMark(new ReplayContext(exchange, envelope.getKeyRef(), policy.getId(),
-				envelope.getNonce(), envelope.getTimestamp()));
+		replay(policy).checkAndMark(ReplayContext.builder()
+			.exchangeContext(exchange)
+			.keyRef(envelope.getKeyRef())
+			.policyId(policy.getId())
+			.nonce(envelope.getNonce())
+			.timestamp(envelope.getTimestamp())
+			.build());
 		byte[] plain = envelope.getPayload().getBytes(StandardCharsets.UTF_8);
 		if (policy.isCryptoEnabled()) {
 			SecureKey decryptKey = key(policy, exchange, envelope.getKeyRef(), SecureKeyUsage.DECRYPT);
@@ -223,8 +237,13 @@ public class SecureWebExchangeService {
 			throw new SecureKeyResolveException("response keyRef is required for secure response");
 		}
 		String resolvedKeyRef = keyRef;
-		SecureExchangeContext exchange = new SecureExchangeContext(SecureScope.RESPONSE_BODY, SecureDirection.OUTBOUND,
-				policy.getId(), null, resolvedKeyRef, policy.getTimestampWindow(), null);
+		SecureExchangeContext exchange = SecureExchangeContext.builder()
+			.scope(SecureScope.RESPONSE_BODY)
+			.direction(SecureDirection.OUTBOUND)
+			.policyId(policy.getId())
+			.keyRef(resolvedKeyRef)
+			.timestampWindow(policy.getTimestampWindow())
+			.build();
 		String payload = new String(plain, StandardCharsets.UTF_8);
 		if (policy.isCryptoEnabled()) {
 			SecureKey encryptKey = key(policy, exchange, resolvedKeyRef, SecureKeyUsage.ENCRYPT);
@@ -266,14 +285,18 @@ public class SecureWebExchangeService {
 				|| (policy.getResponseBodyMode() == SecureResponseMode.FOLLOW_REQUEST && requestWasSecure);
 	}
 
-	RuntimeException translate(SecureExchangeException exception, SecurePolicy policy, SecureScope scope,
-			SecureDirection direction, String keyRef) {
+	RuntimeException translate(SecureExchangeException exception, @Nullable SecurePolicy policy, SecureScope scope,
+			SecureDirection direction, @Nullable String keyRef) {
 		if (this.exceptionTranslator == null) {
 			return exception;
 		}
-		SecureExchangeContext context = new SecureExchangeContext(scope, direction,
-				policy == null ? null : policy.getId(), null, keyRef,
-				policy == null ? null : policy.getTimestampWindow(), null);
+		SecureExchangeContext context = SecureExchangeContext.builder()
+			.scope(scope)
+			.direction(direction)
+			.policyId(policy == null ? null : policy.getId())
+			.keyRef(keyRef)
+			.timestampWindow(policy == null ? null : policy.getTimestampWindow())
+			.build();
 		RuntimeException translated = this.exceptionTranslator.translate(exception, context);
 		return translated == null ? exception : translated;
 	}

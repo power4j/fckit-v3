@@ -36,8 +36,18 @@ public class SdeWebAutoConfiguration {
 			Map<String, SecureKeyResolver> keyResolvers, Map<String, NonceGenerator> nonceGenerators,
 			Map<String, ReplayGuard> replayGuards,
 			ObjectProvider<SecureExchangeExceptionTranslator> exceptionTranslator) {
-		return new SecureWebExchangeService(policyRegistry, envelopeCodec, canonicalizer, jsonCodec, cryptoHandlers,
-				signatureHandlers, keyResolvers, nonceGenerators, replayGuards, exceptionTranslator.getIfAvailable());
+		return SecureWebExchangeService.builder()
+			.policyRegistry(policyRegistry)
+			.envelopeCodec(envelopeCodec)
+			.canonicalizer(canonicalizer)
+			.jsonCodec(jsonCodec)
+			.cryptoHandlers(cryptoHandlers)
+			.signatureHandlers(signatureHandlers)
+			.keyResolvers(keyResolvers)
+			.nonceGenerators(nonceGenerators)
+			.replayGuards(replayGuards)
+			.exceptionTranslator(exceptionTranslator.getIfAvailable())
+			.build();
 	}
 
 	@Bean

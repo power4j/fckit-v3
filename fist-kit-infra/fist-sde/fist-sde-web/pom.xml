@@ -15,6 +15,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-core</artifactId>
     </dependency>

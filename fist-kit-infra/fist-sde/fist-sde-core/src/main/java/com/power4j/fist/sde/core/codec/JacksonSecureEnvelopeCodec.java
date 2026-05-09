@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.power4j.fist.sde.core.SecureEnvelope;
 import com.power4j.fist.sde.core.exception.SecureEnvelopeException;
+import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class JacksonSecureEnvelopeCodec implements SecureEnvelopeCodec {
 	}
 
 	@Override
-	public SecureEnvelope decode(byte[] input, SecureEnvelopeContext context) {
+	public SecureEnvelope decode(byte[] input, @Nullable SecureEnvelopeContext context) {
 		try {
 			Map<String, Object> body = this.objectMapper.readValue(input, MAP_TYPE);
 			SecureEnvelopeFieldMapping mapping = actual(context).getFieldMapping();
@@ -54,7 +55,7 @@ public class JacksonSecureEnvelopeCodec implements SecureEnvelopeCodec {
 	}
 
 	@Override
-	public byte[] encodeToBytes(SecureEnvelope envelope, SecureEnvelopeContext context) {
+	public byte[] encodeToBytes(SecureEnvelope envelope, @Nullable SecureEnvelopeContext context) {
 		try {
 			return this.objectMapper.writeValueAsBytes(encodeToBody(envelope, context));
 		}
@@ -64,7 +65,7 @@ public class JacksonSecureEnvelopeCodec implements SecureEnvelopeCodec {
 	}
 
 	@Override
-	public Object encodeToBody(SecureEnvelope envelope, SecureEnvelopeContext context) {
+	public Object encodeToBody(SecureEnvelope envelope, @Nullable SecureEnvelopeContext context) {
 		SecureEnvelopeFieldMapping mapping = actual(context).getFieldMapping();
 		Map<String, Object> body = new LinkedHashMap<>();
 		put(body, mapping.getVersionField(), envelope.getVersion());
@@ -82,17 +83,17 @@ public class JacksonSecureEnvelopeCodec implements SecureEnvelopeCodec {
 		return body;
 	}
 
-	private static SecureEnvelopeContext actual(SecureEnvelopeContext context) {
+	private static SecureEnvelopeContext actual(@Nullable SecureEnvelopeContext context) {
 		return context == null ? SecureEnvelopeContext.defaults() : context;
 	}
 
-	private static void put(Map<String, Object> body, String field, String value) {
+	private static void put(Map<String, Object> body, @Nullable String field, @Nullable String value) {
 		if (field != null && value != null) {
 			body.put(field, value);
 		}
 	}
 
-	private static String text(Object value) {
+	private static @Nullable String text(@Nullable Object value) {
 		return value == null ? null : String.valueOf(value);
 	}
 

@@ -1,5 +1,7 @@
 package com.power4j.fist.sde.core;
 
+import org.jspecify.annotations.Nullable;
+
 import java.time.Duration;
 
 public class SecurePolicy {
@@ -28,11 +30,11 @@ public class SecurePolicy {
 
 	private Duration timestampWindow = Duration.ofMinutes(5);
 
-	public String getId() {
+	public @Nullable String getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(@Nullable String id) {
 		this.id = id;
 	}
 

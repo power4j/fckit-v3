@@ -197,9 +197,18 @@ class SecureFeignClientTest {
 				Map<String, CryptoHandler> cryptoHandlers, Map<String, SignatureHandler> signatureHandlers,
 				Map<String, SecureKeyResolver> keyResolvers, Map<String, NonceGenerator> nonceGenerators,
 				Map<String, ReplayGuard> replayGuards, SecureExchangeClientProperties properties) {
-			return new DefaultSecureExchangeOperations(policyRegistry, envelopeCodec, canonicalizer, cryptoHandlers,
-					signatureHandlers, keyResolvers, nonceGenerators, replayGuards, properties,
-					SecureExchangeClientLogger.NONE);
+			return DefaultSecureExchangeOperations.builder()
+				.policyRegistry(policyRegistry)
+				.envelopeCodec(envelopeCodec)
+				.canonicalizer(canonicalizer)
+				.cryptoHandlers(cryptoHandlers)
+				.signatureHandlers(signatureHandlers)
+				.keyResolvers(keyResolvers)
+				.nonceGenerators(nonceGenerators)
+				.replayGuards(replayGuards)
+				.properties(properties)
+				.logger(SecureExchangeClientLogger.NONE)
+				.build();
 		}
 
 		@Bean
@@ -209,8 +218,18 @@ class SecureFeignClientTest {
 				Map<String, SecureKeyResolver> keyResolvers, Map<String, NonceGenerator> nonceGenerators,
 				Map<String, ReplayGuard> replayGuards,
 				ObjectProvider<com.power4j.fist.sde.core.exception.SecureExchangeExceptionTranslator> translator) {
-			return new SecureWebExchangeService(policyRegistry, envelopeCodec, canonicalizer, jsonCodec, cryptoHandlers,
-					signatureHandlers, keyResolvers, nonceGenerators, replayGuards, translator.getIfAvailable());
+			return SecureWebExchangeService.builder()
+				.policyRegistry(policyRegistry)
+				.envelopeCodec(envelopeCodec)
+				.canonicalizer(canonicalizer)
+				.jsonCodec(jsonCodec)
+				.cryptoHandlers(cryptoHandlers)
+				.signatureHandlers(signatureHandlers)
+				.keyResolvers(keyResolvers)
+				.nonceGenerators(nonceGenerators)
+				.replayGuards(replayGuards)
+				.exceptionTranslator(translator.getIfAvailable())
+				.build();
 		}
 
 		@Bean

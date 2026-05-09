@@ -2,6 +2,7 @@ package com.power4j.fist.sde.core.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.power4j.fist.sde.core.exception.SecureMessageBindingException;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -14,7 +15,7 @@ public class JacksonSecureJsonCodec implements SecureJsonCodec {
 	}
 
 	@Override
-	public byte[] serialize(Object value, Type valueType) {
+	public byte[] serialize(@Nullable Object value, @Nullable Type valueType) {
 		try {
 			return this.objectMapper.writeValueAsBytes(value);
 		}

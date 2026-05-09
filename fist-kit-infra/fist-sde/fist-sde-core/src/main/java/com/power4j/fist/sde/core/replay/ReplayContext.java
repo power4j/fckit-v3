@@ -1,6 +1,7 @@
 package com.power4j.fist.sde.core.replay;
 
 import com.power4j.fist.sde.core.SecureExchangeContext;
+import lombok.Builder;
 
 public class ReplayContext {
 
@@ -14,6 +15,7 @@ public class ReplayContext {
 
 	private final String timestamp;
 
+	@Builder
 	public ReplayContext(SecureExchangeContext exchangeContext, String keyRef, String policyId, String nonce,
 			String timestamp) {
 		this.exchangeContext = exchangeContext;

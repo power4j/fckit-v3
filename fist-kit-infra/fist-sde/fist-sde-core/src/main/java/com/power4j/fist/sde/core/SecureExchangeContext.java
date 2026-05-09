@@ -1,5 +1,8 @@
 package com.power4j.fist.sde.core;
 
+import lombok.Builder;
+import org.jspecify.annotations.Nullable;
+
 import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -21,8 +24,10 @@ public class SecureExchangeContext {
 
 	private final Map<String, Object> requestContext;
 
-	public SecureExchangeContext(SecureScope scope, SecureDirection direction, String policyId, String algorithm,
-			String keyRef, Duration timestampWindow, Map<String, Object> requestContext) {
+	@Builder
+	public SecureExchangeContext(SecureScope scope, SecureDirection direction, @Nullable String policyId,
+			@Nullable String algorithm, @Nullable String keyRef, @Nullable Duration timestampWindow,
+			@Nullable Map<String, Object> requestContext) {
 		this.scope = scope;
 		this.direction = direction;
 		this.policyId = policyId;
@@ -34,18 +39,32 @@ public class SecureExchangeContext {
 	}
 
 	public static SecureExchangeContext inbound(SecureScope scope) {
-		return new SecureExchangeContext(scope, SecureDirection.INBOUND, null, null, null, Duration.ofMinutes(5), null);
+		return SecureExchangeContext.builder()
+			.scope(scope)
+			.direction(SecureDirection.INBOUND)
+			.timestampWindow(Duration.ofMinutes(5))
+			.build();
 	}
 
 	public static SecureExchangeContext outbound(SecureScope scope) {
-		return new SecureExchangeContext(scope, SecureDirection.OUTBOUND, null, null, null, Duration.ofMinutes(5),
-				null);
+		return SecureExchangeContext.builder()
+			.scope(scope)
+			.direction(SecureDirection.OUTBOUND)
+			.timestampWindow(Duration.ofMinutes(5))
+			.build();
 	}
 
-	public SecureExchangeContext withPolicy(String policyId, String algorithm, String keyRef,
-			Duration timestampWindow) {
-		return new SecureExchangeContext(this.scope, this.direction, policyId, algorithm, keyRef,
-				timestampWindow == null ? this.timestampWindow : timestampWindow, this.requestContext);
+	public SecureExchangeContext withPolicy(@Nullable String policyId, @Nullable String algorithm,
+			@Nullable String keyRef, @Nullable Duration timestampWindow) {
+		return SecureExchangeContext.builder()
+			.scope(this.scope)
+			.direction(this.direction)
+			.policyId(policyId)
+			.algorithm(algorithm)
+			.keyRef(keyRef)
+			.timestampWindow(timestampWindow == null ? this.timestampWindow : timestampWindow)
+			.requestContext(this.requestContext)
+			.build();
 	}
 
 	public SecureScope getScope() {
@@ -56,19 +75,19 @@ public class SecureExchangeContext {
 		return this.direction;
 	}
 
-	public String getPolicyId() {
+	public @Nullable String getPolicyId() {
 		return this.policyId;
 	}
 
-	public String getAlgorithm() {
+	public @Nullable String getAlgorithm() {
 		return this.algorithm;
 	}
 
-	public String getKeyRef() {
+	public @Nullable String getKeyRef() {
 		return this.keyRef;
 	}
 
-	public Duration getTimestampWindow() {
+	public @Nullable Duration getTimestampWindow() {
 		return this.timestampWindow;
 	}
 

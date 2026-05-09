@@ -45,8 +45,13 @@ public class SdeCoreAutoConfiguration {
 		}
 		Map<String, SecureEnvelopeContext> envelopes = new LinkedHashMap<>();
 		for (Map.Entry<String, SecureEnvelopeFieldMapping> entry : properties.getEnvelopes().entrySet()) {
-			envelopes.put(entry.getKey(), new SecureEnvelopeContext(entry.getKey(), entry.getValue(),
-					StandardCharsets.UTF_8, "application/json", null, null));
+			envelopes.put(entry.getKey(),
+					SecureEnvelopeContext.builder()
+						.envelopeName(entry.getKey())
+						.fieldMapping(entry.getValue())
+						.charset(StandardCharsets.UTF_8)
+						.mediaType("application/json")
+						.build());
 		}
 		envelopes.putIfAbsent("default", SecureEnvelopeContext.defaults());
 		return new SimpleSecurePolicyRegistry(properties.getWeb().getDefaultPolicyId(), policies, envelopes);

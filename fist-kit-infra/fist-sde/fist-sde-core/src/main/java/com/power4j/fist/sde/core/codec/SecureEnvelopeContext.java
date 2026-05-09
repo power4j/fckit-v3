@@ -1,5 +1,8 @@
 package com.power4j.fist.sde.core.codec;
 
+import lombok.Builder;
+import org.jspecify.annotations.Nullable;
+
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -18,8 +21,10 @@ public class SecureEnvelopeContext {
 
 	private final Class<?> selectedConverterType;
 
-	public SecureEnvelopeContext(String envelopeName, SecureEnvelopeFieldMapping fieldMapping, Charset charset,
-			String mediaType, Type targetBodyType, Class<?> selectedConverterType) {
+	@Builder
+	public SecureEnvelopeContext(String envelopeName, @Nullable SecureEnvelopeFieldMapping fieldMapping,
+			@Nullable Charset charset, @Nullable String mediaType, @Nullable Type targetBodyType,
+			@Nullable Class<?> selectedConverterType) {
 		this.envelopeName = envelopeName;
 		this.fieldMapping = fieldMapping == null ? SecureEnvelopeFieldMapping.defaults() : fieldMapping;
 		this.charset = charset == null ? StandardCharsets.UTF_8 : charset;
@@ -29,13 +34,23 @@ public class SecureEnvelopeContext {
 	}
 
 	public static SecureEnvelopeContext defaults() {
-		return new SecureEnvelopeContext("default", SecureEnvelopeFieldMapping.defaults(), StandardCharsets.UTF_8,
-				"application/json", null, null);
+		return SecureEnvelopeContext.builder()
+			.envelopeName("default")
+			.fieldMapping(SecureEnvelopeFieldMapping.defaults())
+			.charset(StandardCharsets.UTF_8)
+			.mediaType("application/json")
+			.build();
 	}
 
-	public SecureEnvelopeContext withSelectedConverterType(Class<?> selectedConverterType) {
-		return new SecureEnvelopeContext(this.envelopeName, this.fieldMapping, this.charset, this.mediaType,
-				this.targetBodyType, selectedConverterType);
+	public SecureEnvelopeContext withSelectedConverterType(@Nullable Class<?> selectedConverterType) {
+		return SecureEnvelopeContext.builder()
+			.envelopeName(this.envelopeName)
+			.fieldMapping(this.fieldMapping)
+			.charset(this.charset)
+			.mediaType(this.mediaType)
+			.targetBodyType(this.targetBodyType)
+			.selectedConverterType(selectedConverterType)
+			.build();
 	}
 
 	public String getEnvelopeName() {
@@ -50,15 +65,15 @@ public class SecureEnvelopeContext {
 		return this.charset;
 	}
 
-	public String getMediaType() {
+	public @Nullable String getMediaType() {
 		return this.mediaType;
 	}
 
-	public Type getTargetBodyType() {
+	public @Nullable Type getTargetBodyType() {
 		return this.targetBodyType;
 	}
 
-	public Class<?> getSelectedConverterType() {
+	public @Nullable Class<?> getSelectedConverterType() {
 		return this.selectedConverterType;
 	}
 
