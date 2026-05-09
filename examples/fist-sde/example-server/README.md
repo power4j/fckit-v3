@@ -1,6 +1,6 @@
-# example-sde-web
+# example-sde-server
 
-本示例演示 Spring MVC 服务端接入 `fist-sde-boot-starter` 后，使用方需要完成的关键任务：
+本示例演示 Spring MVC 服务端接入 `fist-sde-boot-starter` 后，如何使用原始 SDE envelope 请求验证服务端处理流程。该示例适合在开发自研 HTTP 客户端、网关适配器或其他非 SDK 客户端时作为本地测试服务端。
 
 1. 显式引入 `fist-sde-boot-starter` 和 `fist-sde-client`。
 2. 如需使用内置演示算法，显式引入 `fist-sde-extra`。
@@ -12,8 +12,10 @@
 运行：
 
 ```powershell
-.\mvnw.cmd -Pexamples -pl examples/fist-sde/example-web -am spring-boot:run
+.\mvnw.cmd -Pexamples -pl examples/fist-sde/example-server -am spring-boot:run
 ```
+
+应用启动后会自动构造一次 SDE request envelope 并请求本地 `/orders`，不需要人工触发请求。
 
 控制台重点观察以下日志：
 

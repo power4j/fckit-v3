@@ -1,4 +1,4 @@
-package com.power4j.fist3.examples.sde.web;
+package com.power4j.fist3.examples.sde.server;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,11 +12,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest(classes = SdeWebExampleApplication.class,
+@SpringBootTest(classes = SdeServerExampleApplication.class,
 		webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
 		properties = { "sde.example.run-on-startup=false", "server.port=19080" })
 @ExtendWith(OutputCaptureExtension.class)
-class SdeWebExampleApplicationTest {
+class SdeServerExampleApplicationTest {
 
 	@Autowired
 	private ExampleSecureEnvelopeClient client;

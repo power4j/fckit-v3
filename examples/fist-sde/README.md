@@ -4,7 +4,7 @@
 
 | 示例 | 重点 |
 | --- | --- |
-| `example-web` | Spring MVC `RequestBodyAdvice` / `ResponseBodyAdvice` 与 `SecureExchangeOperations` |
+| `example-server` | Spring MVC 服务端接入，以及自研客户端调试用 envelope 请求 |
 | `example-feign` | `SecureFeignEncoder` / `SecureFeignDecoder` |
 | `example-restclient` | `SecureRestClientInterceptor` 与 Boot `RestClientCustomizer` |
 | `example-webclient` | `SecureWebClientExchangeFilterFunction` 与 Boot `WebClientCustomizer` |

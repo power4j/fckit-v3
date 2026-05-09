@@ -7,7 +7,7 @@ sde:
 
 logging:
   level:
-    com.power4j.fist3.examples.sde.web: DEBUG
+    com.power4j.fist3.examples.sde.server: DEBUG
     com.power4j.fist.sde: DEBUG
 
 fist:

@@ -10,7 +10,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>example-sde-web</artifactId>
+  <artifactId>example-sde-server</artifactId>
   <name>${project.artifactId}</name>
 
   <dependencies>

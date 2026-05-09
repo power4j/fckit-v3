@@ -15,7 +15,7 @@
   <name>${project.artifactId}</name>
 
   <modules>
-    <module>example-web</module>
+    <module>example-server</module>
     <module>example-feign</module>
     <module>example-restclient</module>
     <module>example-webclient</module>

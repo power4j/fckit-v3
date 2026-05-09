@@ -1,4 +1,4 @@
-package com.power4j.fist3.examples.sde.web;
+package com.power4j.fist3.examples.sde.server;
 
 import java.math.BigDecimal;
 

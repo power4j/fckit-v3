@@ -1,4 +1,4 @@
-package com.power4j.fist3.examples.sde.web;
+package com.power4j.fist3.examples.sde.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +16,15 @@ import java.math.BigDecimal;
 
 @Component
 @ConditionalOnProperty(prefix = "sde.example", name = "run-on-startup", havingValue = "true", matchIfMissing = true)
-class SdeWebDemoRunner implements ApplicationRunner {
+class SdeServerDemoRunner implements ApplicationRunner {
 
-	private static final Logger log = LoggerFactory.getLogger(SdeWebDemoRunner.class);
+	private static final Logger log = LoggerFactory.getLogger(SdeServerDemoRunner.class);
 
 	private final WebServerApplicationContext server;
 
 	private final ExampleSecureEnvelopeClient client;
 
-	SdeWebDemoRunner(WebServerApplicationContext server, ExampleSecureEnvelopeClient client) {
+	SdeServerDemoRunner(WebServerApplicationContext server, ExampleSecureEnvelopeClient client) {
 		this.server = server;
 		this.client = client;
 	}

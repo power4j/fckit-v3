@@ -1,4 +1,4 @@
-package com.power4j.fist3.examples.sde.web;
+package com.power4j.fist3.examples.sde.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.power4j.fist.sde.client.SecureExchangeClientContext;
@@ -39,8 +39,8 @@ class ExampleSecureEnvelopeClient {
 	}
 
 	private SecureExchangeClientContext context() {
-		return new SecureExchangeClientContext(SdeWebExampleConfiguration.POLICY_ID,
-				SdeWebExampleConfiguration.KEY_REF);
+		return new SecureExchangeClientContext(SdeServerExampleConfiguration.POLICY_ID,
+				SdeServerExampleConfiguration.KEY_REF);
 	}
 
 }

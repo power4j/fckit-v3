@@ -1,4 +1,4 @@
-package com.power4j.fist3.examples.sde.web;
+package com.power4j.fist3.examples.sde.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.power4j.fist.sde.client.SecureExchangeClientContext;
@@ -17,13 +17,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 @Configuration(proxyBeanMethods = false)
-class SdeWebExampleConfiguration {
+class SdeServerExampleConfiguration {
 
 	static final String KEY_REF = "tenant-a";
 
 	static final String POLICY_ID = "body-strict-v1";
 
-	private static final Logger log = LoggerFactory.getLogger(SdeWebExampleConfiguration.class);
+	private static final Logger log = LoggerFactory.getLogger(SdeServerExampleConfiguration.class);
 
 	private static final byte[] KEY = "0123456789abcdef".getBytes(StandardCharsets.UTF_8);
 
