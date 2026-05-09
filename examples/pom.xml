@@ -20,6 +20,7 @@
 
   <modules>
     <module>fist-logback</module>
+    <module>fist-sde</module>
   </modules>
 
   <build>
