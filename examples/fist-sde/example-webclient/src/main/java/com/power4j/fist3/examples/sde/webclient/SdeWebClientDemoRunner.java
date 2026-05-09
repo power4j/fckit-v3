@@ -6,6 +6,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.context.WebServerApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -21,9 +22,13 @@ class SdeWebClientDemoRunner implements ApplicationRunner {
 
 	private final WebClient.Builder builder;
 
-	SdeWebClientDemoRunner(WebServerApplicationContext server, WebClient.Builder builder) {
+	private final ConfigurableApplicationContext applicationContext;
+
+	SdeWebClientDemoRunner(WebServerApplicationContext server, WebClient.Builder builder,
+			ConfigurableApplicationContext applicationContext) {
 		this.server = server;
 		this.builder = builder;
+		this.applicationContext = applicationContext;
 	}
 
 	@Override
@@ -36,6 +41,7 @@ class SdeWebClientDemoRunner implements ApplicationRunner {
 			.bodyToMono(OrderResponse.class)
 			.block();
 		log.info("WebClient business response: orderNo={}, status={}", response.getOrderNo(), response.getStatus());
+		this.applicationContext.close();
 	}
 
 	private String url() {

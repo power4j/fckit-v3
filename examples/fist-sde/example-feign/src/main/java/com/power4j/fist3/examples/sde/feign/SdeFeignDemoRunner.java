@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -20,9 +21,13 @@ class SdeFeignDemoRunner implements ApplicationRunner {
 
 	private final ObjectMapper objectMapper;
 
-	SdeFeignDemoRunner(RemoteOrderClient client, ObjectMapper objectMapper) {
+	private final ConfigurableApplicationContext applicationContext;
+
+	SdeFeignDemoRunner(RemoteOrderClient client, ObjectMapper objectMapper,
+			ConfigurableApplicationContext applicationContext) {
 		this.client = client;
 		this.objectMapper = objectMapper;
+		this.applicationContext = applicationContext;
 	}
 
 	@Override
@@ -33,6 +38,7 @@ class SdeFeignDemoRunner implements ApplicationRunner {
 		OrderResponse response = this.client.create(request);
 		log.info("Feign caller business response POJO:\n{}",
 				this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(response));
+		this.applicationContext.close();
 	}
 
 }
