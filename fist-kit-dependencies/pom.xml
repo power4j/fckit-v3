@@ -72,6 +72,26 @@
         <artifactId>fist-mybatis-plus</artifactId>
         <version>${revision}</version>
       </dependency>
+      <dependency>
+        <groupId>com.power4j.fist3</groupId>
+        <artifactId>fist-sde-core</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.power4j.fist3</groupId>
+        <artifactId>fist-sde-extra</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.power4j.fist3</groupId>
+        <artifactId>fist-sde-web</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.power4j.fist3</groupId>
+        <artifactId>fist-sde-boot-starter</artifactId>
+        <version>${revision}</version>
+      </dependency>
       <!-- fist kits app -->
       <dependency>
         <groupId>com.power4j.fist3</groupId>
