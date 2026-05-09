@@ -2,12 +2,12 @@
 
 本示例演示 Spring MVC 服务端接入 `fist-sde-boot-starter` 后，使用方需要完成的关键任务：
 
-1. 显式引入 `fist-sde-boot-starter`。
+1. 显式引入 `fist-sde-boot-starter` 和 `fist-sde-client`。
 2. 如需使用内置演示算法，显式引入 `fist-sde-extra`。
 3. 在 `application.yml` 中开启 `fist.sde.enabled` 和 `fist.sde.web.enabled`。
 4. 配置 `body-strict-v1` 策略。
 5. 显式声明 `CryptoHandler`、`SignatureHandler`、`SecureKeyResolver`、`NonceGenerator` 和 `ReplayGuard` Bean。
-6. Controller 仍然只处理普通 POJO。
+6. Controller 仍然只处理普通 POJO，客户端 envelope 编解码使用 `SecureExchangeOperations`。
 
 运行：
 

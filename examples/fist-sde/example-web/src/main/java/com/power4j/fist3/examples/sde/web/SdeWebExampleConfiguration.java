@@ -1,5 +1,8 @@
 package com.power4j.fist3.examples.sde.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.power4j.fist.sde.client.SecureExchangeClientContext;
+import com.power4j.fist.sde.client.SecureExchangeClientLogger;
 import com.power4j.fist.sde.extra.crypto.AesGcmCryptoHandler;
 import com.power4j.fist.sde.extra.key.StaticSecureKeyResolver;
 import com.power4j.fist.sde.extra.nonce.SecureRandomNonceGenerator;
@@ -52,6 +55,40 @@ class SdeWebExampleConfiguration {
 	StaticSecureKeyResolver staticSecureKeyResolver() {
 		log.info("SDE example key resolver: staticSecureKeyResolver, keyRef={}", KEY_REF);
 		return StaticSecureKeyResolver.symmetric(KEY_REF, KEY);
+	}
+
+	@Bean
+	SecureExchangeClientLogger webSecureExchangeClientLogger(ObjectMapper objectMapper) {
+		return new SecureExchangeClientLogger() {
+			@Override
+			public void requestPlain(byte[] body, SecureExchangeClientContext context) {
+				log.info("Web client raw request body:\n{}", pretty(objectMapper, body));
+			}
+
+			@Override
+			public void requestEnvelope(byte[] envelope, SecureExchangeClientContext context) {
+				log.info("Web client request envelope:\n{}", pretty(objectMapper, envelope));
+			}
+
+			@Override
+			public void responseEnvelope(byte[] envelope, SecureExchangeClientContext context) {
+				log.info("Web client response envelope:\n{}", pretty(objectMapper, envelope));
+			}
+
+			@Override
+			public void responsePlain(byte[] body, SecureExchangeClientContext context) {
+				log.info("Web client decrypted response body:\n{}", pretty(objectMapper, body));
+			}
+		};
+	}
+
+	private String pretty(ObjectMapper objectMapper, byte[] body) {
+		try {
+			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readTree(body));
+		}
+		catch (Exception ex) {
+			return new String(body, StandardCharsets.UTF_8);
+		}
 	}
 
 }

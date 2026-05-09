@@ -16,6 +16,11 @@ fist:
     web:
       enabled: true
       default-policy-id: body-strict-v1
+    client:
+      enabled: true
+      default-policy-id: body-strict-v1
+      default-key-ref: tenant-a
+      log-payload: true
     policies:
       body-strict-v1:
         request-body-mode: REQUIRED

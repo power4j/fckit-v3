@@ -20,6 +20,10 @@
     </dependency>
     <dependency>
       <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-sde-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-sde-extra</artifactId>
     </dependency>
     <dependency>

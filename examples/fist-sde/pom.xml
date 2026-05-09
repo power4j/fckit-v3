@@ -17,6 +17,8 @@
   <modules>
     <module>example-web</module>
     <module>example-feign</module>
+    <module>example-restclient</module>
+    <module>example-webclient</module>
   </modules>
 
   <dependencyManagement>
@@ -38,6 +40,11 @@
       <dependency>
         <groupId>com.power4j.fist3</groupId>
         <artifactId>fist-sde-boot-starter</artifactId>
+        <version>${revision}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.power4j.fist3</groupId>
+        <artifactId>fist-sde-client</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>

@@ -1,4 +1,4 @@
-package com.power4j.fist3.examples.sde.feign;
+package com.power4j.fist3.examples.sde.restclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.power4j.fist.sde.client.SecureExchangeClientContext;
@@ -17,67 +17,62 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 @Configuration(proxyBeanMethods = false)
-class SdeFeignExampleConfiguration {
+class SdeRestClientExampleConfiguration {
 
 	static final String KEY_REF = "tenant-a";
 
 	static final String POLICY_ID = "body-strict-v1";
 
-	private static final Logger log = LoggerFactory.getLogger(SdeFeignExampleConfiguration.class);
+	private static final Logger log = LoggerFactory.getLogger(SdeRestClientExampleConfiguration.class);
 
 	private static final byte[] KEY = "0123456789abcdef".getBytes(StandardCharsets.UTF_8);
 
 	@Bean
 	AesGcmCryptoHandler aesGcmCryptoHandler() {
-		log.info("SDE Feign example crypto handler: aesGcmCryptoHandler / AES-GCM");
 		return new AesGcmCryptoHandler();
 	}
 
 	@Bean
 	HmacSha256SignatureHandler hmacSha256SignatureHandler() {
-		log.info("SDE Feign example signature handler: hmacSha256SignatureHandler / HMAC-SHA256");
 		return new HmacSha256SignatureHandler();
 	}
 
 	@Bean
 	SecureRandomNonceGenerator secureRandomNonceGenerator() {
-		log.info("SDE Feign example nonce generator: secureRandomNonceGenerator");
 		return new SecureRandomNonceGenerator();
 	}
 
 	@Bean
 	InMemoryReplayGuard replayGuard() {
-		log.info("SDE Feign example replay guard: replayGuard / InMemoryReplayGuard for local demo only");
 		return new InMemoryReplayGuard(Duration.ofMinutes(5));
 	}
 
 	@Bean
 	StaticSecureKeyResolver staticSecureKeyResolver() {
-		log.info("SDE Feign example key resolver: staticSecureKeyResolver, keyRef={}", KEY_REF);
 		return StaticSecureKeyResolver.symmetric(KEY_REF, KEY);
 	}
 
 	@Bean
-	SecureExchangeClientLogger feignSecureExchangeClientLogger(ObjectMapper objectMapper) {
+	SecureExchangeClientLogger restClientSecureExchangeClientLogger(ObjectMapper objectMapper) {
 		return new SecureExchangeClientLogger() {
 			@Override
 			public void requestPlain(byte[] body, SecureExchangeClientContext context) {
-				log.info("Feign encoder raw request body:\n{}", pretty(objectMapper, body));
+				log.info("RestClient raw request body:\n{}", pretty(objectMapper, body));
 			}
 
 			@Override
 			public void requestEnvelope(byte[] envelope, SecureExchangeClientContext context) {
-				log.info("Feign encoder request envelope:\n{}", pretty(objectMapper, envelope));
+				log.info("RestClient request envelope:\n{}", pretty(objectMapper, envelope));
 			}
 
 			@Override
 			public void responseEnvelope(byte[] envelope, SecureExchangeClientContext context) {
-				log.info("Feign decoder response envelope:\n{}", pretty(objectMapper, envelope));
+				log.info("RestClient response envelope:\n{}", pretty(objectMapper, envelope));
 			}
 
 			@Override
 			public void responsePlain(byte[] body, SecureExchangeClientContext context) {
-				log.info("Feign decoder decrypted response body:\n{}", pretty(objectMapper, body));
+				log.info("RestClient decrypted response body:\n{}", pretty(objectMapper, body));
 			}
 		};
 	}

@@ -1,14 +1,13 @@
 server:
-  port: 18081
+  port: 18083
 
 sde:
   example:
     run-on-startup: true
-    remote-url: http://localhost:${server.port}
 
 logging:
   level:
-    com.power4j.fist3.examples.sde.feign: DEBUG
+    com.power4j.fist3.examples.sde.webclient: DEBUG
     com.power4j.fist.sde: DEBUG
 
 fist:
@@ -25,7 +24,7 @@ fist:
     policies:
       body-strict-v1:
         request-body-mode: REQUIRED
-        response-body-mode: ENABLED
+        response-body-mode: FOLLOW_REQUEST
         crypto-enabled: true
         signature-enabled: true
         crypto-handler: aesGcmCryptoHandler
@@ -34,11 +33,3 @@ fist:
         nonce-generator: secureRandomNonceGenerator
         replay-guard: replayGuard
         timestamp-window: 5m
-
-spring:
-  cloud:
-    openfeign:
-      client:
-        config:
-          default:
-            loggerLevel: FULL

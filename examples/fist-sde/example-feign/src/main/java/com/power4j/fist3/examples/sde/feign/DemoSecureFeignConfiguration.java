@@ -1,21 +1,29 @@
 package com.power4j.fist3.examples.sde.feign;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.power4j.fist.sde.client.SecureExchangeOperations;
+import com.power4j.fist.sde.client.feign.SecureFeignDecoder;
+import com.power4j.fist.sde.client.feign.SecureFeignEncoder;
 import feign.Logger;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.cloud.openfeign.support.SpringDecoder;
+import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
 
 class DemoSecureFeignConfiguration {
 
 	@Bean
-	Encoder demoSecureFeignEncoder(ObjectMapper objectMapper, ExampleFeignEnvelopeSupport support) {
-		return new DemoSecureFeignEncoder(objectMapper, support);
+	Encoder demoSecureFeignEncoder(ObjectFactory<HttpMessageConverters> messageConverters,
+			SecureExchangeOperations operations) {
+		return new SecureFeignEncoder(new SpringEncoder(messageConverters), operations);
 	}
 
 	@Bean
-	Decoder demoSecureFeignDecoder(ObjectMapper objectMapper, ExampleFeignEnvelopeSupport support) {
-		return new DemoSecureFeignDecoder(objectMapper, support);
+	Decoder demoSecureFeignDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
+			SecureExchangeOperations operations) {
+		return new SecureFeignDecoder(new SpringDecoder(messageConverters), operations);
 	}
 
 	@Bean
