@@ -24,6 +24,23 @@ starter 只注册编排类和适配类，不隐式注册生产算法、静态密
 </dependency>
 ```
 
+使用标准版算法预设时不需要额外引入 Bouncy Castle。使用国密版算法预设、`GmSecureExchangeClientConfiguration`，或直接使用 `Sm4GcmCryptoHandler`、`Sm3Digest`、`HmacSm3SignatureHandler` 时，需要显式引入 Bouncy Castle 并注册 JCA Provider：
+
+```xml
+<dependency>
+  <groupId>org.bouncycastle</groupId>
+  <artifactId>bcprov-jdk15to18</artifactId>
+</dependency>
+```
+
+```java
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Security;
+
+Security.addProvider(new BouncyCastleProvider());
+```
+
 Feign 客户端还需要引入 OpenFeign：
 
 ```xml
