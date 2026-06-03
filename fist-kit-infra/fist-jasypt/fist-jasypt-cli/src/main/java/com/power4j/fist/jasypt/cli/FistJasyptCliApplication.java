@@ -1,5 +1,6 @@
 package com.power4j.fist.jasypt.cli;
 
+import com.power4j.fist.jasypt.core.GmEncryptedValue;
 import com.power4j.fist.jasypt.core.GmTextEncryptor;
 import com.power4j.tile.crypto.utils.Sm3Util;
 
@@ -24,17 +25,20 @@ public final class FistJasyptCliApplication {
 	}
 
 	public static void main(String[] args) {
-		if (args.length == 0) {
-			throw new IllegalArgumentException("Command is required: encrypt, decrypt, generate-key, fingerprint");
+		if (args.length == 0 || isHelp(args[0])) {
+			System.out.println(helpText());
+			return;
 		}
 		String command = args[0];
 		Map<String, String> options = parseOptions(args);
 		if ("encrypt".equals(command)) {
-			System.out.println(new GmTextEncryptor().encrypt(required(options, "--value"), resolveMasterKey(options)));
+			System.out.println(new GmTextEncryptor().encrypt(required(options, "--value"), resolveMasterKey(options),
+					cipherPrefix(options), cipherSuffix(options)));
 			return;
 		}
 		if ("decrypt".equals(command)) {
-			System.out.println(new GmTextEncryptor().decrypt(required(options, "--value"), resolveMasterKey(options)));
+			System.out.println(new GmTextEncryptor().decrypt(required(options, "--value"), resolveMasterKey(options),
+					cipherPrefix(options), cipherSuffix(options)));
 			return;
 		}
 		if ("generate-key".equals(command)) {
@@ -45,7 +49,7 @@ public final class FistJasyptCliApplication {
 			System.out.println(fingerprint(resolveMasterKey(options)));
 			return;
 		}
-		throw new IllegalArgumentException("Unsupported command: " + command);
+		throw new IllegalArgumentException("Unsupported command: " + command + ". Run `help` for usage.");
 	}
 
 	private static Map<String, String> parseOptions(String[] args) {
@@ -69,6 +73,40 @@ public final class FistJasyptCliApplication {
 			throw new IllegalArgumentException(key + " is required.");
 		}
 		return value;
+	}
+
+	private static boolean isHelp(String command) {
+		return "help".equals(command) || "--help".equals(command) || "-h".equals(command);
+	}
+
+	private static String cipherPrefix(Map<String, String> options) {
+		return options.getOrDefault("--prefix", GmEncryptedValue.PREFIX);
+	}
+
+	private static String cipherSuffix(Map<String, String> options) {
+		return options.getOrDefault("--suffix", GmEncryptedValue.SUFFIX);
+	}
+
+	private static String helpText() {
+		return """
+				Usage:
+				  fist-jasypt-cli <command> [options]
+
+				Commands:
+				  encrypt        Encrypt a plain config value.
+				  decrypt        Decrypt an encrypted config value.
+				  generate-key   Generate a Base64 random key.
+				  fingerprint    Print the SM3 fingerprint of the master key.
+				  help           Print this help message.
+
+				Options:
+				  --value <text>             Plain text for encrypt, or cipher text for decrypt.
+				  --master-key-file <path>   File containing the master key.
+				  --master-key-env <name>    Environment variable name for the master key. Default: FIST_JASYPT_MASTER_KEY.
+				  --prefix <text>            Cipher text prefix. Default: GMENC(
+				  --suffix <text>            Cipher text suffix. Default: )
+				  --bytes <number>           Random key byte length for generate-key. Default: 32.
+				""";
 	}
 
 	private static String resolveMasterKey(Map<String, String> options) {

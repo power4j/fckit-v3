@@ -45,17 +45,28 @@ public final class GmEncryptedValue {
 	}
 
 	public String format() {
+		return format(PREFIX, SUFFIX);
+	}
+
+	public String format(String prefix, String suffix) {
 		Base64.Encoder encoder = Base64.getEncoder();
-		return PREFIX + VERSION + ":" + encoder.encodeToString(this.salt) + ":" + encoder.encodeToString(this.iv) + ":"
-				+ encoder.encodeToString(this.cipher) + ":" + encoder.encodeToString(this.mac) + SUFFIX;
+		return prefix + formatBody(encoder) + suffix;
+	}
+
+	public String formatBody() {
+		return formatBody(Base64.getEncoder());
 	}
 
 	public static GmEncryptedValue parse(String value) {
-		if (!value.startsWith(PREFIX) || !value.endsWith(SUFFIX)) {
-			throw new GmConfigCryptoException("Invalid GMENC envelope");
-		}
-		String content = value.substring(PREFIX.length(), value.length() - SUFFIX.length());
-		String[] parts = content.split(":", -1);
+		return parse(value, PREFIX, SUFFIX);
+	}
+
+	public static GmEncryptedValue parse(String value, String prefix, String suffix) {
+		return parseBody(extractBody(value, prefix, suffix));
+	}
+
+	public static GmEncryptedValue parseBody(String value) {
+		String[] parts = value.split(":", -1);
 		if (parts.length != 5 || !VERSION.equals(parts[0])) {
 			throw new GmConfigCryptoException("Invalid GMENC envelope version or field count");
 		}
@@ -67,6 +78,18 @@ public final class GmEncryptedValue {
 		catch (IllegalArgumentException ex) {
 			throw new GmConfigCryptoException("Invalid GMENC Base64 field", ex);
 		}
+	}
+
+	private String formatBody(Base64.Encoder encoder) {
+		return VERSION + ":" + encoder.encodeToString(this.salt) + ":" + encoder.encodeToString(this.iv) + ":"
+				+ encoder.encodeToString(this.cipher) + ":" + encoder.encodeToString(this.mac);
+	}
+
+	private static String extractBody(String value, String prefix, String suffix) {
+		if (!value.startsWith(prefix) || !value.endsWith(suffix)) {
+			throw new GmConfigCryptoException("Invalid GMENC envelope");
+		}
+		return value.substring(prefix.length(), value.length() - suffix.length());
 	}
 
 }

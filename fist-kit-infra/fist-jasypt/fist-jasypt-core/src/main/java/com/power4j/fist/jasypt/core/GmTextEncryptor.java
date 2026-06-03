@@ -41,6 +41,10 @@ public class GmTextEncryptor {
 	 * @return `GMENC(...)` 配置密文
 	 */
 	public String encrypt(String plain, String masterKey) {
+		return encrypt(plain, masterKey, GmEncryptedValue.PREFIX, GmEncryptedValue.SUFFIX);
+	}
+
+	public String encrypt(String plain, String masterKey, String prefix, String suffix) {
 		byte[] salt = randomBytes(SALT_BYTES);
 		byte[] iv = randomBytes(Sm4Util.BLOCK_SIZE);
 		byte[] encKey = deriveKey(masterKey, salt, ENC_LABEL, 16);
@@ -49,7 +53,7 @@ public class GmTextEncryptor {
 			QuickCipher sm4 = cipher(encKey, iv);
 			CipherBlobDetails blob = sm4.encrypt(plain.getBytes(StandardCharsets.UTF_8));
 			byte[] mac = mac(macKey, salt, iv, blob.getCipher());
-			return new GmEncryptedValue(salt, iv, blob.getCipher(), mac).format();
+			return new GmEncryptedValue(salt, iv, blob.getCipher(), mac).format(prefix, suffix);
 		}
 		catch (GeneralCryptoException ex) {
 			throw new GmConfigCryptoException("GMENC encryption failed", ex);
@@ -63,7 +67,19 @@ public class GmTextEncryptor {
 	 * @return 配置明文
 	 */
 	public String decrypt(String cipherText, String masterKey) {
-		GmEncryptedValue encrypted = GmEncryptedValue.parse(cipherText);
+		return decrypt(cipherText, masterKey, GmEncryptedValue.PREFIX, GmEncryptedValue.SUFFIX);
+	}
+
+	public String decrypt(String cipherText, String masterKey, String prefix, String suffix) {
+		GmEncryptedValue encrypted = GmEncryptedValue.parse(cipherText, prefix, suffix);
+		return decrypt(encrypted, masterKey);
+	}
+
+	public String decryptBody(String cipherBody, String masterKey) {
+		return decrypt(GmEncryptedValue.parseBody(cipherBody), masterKey);
+	}
+
+	private String decrypt(GmEncryptedValue encrypted, String masterKey) {
 		byte[] encKey = deriveKey(masterKey, encrypted.getSalt(), ENC_LABEL, 16);
 		byte[] macKey = deriveKey(masterKey, encrypted.getSalt(), MAC_LABEL, HmacSm3Util.HMAC_SM3_BYTES);
 		byte[] expected = mac(macKey, encrypted.getSalt(), encrypted.getIv(), encrypted.getCipher());

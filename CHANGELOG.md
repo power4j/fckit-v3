@@ -12,7 +12,12 @@
 - 新增 `GMENC(...)` 配置密文 envelope，使用 SM3 派生、SM4-CBC/PKCS7 加密和 HMAC-SM3 完整性校验。
 - 新增 Spring Boot starter，支持通过 `fist.jasypt` 启用自定义 `jasyptStringEncryptor`，并将默认密文边界映射到 Jasypt 属性。
 - 新增 CLI 命令，用于生成随机密钥、加密、解密和查看主密钥指纹。
+- 新增 CLI `help`、`--help`、`-h` 帮助入口。
 - 新增 `example-jasypt-basic` 示例，演示主密钥文件和 `GMENC(...)` 配置读取。
+
+### Fixed
+
+- 修正 `fist.jasypt.cipher-prefix` 和 `fist.jasypt.cipher-suffix` 仅影响 Jasypt 属性、不影响实际加密器输出的问题。当前 core、Spring Boot starter 和 CLI 均支持相同的可配置密文边界。
 
 ## [3.13.1] - 2026-05-09
 

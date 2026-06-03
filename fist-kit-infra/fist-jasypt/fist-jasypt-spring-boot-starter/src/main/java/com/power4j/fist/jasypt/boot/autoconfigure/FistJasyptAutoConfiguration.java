@@ -27,7 +27,8 @@ public class FistJasyptAutoConfiguration {
 	@Bean("jasyptStringEncryptor")
 	@ConditionalOnMissingBean(name = "jasyptStringEncryptor")
 	StringEncryptor jasyptStringEncryptor(FistJasyptProperties properties, Environment environment) {
-		return new FistJasyptStringEncryptor(new GmTextEncryptor(), resolveMasterKey(properties, environment));
+		return new FistJasyptStringEncryptor(new GmTextEncryptor(), resolveMasterKey(properties, environment),
+				properties.getCipherPrefix(), properties.getCipherSuffix());
 	}
 
 	private static String resolveMasterKey(FistJasyptProperties properties, Environment environment) {

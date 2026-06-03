@@ -14,27 +14,32 @@ class FistJasyptStringEncryptor implements StringEncryptor {
 
 	private final String masterKey;
 
+	private final String cipherPrefix;
+
+	private final String cipherSuffix;
+
 	FistJasyptStringEncryptor(GmTextEncryptor delegate, String masterKey) {
+		this(delegate, masterKey, GmEncryptedValue.PREFIX, GmEncryptedValue.SUFFIX);
+	}
+
+	FistJasyptStringEncryptor(GmTextEncryptor delegate, String masterKey, String cipherPrefix, String cipherSuffix) {
 		this.delegate = delegate;
 		this.masterKey = masterKey;
+		this.cipherPrefix = cipherPrefix;
+		this.cipherSuffix = cipherSuffix;
 	}
 
 	@Override
 	public String encrypt(String message) {
-		return this.delegate.encrypt(message, this.masterKey);
+		return this.delegate.encrypt(message, this.masterKey, this.cipherPrefix, this.cipherSuffix);
 	}
 
 	@Override
 	public String decrypt(String encryptedMessage) {
-		return this.delegate.decrypt(normalize(encryptedMessage), this.masterKey);
-	}
-
-	private static String normalize(String encryptedMessage) {
-		if (encryptedMessage.startsWith(GmEncryptedValue.PREFIX)
-				&& encryptedMessage.endsWith(GmEncryptedValue.SUFFIX)) {
-			return encryptedMessage;
+		if (encryptedMessage.startsWith(this.cipherPrefix) && encryptedMessage.endsWith(this.cipherSuffix)) {
+			return this.delegate.decrypt(encryptedMessage, this.masterKey, this.cipherPrefix, this.cipherSuffix);
 		}
-		return GmEncryptedValue.PREFIX + encryptedMessage + GmEncryptedValue.SUFFIX;
+		return this.delegate.decryptBody(encryptedMessage, this.masterKey);
 	}
 
 }

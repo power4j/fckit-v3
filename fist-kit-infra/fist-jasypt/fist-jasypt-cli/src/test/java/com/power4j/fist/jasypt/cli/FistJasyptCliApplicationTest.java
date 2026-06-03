@@ -32,6 +32,19 @@ class FistJasyptCliApplicationTest {
 	}
 
 	@Test
+	void shouldEncryptAndDecryptWithCustomCipherPrefixAndSuffix() throws Exception {
+		Path masterKeyFile = writeMasterKey();
+
+		String cipher = run("encrypt", "--master-key-file", masterKeyFile.toString(), "--value", "hmac-secret",
+				"--prefix", "ENC[", "--suffix", "]");
+		String plain = run("decrypt", "--master-key-file", masterKeyFile.toString(), "--value", cipher, "--prefix",
+				"ENC[", "--suffix", "]");
+
+		assertThat(cipher).startsWith("ENC[v1:");
+		assertThat(plain).isEqualTo("hmac-secret");
+	}
+
+	@Test
 	void shouldGenerateRandomKeys() {
 		String key = run("generate-key", "--bytes", "32");
 
@@ -54,6 +67,12 @@ class FistJasyptCliApplicationTest {
 	void shouldRejectMissingRequiredArgument() {
 		assertThatThrownBy(() -> run("encrypt", "--value", "hmac-secret")).isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("--master-key-file");
+	}
+
+	@Test
+	void shouldPrintHelp() {
+		assertThat(run("help")).contains("Usage:", "Commands:", "encrypt", "decrypt", "generate-key", "fingerprint");
+		assertThat(run("--help")).contains("Usage:", "--master-key-file", "--prefix", "--suffix");
 	}
 
 	@Test
