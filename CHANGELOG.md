@@ -6,6 +6,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 新增 `fist-jasypt` 国密配置加密模块组，包含 `fist-jasypt-core`、`fist-jasypt-spring-boot-starter` 和不发布 Maven 的 `fist-jasypt-cli`。
+- 新增 `GMENC(...)` 配置密文 envelope，使用 SM3 派生、SM4-CBC/PKCS7 加密和 HMAC-SM3 完整性校验。
+- 新增 Spring Boot starter，支持通过 `fist.jasypt` 启用自定义 `jasyptStringEncryptor`，并将默认密文边界映射到 Jasypt 属性。
+- 新增 CLI 命令，用于生成随机密钥、加密、解密和查看主密钥指纹。
+- 新增 `example-jasypt-basic` 示例，演示主密钥文件和 `GMENC(...)` 配置读取。
+
 ## [3.13.1] - 2026-05-09
 
 ### Changed
