@@ -6,6 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * FIST 国密配置加密属性。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
  */
 @ConfigurationProperties(prefix = "fist.jasypt")
 public class FistJasyptProperties {

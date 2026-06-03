@@ -7,6 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * {@link FistJasyptStringEncryptor} 测试。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
+ */
 class FistJasyptStringEncryptorTest {
 
 	private final FistJasyptStringEncryptor encryptor = new FistJasyptStringEncryptor(new GmTextEncryptor(),

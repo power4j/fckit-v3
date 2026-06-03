@@ -14,6 +14,12 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * {@link FistJasyptCliApplication} 测试。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
+ */
 class FistJasyptCliApplicationTest {
 
 	@TempDir

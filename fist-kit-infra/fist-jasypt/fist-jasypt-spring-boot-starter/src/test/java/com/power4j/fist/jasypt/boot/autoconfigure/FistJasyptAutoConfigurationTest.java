@@ -11,6 +11,12 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * {@link FistJasyptAutoConfiguration} 测试。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
+ */
 class FistJasyptAutoConfigurationTest {
 
 	private final ApplicationContextRunner runner = new ApplicationContextRunner()

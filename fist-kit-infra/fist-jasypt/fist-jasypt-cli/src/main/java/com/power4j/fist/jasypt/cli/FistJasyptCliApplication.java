@@ -14,6 +14,9 @@ import java.util.Map;
 
 /**
  * FIST 国密配置加密命令入口。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
  */
 public final class FistJasyptCliApplication {
 

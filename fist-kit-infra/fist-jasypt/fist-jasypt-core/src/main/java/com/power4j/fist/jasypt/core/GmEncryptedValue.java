@@ -4,6 +4,9 @@ import java.util.Base64;
 
 /**
  * `GMENC(...)` 配置密文 envelope。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
  */
 public final class GmEncryptedValue {
 

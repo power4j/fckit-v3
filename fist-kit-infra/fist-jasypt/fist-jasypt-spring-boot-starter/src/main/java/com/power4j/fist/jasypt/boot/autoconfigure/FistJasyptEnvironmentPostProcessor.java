@@ -13,6 +13,9 @@ import java.util.Map;
 
 /**
  * 将 `fist.jasypt` 密文边界映射到 Jasypt 标准属性。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
  */
 public class FistJasyptEnvironmentPostProcessor implements EnvironmentPostProcessor {
 

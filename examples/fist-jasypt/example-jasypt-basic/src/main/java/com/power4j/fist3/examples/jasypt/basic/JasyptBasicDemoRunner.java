@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+/**
+ * 国密配置加密示例输出。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
+ */
 @Component
 class JasyptBasicDemoRunner implements CommandLineRunner {
 

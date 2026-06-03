@@ -9,6 +9,12 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * {@link FistJasyptEnvironmentPostProcessor} 测试。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
+ */
 class FistJasyptEnvironmentPostProcessorTest {
 
 	private final FistJasyptEnvironmentPostProcessor processor = new FistJasyptEnvironmentPostProcessor();

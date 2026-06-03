@@ -15,6 +15,9 @@ import java.security.SecureRandom;
 
 /**
  * 国密配置文本加解密器。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
  */
 public class GmTextEncryptor {
 

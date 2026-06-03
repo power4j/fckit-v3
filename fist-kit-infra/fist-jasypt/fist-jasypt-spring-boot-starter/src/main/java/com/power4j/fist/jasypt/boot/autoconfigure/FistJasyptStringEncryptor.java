@@ -7,6 +7,9 @@ import org.jasypt.encryption.StringEncryptor;
 
 /**
  * 适配 Jasypt `StringEncryptor` 的国密文本加解密器。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.14
  */
 class FistJasyptStringEncryptor implements StringEncryptor {
 
