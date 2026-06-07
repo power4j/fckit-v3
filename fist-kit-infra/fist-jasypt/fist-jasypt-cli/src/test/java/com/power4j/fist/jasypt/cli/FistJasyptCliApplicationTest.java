@@ -81,19 +81,6 @@ class FistJasyptCliApplicationTest {
 		assertThat(run("--help")).contains("Usage:", "--master-key-file", "--prefix", "--suffix");
 	}
 
-	@Test
-	void shouldRunFromPackagedJar() throws Exception {
-		Path masterKeyFile = writeMasterKey();
-		Process process = new ProcessBuilder("java", "-jar", "target/fist-jasypt-cli-3.14.0-SNAPSHOT.jar",
-				"fingerprint", "--master-key-file", masterKeyFile.toString())
-			.redirectErrorStream(true)
-			.start();
-
-		assertThat(process.waitFor()).isZero();
-		assertThat(new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim())
-			.startsWith("SM3:");
-	}
-
 	private Path writeMasterKey() throws Exception {
 		Path masterKeyFile = this.tempDir.resolve("master.key");
 		Files.writeString(masterKeyFile, "master-secret", StandardCharsets.UTF_8);

@@ -7,11 +7,11 @@
 查看 CLI 命令和参数：
 
 ```bash
-java -jar fist-jasypt-cli-3.14.0-SNAPSHOT.jar help
+java -jar fist-jasypt-cli.jar help
 ```
 
 ```bash
-java -jar fist-jasypt-cli-3.14.0-SNAPSHOT.jar generate-key --bytes 32
+java -jar fist-jasypt-cli.jar generate-key --bytes 32
 ```
 
 将命令输出写入受控文件，例如 `D:/secure/fist-jasypt-master.key`。该文件不写入 Git，不在日志中打印。
@@ -21,13 +21,13 @@ java -jar fist-jasypt-cli-3.14.0-SNAPSHOT.jar generate-key --bytes 32
 默认密文格式为 `GMENC(...)`：
 
 ```bash
-java -jar fist-jasypt-cli-3.14.0-SNAPSHOT.jar encrypt --master-key-file D:/secure/fist-jasypt-master.key --value hmac-secret
+java -jar fist-jasypt-cli.jar encrypt --master-key-file D:/secure/fist-jasypt-master.key --value hmac-secret
 ```
 
 如应用配置了自定义密文边界，CLI 需要使用相同的 `--prefix` 和 `--suffix`：
 
 ```bash
-java -jar fist-jasypt-cli-3.14.0-SNAPSHOT.jar encrypt --master-key-file D:/secure/fist-jasypt-master.key --value hmac-secret --prefix "ENC[" --suffix "]"
+java -jar fist-jasypt-cli.jar encrypt --master-key-file D:/secure/fist-jasypt-master.key --value hmac-secret --prefix "ENC[" --suffix "]"
 ```
 
 将输出的 `GMENC(...)` 写入 `application.yml`：
