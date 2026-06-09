@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [3.14.0] - 2026-06-09
+
 ### Added
 
 - 新增 `fist-jasypt` 国密配置加密模块组，包含 `fist-jasypt-core`、`fist-jasypt-spring-boot-starter` 和不发布 Maven 的 `fist-jasypt-cli`。
