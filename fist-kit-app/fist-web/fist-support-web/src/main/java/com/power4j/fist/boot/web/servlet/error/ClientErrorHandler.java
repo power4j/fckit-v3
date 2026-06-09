@@ -19,6 +19,7 @@ package com.power4j.fist.boot.web.servlet.error;
 import com.power4j.coca.kit.common.lang.Result;
 import com.power4j.coca.kit.common.text.StringPool;
 import com.power4j.fist.boot.common.api.Results;
+import com.power4j.fist.boot.common.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -127,6 +129,14 @@ public class ClientErrorHandler {
 		String hint = String.format("%s %s", e.getHttpMethod(), e.getRequestURL());
 		log.error("请求资源不存在:{}", hint);
 		return Results.clientError("请求资源不存在", hint);
+	}
+
+	@ExceptionHandler(NoResourceFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public Result<Object> handleException(NoResourceFoundException e) {
+		String hint = String.format("%s %s", e.getHttpMethod(), e.getResourcePath());
+		log.warn("请求静态资源不存在:{}", hint);
+		return Results.resultWithHint(ErrorCode.A9900, "请求资源不存在", null, hint);
 	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)

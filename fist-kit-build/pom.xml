@@ -208,6 +208,11 @@
         <version>${bcprov-18.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.github.ulisesbocchio</groupId>
+        <artifactId>jasypt-spring-boot-starter</artifactId>
+        <version>${jasypt-spring-boot.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>transmittable-thread-local</artifactId>
         <version>${transmittable-thread-local.version}</version>

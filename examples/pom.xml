@@ -19,6 +19,7 @@
   </properties>
 
   <modules>
+    <module>fist-jasypt</module>
     <module>fist-logback</module>
     <module>fist-sde</module>
   </modules>
