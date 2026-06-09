@@ -1,0 +1,6 @@
+fist:
+  jasypt:
+    enabled: true
+
+demo:
+  hmac-key: GMENC(v1:6Lq7J4ce0JnDAzzh3D7UxA==:XoA9UJTkas7phDQNqOn4dQ==:0FHOQABbInKUIJVzUvORLQ==:wzQI6MjFcpMTXlUwPKJcTkhSCSqPLpkknnBeF095pkI=)

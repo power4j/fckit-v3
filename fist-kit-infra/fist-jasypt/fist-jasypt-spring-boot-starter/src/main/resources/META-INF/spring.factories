@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.power4j.fist.jasypt.boot.autoconfigure.FistJasyptAutoConfiguration
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.power4j.fist.jasypt.boot.autoconfigure.FistJasyptEnvironmentPostProcessor
