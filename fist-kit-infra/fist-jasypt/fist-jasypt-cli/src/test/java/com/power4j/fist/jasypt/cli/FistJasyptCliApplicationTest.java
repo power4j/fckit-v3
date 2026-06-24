@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -70,6 +71,36 @@ class FistJasyptCliApplicationTest {
 	}
 
 	@Test
+	void shouldPrintStableHmacKeyFingerprintFromBase64Value() {
+		String key = Base64.getEncoder().encodeToString("hmac-secret".getBytes(StandardCharsets.UTF_8));
+
+		String fingerprint = run("hmac-key-fingerprint", "--value", key);
+
+		assertThat(fingerprint).matches("sm3:[0-9a-f]{16}");
+		assertThat(run("hmac-key-fingerprint", "--value", key)).isEqualTo(fingerprint);
+	}
+
+	@Test
+	void shouldPrintSameHmacKeyFingerprintFromEncryptedValue() throws Exception {
+		Path masterKeyFile = writeMasterKey();
+		String key = Base64.getEncoder().encodeToString("hmac-secret".getBytes(StandardCharsets.UTF_8));
+		String cipher = new GmTextEncryptor().encrypt(key, "master-secret");
+
+		String plainFingerprint = run("hmac-key-fingerprint", "--value", key);
+		String encryptedFingerprint = run("hmac-key-fingerprint", "--master-key-file", masterKeyFile.toString(),
+				"--encrypted-value", cipher);
+
+		assertThat(encryptedFingerprint).isEqualTo(plainFingerprint);
+	}
+
+	@Test
+	void shouldRejectInvalidHmacKeyBase64Value() {
+		assertThatThrownBy(() -> run("hmac-key-fingerprint", "--value", "not-base64!"))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("HMAC key Base64 is invalid");
+	}
+
+	@Test
 	void shouldRejectMissingRequiredArgument() {
 		assertThatThrownBy(() -> run("encrypt", "--value", "hmac-secret")).isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("--master-key-file");
@@ -77,7 +108,9 @@ class FistJasyptCliApplicationTest {
 
 	@Test
 	void shouldPrintHelp() {
-		assertThat(run("help")).contains("Usage:", "Commands:", "encrypt", "decrypt", "generate-key", "fingerprint");
+		assertThat(run("help")).contains("Usage:", "Commands:", "encrypt", "decrypt", "generate-key", "fingerprint",
+				"hmac-key-fingerprint");
+		assertThat(run("help")).contains("master key", "HMAC business key");
 		assertThat(run("--help")).contains("Usage:", "--master-key-file", "--prefix", "--suffix");
 	}
 

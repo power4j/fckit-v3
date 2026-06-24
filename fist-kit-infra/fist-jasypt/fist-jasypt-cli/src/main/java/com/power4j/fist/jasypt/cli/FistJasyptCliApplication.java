@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -50,6 +51,10 @@ public final class FistJasyptCliApplication {
 		}
 		if ("fingerprint".equals(command)) {
 			System.out.println(fingerprint(resolveMasterKey(options)));
+			return;
+		}
+		if ("hmac-key-fingerprint".equals(command)) {
+			System.out.println(hmacKeyFingerprint(resolveHmacKeyBase64(options)));
 			return;
 		}
 		throw new IllegalArgumentException("Unsupported command: " + command + ". Run `help` for usage.");
@@ -100,10 +105,13 @@ public final class FistJasyptCliApplication {
 				  decrypt        Decrypt an encrypted config value.
 				  generate-key   Generate a Base64 random key.
 				  fingerprint    Print the SM3 fingerprint of the master key.
+				  hmac-key-fingerprint
+				                 Print the SM3 fingerprint of the HMAC business key.
 				  help           Print this help message.
 
 				Options:
-				  --value <text>             Plain text for encrypt, or cipher text for decrypt.
+				  --value <text>             Plain text for encrypt, cipher text for decrypt, or HMAC key Base64 for hmac-key-fingerprint.
+				  --encrypted-value <text>   GMENC(...) HMAC key Base64 for hmac-key-fingerprint.
 				  --master-key-file <path>   File containing the master key.
 				  --master-key-env <name>    Environment variable name for the master key. Default: FIST_JASYPT_MASTER_KEY.
 				  --prefix <text>            Cipher text prefix. Default: GMENC(
@@ -147,6 +155,31 @@ public final class FistJasyptCliApplication {
 	private static String fingerprint(String masterKey) {
 		byte[] hash = Sm3Util.hash(masterKey.getBytes(StandardCharsets.UTF_8), 16, null);
 		return "SM3:" + Base64.getEncoder().encodeToString(hash);
+	}
+
+	private static String resolveHmacKeyBase64(Map<String, String> options) {
+		String value = options.get("--value");
+		String encryptedValue = options.get("--encrypted-value");
+		if (value != null && encryptedValue != null) {
+			throw new IllegalArgumentException("--value and --encrypted-value cannot be used together.");
+		}
+		if (encryptedValue != null) {
+			return new GmTextEncryptor().decrypt(required(options, "--encrypted-value"), resolveMasterKey(options),
+					cipherPrefix(options), cipherSuffix(options));
+		}
+		return required(options, "--value");
+	}
+
+	private static String hmacKeyFingerprint(String keyBase64) {
+		byte[] key;
+		try {
+			key = Base64.getDecoder().decode(keyBase64);
+		}
+		catch (IllegalArgumentException ex) {
+			throw new IllegalArgumentException("HMAC key Base64 is invalid.", ex);
+		}
+		byte[] hash = Sm3Util.hash(key, 8, null);
+		return "sm3:" + HexFormat.of().formatHex(hash);
 	}
 
 }
