@@ -64,3 +64,4 @@ git diff --check
 - 2026-07-01：T2 已执行 `javac -encoding UTF-8` 编译主代码通过；临时 smoke 程序验证 `restore`、`pushSpan`、scope 清理通过。Maven 单元测试需网络可用后补跑。
 - 2026-07-01：T3 已先写入 `DefaultTraceContextRuntimeTest`，本地 `javac -encoding UTF-8` 编译主代码通过；临时 smoke 程序验证入口、出口、MDC 编排通过。Maven 单元测试仍受父 BOM 下载失败限制。
 - 2026-07-01：T3 已写入 item 支撑类型测试，本地 `javac -encoding UTF-8` 编译主代码通过；临时 smoke 程序验证单值 item 入口采集、出口写入和 MDC 写入通过。
+- 2026-07-01：T3 已写入 registry builder 测试，本地 `javac -encoding UTF-8` 编译主代码通过；临时 smoke 程序验证 item 排序和重复 `context-name` fail-fast 通过。
