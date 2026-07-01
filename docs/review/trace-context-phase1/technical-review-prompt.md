@@ -7,6 +7,8 @@
 评审输入文档：
 
 - `fist-kit3-jasypt/docs/plans/2026-07-01-trace-context-phase1.md`
+- `fist-kit3-jasypt/docs/review/trace-context-phase1/01-technical-review.md`
+- `fist-kit3-jasypt/docs/review/trace-context-phase1/02-technical-review.md`
 
 说明：`fist-kit3` 是项目名称，`fist-kit3-jasypt` 是当前落地目录，即该项目的 git worktree。
 
@@ -55,6 +57,10 @@
 - starter 作为接入层、核心库作为复用层的边界是否清楚，是否存在 Feign、Web、reactive 模块反向依赖 starter 的风险。
 - `fist.trace-context` 配置是否由 starter 统一读取、解析和校验，其他模块是否只消费 TraceContextRuntime / TraceContextRegistry。
 - 是否存在其他模块重复读取配置、重复解释 item props、重复编排 item 的风险。
+- 第 2 轮指出的 reactive 写入侧与读取侧协议是否闭环，`RequestIdGlobalFilter`、`MdcContextLifter`、`GlobalErrorAttributes` 是否都纳入治理。
+- Feign 治理是否保留现有 RelayInterceptor，仅用 TraceRelayHandler 取代 HeaderRelayHandler；trace header 与认证 header 是否能在同一 handler 链中共存。
+- 第 2 轮指出的纯 Java 核心库与 Spring Bean 查找矛盾是否通过核心抽象解决。
+- 第 2 轮指出的 `enabled=false` 装配契约是否明确且可测试。
 - 新模块的配置能力是否足以支撑向前兼容，而不是形成另一套旁路 trace 能力。
 - 首阶段只涉及 fist-kit3 项目是否被严格遵守，是否误改应用项目。
 
@@ -110,7 +116,7 @@
 
 - Servlet Filter 是否足够作为首阶段入口能力。
 - HeaderMdcFilter 删除并迁移到 starter 是否可行，破坏性是否被充分说明。
-- Feign 模块动态选择基于 TraceContext 的实现或旧实现是否可行，是否会造成循环依赖、重复 RequestInterceptor 或 header 重复写入。
+- Feign 模块通过 TraceRelayHandler 取代 HeaderRelayHandler 是否可行，是否会造成循环依赖、重复 RequestInterceptor 或 header 重复写入。
 - RestClient、Feign、reactive MDC 的边界是否清楚。
 - WebFlux / Gateway 只改造 reactive MDC 恢复、不提供完整入口追踪上下文能力，这个范围是否自洽。
 - 是否需要支持 RestTemplate、WebClient、消息队列，还是明确不做。
@@ -124,7 +130,7 @@
 - 是否可能改变请求头、日志内容、线程上下文、AOP 行为。
 - 是否需要默认 disabled，要求应用显式开启。
 - 是否有从旧 Web 默认能力迁移到 starter 的明确路径。
-- 原自定义 TraceInfoResolver、旧 Feign 透传、reactive MDC 的迁移说明是否完整。
+- 原自定义 TraceInfoResolver、旧 Feign 透传、reactive MDC 的迁移说明是否完整，是否放在原模块 README / changelog 而不是 starter README。
 - 是否需要保留 deprecated 过渡期，而不是直接删除。
 
 十、测试和验收
