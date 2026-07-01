@@ -24,7 +24,7 @@
 | 编号 | 状态 | 任务 | 主要范围 | 验收检查 |
 | --- | --- | --- | --- | --- |
 | T0 | done | 建立任务跟踪 | `docs/tasks/2026-07-01-trace-context-phase1-tasks.md` | 文档提交，工作区干净 |
-| T1 | todo | 创建 Maven 模块骨架 | `fist-kit-infra/pom.xml`、`fist-kit-dependencies/pom.xml`、`fist-kit-infra/fist-trace-context`、`fist-kit-infra/fist-trace-context-spring-boot-starter` | 新模块可被 Maven 识别 |
+| T1 | done | 创建 Maven 模块骨架 | `fist-kit-infra/pom.xml`、`fist-kit-dependencies/pom.xml`、`fist-kit-infra/fist-trace-context`、`fist-kit-infra/fist-trace-context-spring-boot-starter` | 新模块可被 Maven 识别 |
 | T2 | todo | 实现核心上下文 API | `TraceContext`、`TraceContextHolder`、`TraceContexts`、`TraceScope`、`TraceContextSnapshot` | 单元测试覆盖读写、snapshot、restore、scope 清理、span 嵌套 |
 | T3 | todo | 实现 item 与 runtime 编排 | `TraceContextItem`、`TraceContextItemFactory`、`TraceContextRegistry`、`TraceContextRuntime`、载体接口、抽象基类 | 单元测试覆盖排序、入口冻结、出口透传、MDC 同步、配置冲突 |
 | T4 | todo | 实现 starter 配置与默认 processor | `TraceContextProperties`、自动配置、`correlation-id`、`system-code`、配置元数据 | `enabled=false` 不创建 runtime；默认配置可生成 `X-REQ-UID` / `requestId` |
@@ -55,3 +55,8 @@ git diff --check
 ```
 
 模块实现后按任务补充更精确的 Maven 验证命令，优先只运行被改模块及其必要依赖。
+
+## 验证记录
+
+- 2026-07-01：T1 模块骨架执行 XML 解析检查通过，`git diff --check` 通过。
+- 2026-07-01：T1 Maven 验证命令 `mvnd -pl fist-kit-infra/fist-trace-context,fist-kit-infra/fist-trace-context-spring-boot-starter -am -DskipTests validate` 受限于沙箱网络，无法下载父 BOM；非沙箱执行申请因审批服务 503 未执行。网络可用后需补跑。
