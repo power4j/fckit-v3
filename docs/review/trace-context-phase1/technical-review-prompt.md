@@ -58,6 +58,7 @@
 - `fist.trace-context` 配置是否由 starter 统一读取、解析和校验，其他模块是否只消费 TraceContextRuntime / TraceContextRegistry。
 - 是否存在其他模块重复读取配置、重复解释 item props、重复编排 item 的风险。
 - 第 2 轮指出的 reactive 写入侧与读取侧协议是否闭环，`RequestIdGlobalFilter`、`MdcContextLifter`、`GlobalErrorAttributes` 是否都纳入治理。
+- 第 3 轮指出的 gateway 转发透传语义、reactive 入口调用链、Feign 未启用 starter 的破坏性、`MdcContextLifter` scope 清理是否已补齐。
 - Feign 治理是否保留现有 RelayInterceptor，仅用 TraceRelayHandler 取代 HeaderRelayHandler；trace header 与认证 header 是否能在同一 handler 链中共存。
 - 第 2 轮指出的纯 Java 核心库与 Spring Bean 查找矛盾是否通过核心抽象解决。
 - 第 2 轮指出的 `enabled=false` 装配契约是否明确且可测试。
@@ -119,6 +120,7 @@
 - Feign 模块通过 TraceRelayHandler 取代 HeaderRelayHandler 是否可行，是否会造成循环依赖、重复 RequestInterceptor 或 header 重复写入。
 - RestClient、Feign、reactive MDC 的边界是否清楚。
 - WebFlux / Gateway 只改造 reactive MDC 恢复、不提供完整入口追踪上下文能力，这个范围是否自洽。
+- `RequestIdGlobalFilter` 改造后是否仍保留 `X-REQ-UID` 转发写回，reactive inbound -> capture -> contextWrite 调用链是否可实现。
 - 是否需要支持 RestTemplate、WebClient、消息队列，还是明确不做。
 - 异步上下文传递是否应首阶段实现，还是放后续。
 - ThreadLocal、快照、TaskDecorator 的边界是否清楚。
@@ -140,6 +142,7 @@
 - README 是否规定得足够简洁。
 - 两个示例是否足以证明默认能力和扩展能力。
 - 是否缺少错误配置、嵌套 span、异常退出、MDC 清理、并发隔离等关键测试。
+- 是否已经足够进入实现阶段，后续应改为 PoC / 实现评审而不是继续文档评审。
 
 输出格式：
 

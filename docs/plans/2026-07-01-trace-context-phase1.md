@@ -97,6 +97,7 @@ Feign 透传治理在 `fist-cloud-rpc-feign` 内完成。该模块保留现有 `
 - `fist-cloud-rpc-feign` 可以增加对 `fist-trace-context` 的可选依赖或普通依赖，用于实现基于 `TraceContext` 的 `TraceRelayHandler`。
 - `fist-cloud-rpc-feign` 不应依赖 `fist-trace-context-spring-boot-starter`。是否注册 `TraceRelayHandler`，应通过 `TraceContextRuntime` bean 是否存在判断。
 - `fist-cloud-rpc-feign` 的自动配置必须在 trace-context starter 自动配置之后评估，避免启用 starter 后 Feign 仍误走旧实现。
+- `fist-cloud-gateway` / `fist-gateway-auth-core` 可以增加对 `fist-trace-context` 的可选依赖或普通依赖，用于实现 reactive 入口适配和 Reactor Context 载荷写入。
 
 配置所有权：
 
@@ -151,12 +152,18 @@ Feign 透传治理在 `fist-cloud-rpc-feign` 内完成。该模块保留现有 `
 
 - 新增统一的 Reactor Context key，用于保存 `TraceContextSnapshot` 或等价上下文载荷，不再使用只保存 requestId 字符串的旧协议。
 - `RequestIdGlobalFilter` 作为写入侧，负责在 reactive 入口构造或获取当前 `TraceContext`，并向 Reactor Context 写入统一载荷。
+- `RequestIdGlobalFilter` 仍保留现有向下游 request header 写回 `X-REQ-UID` 的行为。写回值来自 `correlation-id` 的入口采集或缺失生成结果。
+- 「不支持完整 WebFlux / Gateway 入口追踪上下文能力」不包含现有 `X-REQ-UID` 转发透传；该能力首阶段必须保留。
+- `fist-support-web` 提供基于 `ServerHttpRequest` 的 `InboundTraceContext` 适配实现。核心库不依赖 Spring Web，不提供该适配。
+- reactive 入口调用链为：`RequestIdGlobalFilter` 获取 `TraceContextRuntime` bean；创建基于 `ServerHttpRequest` 的 `InboundTraceContext`；调用 `runtime.inbound(...)`；立即调用 `runtime.capture()` 得到 snapshot；通过 `contextWrite` 写入 Reactor Context 统一载荷。
+- 无 `TraceContextRuntime` bean 时，`RequestIdGlobalFilter` 回退到现有 requestId 字符串协议和 header 写回行为，保证 gateway 不因未启用 starter 失败。
 - `MdcContextLifter` 不再固定处理 MDC `requestId`。
 - `MdcContextLifter` 作为读取侧，从 Reactor Context 读取统一载荷。
 - reactive 执行片段恢复 MDC 时，复用核心库的 MDC 同步规则。
 - reactive 场景不能直接依赖普通 ThreadLocal 作为上下文来源。
+- reactive 业务代码首阶段不提供 `TraceContextHolder` ThreadLocal 语义，只提供 Reactor Context 载荷读取和 MDC 恢复。
 - `GlobalErrorAttributes` 构造错误响应时，优先从 `TraceContext` 或 Reactor Context 中的统一载荷读取 requestId，不再直接固定读取 `X-REQ-UID` header。
-- 首阶段只声明支持 reactive MDC 恢复和 reactive 异常事件 requestId 来源统一；WebFlux / Gateway 的完整响应写回、网关透传策略等能力不纳入首阶段。
+- 首阶段只声明支持现有 `X-REQ-UID` 转发透传、reactive MDC 恢复和 reactive 异常事件 requestId 来源统一；WebFlux / Gateway 的响应写回、采样、动态路由等高级策略不纳入首阶段。
 
 ### TraceInfo / TraceInfoResolver
 
@@ -295,11 +302,14 @@ fist:
 
 同 `order` 时按 item ID 字典序排序，保证启动结果稳定。首阶段不引入 `dependsOn`，如后续出现复杂依赖，再扩展依赖表达。
 
+配置元数据只覆盖通用配置项。`props` 是 processor 私有配置，首阶段不承诺 IDE 对 `props` 内部 key 的自动提示；错误配置由对应 factory 在启动阶段校验并 fail-fast。
+
 多实例冲突规则：
 
 - 同一个 `processor` 可以创建多个 item 实例。
 - 多个可写 item 使用相同 `context-name` 时，启动失败。
 - 多个写入 MDC 的 item 使用相同 `mdc-name` 时，启动失败。
+- 多个写入出口载体的 item 使用相同 `outbound-header` 时，启动失败，除非后续显式引入覆盖策略。
 - 默认值可能导致冲突。多实例配置必须显式声明不同的 `context-name`，需要写入 MDC 时也必须显式声明不同的 `mdc-name`。
 
 ## 默认能力
@@ -567,6 +577,8 @@ public interface TraceContextItemFactory {
 
 factory 必须校验自己的 `props`。配置错误抛出 `TraceContextConfigurationException`，启动 fail-fast。
 
+`TraceContextConfigurationException` 定义在核心库中，是 unchecked exception。
+
 ### TraceContextBeanLocator
 
 核心库不依赖 Spring，但需要给 factory 提供可选的外部对象查找能力。核心库定义自己的查找抽象：
@@ -715,6 +727,7 @@ Spring Boot starter 支持 Spring Bean factory。
 - Servlet Filter 使用 `try-finally` 清理请求入口写入的 MDC。
 - `TraceScope.close()` 恢复进入 scope 前的上下文和 MDC。
 - `TaskDecorator` 在线程池任务结束后恢复原上下文并清理 MDC。
+- `MdcContextLifter` 在每次 reactive 信号回调内执行 restore 和 MDC 同步，并在同一回调内 close 对应 `TraceScope`，不得跨信号持有 scope。
 - 异常退出必须走同样清理路径。
 
 ## 破坏性评估
@@ -733,6 +746,7 @@ Spring Boot starter 支持 Spring Bean factory。
 - MDC 新增或更新 `requestId`、`systemCode`、`spanId`。
 - RestClient 下游请求会通过 `TraceContext` 透传 `X-REQ-UID`。
 - Feign 透传在 `fist-cloud-rpc-feign` 内通过 `RelayHandler` 链治理。启用追踪上下文时注册 `TraceRelayHandler`，由默认 `correlation-id` item 补齐原 `X-REQ-UID` 透传能力；认证 header 仍由 `UserRelayHandler` 处理。未启用追踪上下文时不注册 `TraceRelayHandler`。
+- 未引入或未启用 starter 的应用，Feign 下游调用不再透传 `X-REQ-UID`。需要跨服务关联 ID 的应用必须引入并启用 starter。
 - 默认异常事件中的 `TraceInfo` 从 `TraceContext` 构造，不再依赖默认 `TraceInfoResolver`。
 - reactive MDC 传播和 reactive 异常事件 requestId 来源改为基于 `TraceContext` 核心模型。
 - `@TraceSpan` 会改变当前 span 和 MDC `spanId`。
@@ -786,7 +800,7 @@ Spring Boot starter 支持 Spring Bean factory。
 - `fist-cloud-gateway/fist-gateway-auth-core` 改造 `RequestIdGlobalFilter`，写入与 `MdcContextLifter` 一致的 Reactor Context 载荷。
 - `fist-support-web` 改造 `GlobalErrorAttributes`，从 `TraceContext` 或 Reactor Context 载荷读取 requestId。
 - `fist-cloud-rpc-feign` 删除 `HeaderRelayHandler`，新增 `TraceRelayHandler`，存在 `TraceContextRuntime` bean 时把 `TraceRelayHandler` 加入 `RelayInterceptor` handler 链。
-- 测试覆盖旧 filter 不再注册、异常事件读取 `TraceContext`、Feign 单拦截器注册、启用 starter 后 Feign 通过 `TraceRelayHandler` 透传且保留认证 header、`enabled=false` 时不注册 `TraceRelayHandler`、reactive MDC 通过 runtime 恢复、reactive 异常事件读取 requestId。
+- 测试覆盖旧 filter 不再注册、异常事件读取 `TraceContext`、Feign 单拦截器注册、启用 starter 后 Feign 通过 `TraceRelayHandler` 透传且保留认证 header、`enabled=false` 时不注册 `TraceRelayHandler`、reactive MDC 通过 runtime 恢复、reactive 信号切换后 MDC 无残留、reactive 异常事件读取 requestId、gateway 转发仍写入 `X-REQ-UID`。
 
 ### 文档
 
@@ -872,13 +886,14 @@ starter README 不展开旧模块迁移背景，不复制本方案大段内容�
 12. 移除旧 `HeaderMdcFilter` 自动配置，保留 public 类并标记 deprecated。
 13. 移除旧默认 `TraceInfoResolver` bean，保留 public 接口并标记 deprecated，改造异常事件从 `TraceContext` 构造 `TraceInfo`。
 14. 删除 `HeaderRelayHandler`，新增 `TraceRelayHandler`，并接入现有 `RelayInterceptor` handler 链。
-15. 改造 `RequestIdGlobalFilter` 的 Reactor Context 写入协议。
-16. 基于 `TraceContextRuntime` 改造 `MdcContextLifter`。
-17. 改造 `GlobalErrorAttributes` 的 requestId 来源。
-18. 补 starter 和既有模块治理测试。
-19. 编写 starter README。
-20. 添加基本示例。
-21. 添加自定义扩展示例。
+15. 提供基于 `ServerHttpRequest` 的 `InboundTraceContext` 适配。
+16. 改造 `RequestIdGlobalFilter` 的 Reactor Context 写入协议，并保留 `X-REQ-UID` 转发写回。
+17. 基于 `TraceContextRuntime` 改造 `MdcContextLifter`，并验证每个信号回调后 MDC 清理。
+18. 改造 `GlobalErrorAttributes` 的 requestId 来源。
+19. 补 starter 和既有模块治理测试。
+20. 编写 starter README 和原模块 README / changelog 迁移说明。
+21. 添加基本示例。
+22. 添加自定义扩展示例。
 
 ## 格式与构建要求
 
