@@ -19,6 +19,10 @@
 - `fist-cloud-rpc-feign` 使用 `TraceRelayHandler` 取代内部 `HeaderRelayHandler`。启用 `TraceContextRuntime` 后，Feign 通过现有 `RelayInterceptor` handler 链透传 trace header，认证 header 仍由 `UserRelayHandler` 处理。
 - `fist-cloud-gateway` 的 `RequestIdGlobalFilter`、`MdcContextLifter` 和 `GlobalErrorAttributes` 改为使用统一 Reactor Context 快照协议；未启用 `TraceContextRuntime` 时保留旧 requestId 字符串回退。
 
+### Removed
+
+- 移除多个 Spring Boot starter 中冗余的 `spring.factories` 自动配置条目。Spring Boot 3 自动配置由 `AutoConfiguration.imports` 提供，对 Spring Boot 3 应用无功能影响。
+
 ### Deprecated
 
 - `HeaderMdcFilter` 和 `TraceInfoResolver` 已标记为 deprecated，后续应迁移到 `fist-trace-context` 相关 API。

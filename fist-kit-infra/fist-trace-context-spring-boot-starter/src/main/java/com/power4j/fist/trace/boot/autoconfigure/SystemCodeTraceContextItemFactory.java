@@ -16,6 +16,8 @@ import java.util.Optional;
 
 /**
  * 系统代码追踪上下文项工厂。
+ * <p>
+ * 系统代码在 item 创建期解析并冻结，不随运行期 {@link SystemCodeProvider} 返回值变化。
  *
  * @author CJ (power4j@outlook.com)
  * @since 3.15

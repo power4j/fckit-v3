@@ -19,6 +19,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,17 @@ class FeignClientAutoConfigurationTest {
 	void tearDown() {
 		TraceContexts.clear();
 		UserContextHolder.setOriginalValue(null);
+	}
+
+	@Test
+	void userRelayHandlerShouldRunAfterTraceRelayHandler() {
+		Order traceOrder = AnnotationUtils.findAnnotation(TraceRelayHandler.class, Order.class);
+		Order userOrder = AnnotationUtils.findAnnotation(UserRelayHandler.class, Order.class);
+
+		assertThat(traceOrder).isNotNull();
+		assertThat(userOrder).isNotNull();
+		assertThat(traceOrder.value()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
+		assertThat(userOrder.value()).isEqualTo(Ordered.LOWEST_PRECEDENCE);
 	}
 
 	@Test

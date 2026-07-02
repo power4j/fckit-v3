@@ -7,6 +7,9 @@ import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.trace.context.TraceContexts;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.Order;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
@@ -29,6 +32,14 @@ class TraceContextWebFilterTest {
 	@AfterEach
 	void tearDown() {
 		TraceContexts.clear();
+	}
+
+	@Test
+	void shouldRunWithHighestPrecedence() {
+		Order order = AnnotationUtils.findAnnotation(TraceContextWebFilter.class, Order.class);
+
+		assertThat(order).isNotNull();
+		assertThat(order.value()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
 	}
 
 	@Test

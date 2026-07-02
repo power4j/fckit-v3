@@ -23,6 +23,8 @@ import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 
 import java.util.Collections;
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
  * @since 1.0
  */
 @Slf4j
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class UserRelayHandler implements RelayHandler {
 
 	@Override
