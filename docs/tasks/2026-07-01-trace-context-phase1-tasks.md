@@ -30,7 +30,7 @@
 | T4 | done | 实现 starter 配置与默认 processor | `TraceContextProperties`、自动配置、`correlation-id`、`system-code`、配置元数据 | `enabled=false` 不创建 runtime；默认配置可生成 `X-REQ-UID` / `requestId` |
 | T5 | done | 实现 Servlet / RestClient / async / span 注解 | starter Filter、RestClient interceptor、TaskDecorator、`@TraceSpan`、`@TraceSpanGroup` | 测试覆盖入口采集、缺失生成、MDC 清理、RestClient 透传、注解 span、异步恢复 |
 | T6 | done | 治理 Web 旧能力 | `fist-support-web`、`fist-boot-web-app` | 删除旧默认 `HeaderMdcFilter` 和默认 `TraceInfoResolver` 装配；public 类型 deprecated；异常事件读取 `TraceContext` |
-| T7 | todo | 治理 Feign 透传 | `fist-cloud-rpc-feign` | 删除 `HeaderRelayHandler`；新增 `TraceRelayHandler`；保留单个 `RelayInterceptor`；认证 header 不受影响 |
+| T7 | done | 治理 Feign 透传 | `fist-cloud-rpc-feign` | 删除 `HeaderRelayHandler`；新增 `TraceRelayHandler`；保留单个 `RelayInterceptor`；认证 header 不受影响 |
 | T8 | todo | 治理 reactive / gateway | `fist-support-web`、`fist-gateway-auth-core`、`fist-cloud-gateway-acl` | `RequestIdGlobalFilter` 写入 snapshot 并保留 `X-REQ-UID`；`MdcContextLifter` 每个信号 close scope；异常响应读取统一上下文 |
 | T9 | todo | 补充 README / changelog / 示例 | starter README、原模块迁移说明、`examples/fist-trace-context` | README 简洁；两个示例覆盖默认能力和自定义 item |
 | T10 | todo | 首阶段集成验证 | 相关模块测试和必要聚合构建 | 关键模块测试通过；破坏性更新说明完整 |
@@ -70,3 +70,5 @@ git diff --check
 - 2026-07-02：T5 执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dtest=TraceContextServletFilterTest,TraceContextRestClientTest,TraceContextTaskDecoratorTest,TraceSpanAspectTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，9 个测试通过。
 - 2026-07-02：执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试通过，starter 13 个测试通过。
 - 2026-07-02：T6 执行 `mvnd -pl fist-kit-app/fist-web/fist-boot-web-app,fist-kit-app/fist-web/fist-support-web -am "-Dtest=FistWebAutoConfigurationTest,AbstractExceptionHandlerTraceContextTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，4 个目标测试通过。
+- 2026-07-02：T7 先执行 `mvnd -pl fist-kit-cloud/fist-cloud-rpc-feign -am "-Dtest=FeignClientAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 验证 RED，失败原因为缺少 `TraceRelayHandler` 生产类。
+- 2026-07-02：T7 执行 `mvnd -pl fist-kit-cloud/fist-cloud-rpc-feign -am "-Dtest=FeignClientAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，4 个测试通过。

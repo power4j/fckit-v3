@@ -16,51 +16,29 @@
 
 package com.power4j.fist.cloud.rpc.feign;
 
+import com.power4j.fist.trace.context.TraceContextRuntime;
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 
-import java.util.Set;
-
 /**
+ * 基于 {@link TraceContextRuntime} 的 Feign 追踪信息传递处理器。
+ *
  * @author CJ (power4j@outlook.com)
- * @since 1.0
+ * @since 3.15
  */
-@Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
-public class HeaderRelayHandler implements RelayHandler {
+public class TraceRelayHandler implements RelayHandler {
 
-	private final Set<String> headers;
+	private final TraceContextRuntime runtime;
 
 	@Override
 	public void handle(@Nullable HttpServletRequest request, RequestTemplate template) {
-		if (request == null) {
-
-			if (log.isTraceEnabled()) {
-				log.trace("no request,skip relay headers");
-			}
-
-			return;
-		}
-		if (ObjectUtils.isEmpty(headers)) {
-			if (log.isTraceEnabled()) {
-				log.trace("no relay headers configured,skip relay headers");
-			}
-
-			return;
-		}
-		headers.forEach(k -> {
-			String val = request.getHeader(k);
-			if (val != null) {
-				if (log.isTraceEnabled()) {
-					log.trace("relay header:{}", k);
-				}
-				template.header(k, val);
-			}
-		});
+		this.runtime.outbound(new FeignRequestTemplateOutboundTraceContext(template));
 	}
 
 }
