@@ -31,9 +31,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @deprecated 使用 {@code fist-trace-context-spring-boot-starter} 替代。
  * @author CJ (power4j@outlook.com)
  * @since 3.8
  */
+@Deprecated(since = "3.15", forRemoval = false)
 @RequiredArgsConstructor
 public class HeaderMdcFilter extends OncePerRequestFilter {
 
