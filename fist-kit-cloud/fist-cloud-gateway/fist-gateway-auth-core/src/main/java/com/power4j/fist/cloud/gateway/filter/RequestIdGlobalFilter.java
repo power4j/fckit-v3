@@ -27,10 +27,10 @@ import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.trace.context.TraceContextSnapshot;
 import com.power4j.fist.trace.context.TraceContexts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.Nullable;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.lang.Nullable;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -73,6 +73,8 @@ public class RequestIdGlobalFilter implements GlobalFilter {
 
 	private Mono<Void> filterWithTraceRuntime(ServerWebExchange exchange, GatewayFilterChain chain) {
 		try {
+			// 同步段完成上下文构建、header 透传和 snapshot 捕获。
+			// finally 只清理当前网关线程，不影响后续 Reactor Context。
 			TraceContext traceContext = this.runtime
 				.inbound(new ServerHttpRequestInboundTraceContext(exchange.getRequest()));
 			MapOutboundTraceContext outbound = new MapOutboundTraceContext();

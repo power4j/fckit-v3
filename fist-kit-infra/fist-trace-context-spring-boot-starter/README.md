@@ -1,6 +1,8 @@
 # fist-trace-context-spring-boot-starter
 
-`fist-trace-context-spring-boot-starter` 提供追踪上下文的 Spring Boot 接入能力。默认能力覆盖入口请求采集、MDC 写入、RestClient 透传、异步任务恢复和 `@TraceSpan` 方法级 span。
+`fist-trace-context-spring-boot-starter` 提供追踪上下文的 Spring Boot 接入能力。默认能力覆盖 Servlet 入口请求采集、MDC 写入、RestClient 透传、异步任务恢复和 `@TraceSpan` 方法级 span。
+
+首阶段暂不提供普通 WebFlux 应用的 starter 级入站 `WebFilter`。Reactive 场景当前由 `fist-cloud-gateway` 的 `RequestIdGlobalFilter` 写入统一 snapshot。
 
 ## 依赖
 

@@ -8,7 +8,9 @@ import com.power4j.fist.trace.context.TraceContexts;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.context.annotation.ImportCandidates;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 import java.util.Map;
@@ -29,6 +31,12 @@ class TraceContextAutoConfigurationTest {
 	@AfterEach
 	void tearDown() {
 		TraceContexts.clear();
+	}
+
+	@Test
+	void shouldRegisterAutoConfigurationImportCandidate() {
+		assertThat(ImportCandidates.load(AutoConfiguration.class, getClass().getClassLoader()))
+			.contains(TraceContextAutoConfiguration.class.getName());
 	}
 
 	@Test

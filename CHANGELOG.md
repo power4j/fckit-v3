@@ -23,6 +23,10 @@
 
 - `HeaderMdcFilter` 和 `TraceInfoResolver` 已标记为 deprecated，后续应迁移到 `fist-trace-context` 相关 API。
 
+### Fixed
+
+- 修正 `fist-trace-context-spring-boot-starter` 缺少 Spring Boot 3 `AutoConfiguration.imports` 导致无法被自动配置发现的问题。
+
 ## [3.14.0] - 2026-06-09
 
 ### Added
