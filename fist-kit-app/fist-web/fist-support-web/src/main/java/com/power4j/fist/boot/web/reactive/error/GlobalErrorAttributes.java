@@ -17,6 +17,7 @@
 package com.power4j.fist.boot.web.reactive.error;
 
 import com.power4j.fist.boot.web.constant.HttpConstant;
+import com.power4j.fist.boot.web.reactive.trace.ReactiveTraceContext;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -39,6 +40,12 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 	}
 
 	protected Map<String, Object> processErrorAttributes(Map<String, Object> attributes, ServerRequest request) {
+		ReactiveTraceContext.getSnapshot(request.exchange())
+			.map(snapshot -> snapshot.values().get(ATTRIBUTE_KEY_REQUEST_ID))
+			.ifPresent(requestId -> attributes.put(ATTRIBUTE_KEY_REQUEST_ID, requestId));
+		if (attributes.containsKey(ATTRIBUTE_KEY_REQUEST_ID)) {
+			return attributes;
+		}
 		final String customRequestId = request.headers().firstHeader(HttpConstant.Header.KEY_REQUEST_ID);
 		if (Objects.nonNull(customRequestId)) {
 			attributes.put(ATTRIBUTE_KEY_REQUEST_ID, customRequestId);

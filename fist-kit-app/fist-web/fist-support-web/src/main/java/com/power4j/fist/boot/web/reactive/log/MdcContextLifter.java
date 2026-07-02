@@ -18,6 +18,10 @@ package com.power4j.fist.boot.web.reactive.log;
 
 import com.power4j.fist.boot.common.logging.LogConstant;
 import com.power4j.fist.boot.web.reactive.constant.ContextConstant;
+import com.power4j.fist.boot.web.reactive.trace.ReactiveTraceContext;
+import com.power4j.fist.boot.web.reactive.trace.Slf4jTraceMdcContext;
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.trace.context.TraceScope;
 import org.reactivestreams.Subscription;
 import org.slf4j.MDC;
 import reactor.core.CoreSubscriber;
@@ -34,8 +38,15 @@ public class MdcContextLifter<T> implements CoreSubscriber<T> {
 
 	private final CoreSubscriber<T> coreSubscriber;
 
+	private final TraceContextRuntime runtime;
+
 	public MdcContextLifter(CoreSubscriber<T> coreSubscriber) {
+		this(coreSubscriber, null);
+	}
+
+	public MdcContextLifter(CoreSubscriber<T> coreSubscriber, TraceContextRuntime runtime) {
 		this.coreSubscriber = coreSubscriber;
+		this.runtime = runtime;
 	}
 
 	@Override
@@ -64,6 +75,18 @@ public class MdcContextLifter<T> implements CoreSubscriber<T> {
 	}
 
 	private void withMdc(Runnable runnable) {
+		if (this.runtime != null) {
+			if (ReactiveTraceContext.getSnapshot(coreSubscriber.currentContext()).map(snapshot -> {
+				try (TraceScope ignored = this.runtime.restore(snapshot);
+						Slf4jTraceMdcContext mdc = new Slf4jTraceMdcContext()) {
+					this.runtime.syncMdc(mdc);
+					runnable.run();
+				}
+				return true;
+			}).orElse(false)) {
+				return;
+			}
+		}
 		final Object requestIdVal = coreSubscriber.currentContext().getOrDefault(ContextConstant.KEY_MDC, null);
 		if (Objects.nonNull(requestIdVal)) {
 			try (MDC.MDCCloseable ignored = MDC.putCloseable(LogConstant.MDC_REQUEST_ID, requestIdVal.toString())) {

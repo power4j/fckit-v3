@@ -17,7 +17,9 @@
 package com.power4j.fist.boot.web.reactive.log;
 
 import com.power4j.fist.boot.web.reactive.constant.ContextConstant;
+import com.power4j.fist.trace.context.TraceContextRuntime;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.Nullable;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Operators;
 
@@ -32,10 +34,17 @@ import jakarta.annotation.PreDestroy;
 @Configuration
 public class MdcContextLifterConfiguration {
 
+	@Nullable
+	private final TraceContextRuntime runtime;
+
+	public MdcContextLifterConfiguration(@Nullable TraceContextRuntime runtime) {
+		this.runtime = runtime;
+	}
+
 	@PostConstruct
 	private void contextOperatorHook() {
 		Hooks.onEachOperator(ContextConstant.KEY_MDC,
-				Operators.lift((s, coreSubscriber) -> new MdcContextLifter<>(coreSubscriber)));
+				Operators.lift((s, coreSubscriber) -> new MdcContextLifter<>(coreSubscriber, this.runtime)));
 	}
 
 	@PreDestroy
