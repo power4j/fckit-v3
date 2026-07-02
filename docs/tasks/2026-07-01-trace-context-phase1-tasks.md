@@ -40,7 +40,8 @@
 | R4-4 | done | 第 4 轮 span 文档补充 | starter README、`@TraceSpan` Javadoc | 明确 `@TraceSpan(".xxx")` 不拼接类级 group |
 | R4-5 | done | 第 4 轮 span AOP 开关整改 | `fist-trace-context-spring-boot-starter` | `fist.trace-context.span.enabled=false` 时不创建 span aspect，也不主动启用 AOP |
 | R4-6 | done | 第 4 轮 BeanLocator 简化 | `fist-trace-context`、starter | 删除 `TraceContextBeanLocator` 抽象；`system-code` processor 直接注入 `SystemCodeProvider` |
-| R4-7 | todo | 第 4 轮剩余设计项 | WebFlux 入站、异常 requestId 消费、MDC 实现合并 | 单独评估后拆分实施 |
+| R4-7 | done | 第 4 轮 MDC 实现合并 | `fist-trace-context`、starter、`fist-support-web` | `Slf4jTraceMdcContext` 只保留 core 实现，starter 与 reactive lifter 复用 |
+| R4-8 | todo | 第 4 轮剩余设计项 | WebFlux 入站、异常 requestId 消费 | 单独评估后拆分实施 |
 
 ## 建议提交粒度
 
@@ -99,3 +100,4 @@ git diff --check
 - 2026-07-02：R4-5 先执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dtest=TraceSpanAspectTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 验证 RED，失败原因为 `fist.trace-context.span.enabled=false` 时仍创建 `TraceSpanAspect`。
 - 2026-07-02：R4-5 执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试、starter 16 个测试通过。
 - 2026-07-02：R4-6 删除 `TraceContextBeanLocator` 抽象，补充 `SystemCodeProvider` 优先级测试。`mvnd` 因本地仓库锁与远端 ID 校验问题未完成；改用 `cmd /c mvn -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试、starter 17 个测试通过。
+- 2026-07-02：R4-7 合并两份 `Slf4jTraceMdcContext` 到 core，执行 `cmd /c mvn -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试、starter 17 个测试通过；执行 `cmd /c mvn -pl fist-kit-app/fist-web/fist-support-web -am "-Dtest=MdcContextLifterTraceContextTest,GlobalErrorAttributesTraceContextTest,AbstractExceptionHandlerTraceContextTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，`fist-support-web` 4 个目标测试通过。

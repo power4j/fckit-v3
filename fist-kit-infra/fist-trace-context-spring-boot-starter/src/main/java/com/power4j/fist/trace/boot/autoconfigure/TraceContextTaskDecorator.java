@@ -1,5 +1,6 @@
 package com.power4j.fist.trace.boot.autoconfigure;
 
+import com.power4j.fist.trace.context.Slf4jTraceMdcContext;
 import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.trace.context.TraceContextSnapshot;
 import com.power4j.fist.trace.context.TraceContexts;

@@ -1,7 +1,5 @@
-package com.power4j.fist.trace.boot.autoconfigure;
+package com.power4j.fist.trace.context;
 
-import com.power4j.fist.trace.context.TraceContexts;
-import com.power4j.fist.trace.context.TraceMdcContext;
 import org.slf4j.MDC;
 
 import java.util.LinkedHashMap;
@@ -14,7 +12,7 @@ import java.util.Optional;
  * @author CJ (power4j@outlook.com)
  * @since 3.15
  */
-class Slf4jTraceMdcContext implements TraceMdcContext, AutoCloseable {
+public class Slf4jTraceMdcContext implements TraceMdcContext, AutoCloseable {
 
 	private final Map<String, String> previousValues = new LinkedHashMap<>();
 
