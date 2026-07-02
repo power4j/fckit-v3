@@ -9,6 +9,8 @@ import com.power4j.fist.trace.context.TraceContextRegistry;
 import com.power4j.fist.trace.context.TraceContextRegistryBuilder;
 import com.power4j.fist.trace.context.TraceContextRuntime;
 
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -97,6 +99,11 @@ public class TraceContextAutoConfiguration {
 	@ConditionalOnMissingBean
 	TaskDecorator traceContextTaskDecorator(TraceContextRuntime runtime) {
 		return new TraceContextTaskDecorator(runtime);
+	}
+
+	@Bean
+	static BeanPostProcessor traceContextTaskDecoratorBeanPostProcessor(ObjectProvider<TraceContextRuntime> runtime) {
+		return new TraceContextTaskDecoratorBeanPostProcessor(runtime);
 	}
 
 	@Bean

@@ -81,6 +81,8 @@ class OrderService {
 }
 ```
 
+类上存在 `@TraceSpanGroup("order")` 时，`@TraceSpan("submit")` 生成 `order.submit`。`@TraceSpan(".remote.query")` 视为绝对 span 名，生成 `remote.query`，不拼接类级 group。
+
 限制：
 
 - 仅对 Spring Bean 生效。
