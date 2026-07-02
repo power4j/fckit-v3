@@ -13,19 +13,12 @@ public class TraceContextItemFactoryContext {
 
 	private final Supplier<String> idGenerator;
 
-	private final TraceContextBeanLocator beanLocator;
-
-	public TraceContextItemFactoryContext(Supplier<String> idGenerator, TraceContextBeanLocator beanLocator) {
+	public TraceContextItemFactoryContext(Supplier<String> idGenerator) {
 		this.idGenerator = Objects.requireNonNull(idGenerator, "idGenerator");
-		this.beanLocator = Objects.requireNonNull(beanLocator, "beanLocator");
 	}
 
 	public Supplier<String> idGenerator() {
 		return this.idGenerator;
-	}
-
-	public TraceContextBeanLocator beanLocator() {
-		return this.beanLocator;
 	}
 
 }

@@ -9,6 +9,7 @@ import com.power4j.fist.trace.context.TraceContextItemFactory;
 import com.power4j.fist.trace.context.TraceContextItemFactoryContext;
 import com.power4j.fist.trace.context.TraceContextItemSpec;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.env.Environment;
 
 import java.util.Optional;
@@ -25,8 +26,12 @@ public class SystemCodeTraceContextItemFactory implements TraceContextItemFactor
 
 	private final Environment environment;
 
-	public SystemCodeTraceContextItemFactory(Environment environment) {
+	private final ObjectProvider<SystemCodeProvider> systemCodeProvider;
+
+	public SystemCodeTraceContextItemFactory(Environment environment,
+			ObjectProvider<SystemCodeProvider> systemCodeProvider) {
 		this.environment = environment;
+		this.systemCodeProvider = systemCodeProvider;
 	}
 
 	@Override
@@ -36,8 +41,8 @@ public class SystemCodeTraceContextItemFactory implements TraceContextItemFactor
 
 	@Override
 	public TraceContextItem create(TraceContextItemSpec spec, TraceContextItemFactoryContext context) {
-		Optional<String> systemCode = context.beanLocator()
-			.find(SystemCodeProvider.class)
+		Optional<String> systemCode = this.systemCodeProvider.stream()
+			.findFirst()
 			.flatMap(SystemCodeProvider::getSystemCode)
 			.or(() -> Optional.ofNullable(this.environment.getProperty("spring.application.name")));
 		systemCode.ifPresent(value -> {

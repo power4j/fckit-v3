@@ -17,8 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class TraceContextRegistryBuilderTest {
 
-	private final TraceContextItemFactoryContext context = new TraceContextItemFactoryContext(() -> "ID-1",
-			TraceContextBeanLocator.empty());
+	private final TraceContextItemFactoryContext context = new TraceContextItemFactoryContext(() -> "ID-1");
 
 	@Test
 	void buildShouldSortByOrderThenId() {

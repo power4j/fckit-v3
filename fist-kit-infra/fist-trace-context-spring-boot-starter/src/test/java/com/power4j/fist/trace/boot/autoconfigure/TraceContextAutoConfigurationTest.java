@@ -3,6 +3,7 @@ package com.power4j.fist.trace.boot.autoconfigure;
 import com.power4j.fist.trace.context.MapInboundTraceContext;
 import com.power4j.fist.trace.context.MapOutboundTraceContext;
 import com.power4j.fist.trace.context.MapTraceMdcContext;
+import com.power4j.fist.trace.context.SystemCodeProvider;
 import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.trace.context.TraceContexts;
 
@@ -12,8 +13,11 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.context.annotation.ImportCandidates;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,6 +82,30 @@ class TraceContextAutoConfigurationTest {
 
 				assertThat(mdc.values()).containsEntry("systemCode", "bank-web");
 			});
+	}
+
+	@Test
+	void defaultSystemCodeShouldPreferSystemCodeProvider() {
+		this.runner.withUserConfiguration(SystemCodeProviderConfiguration.class)
+			.withPropertyValues("fist.trace-context.enabled=true", "spring.application.name=bank-web")
+			.run((context) -> {
+				TraceContextRuntime runtime = context.getBean(TraceContextRuntime.class);
+				runtime.inbound(new MapInboundTraceContext(Map.of()));
+				MapTraceMdcContext mdc = new MapTraceMdcContext();
+				runtime.syncMdc(mdc);
+
+				assertThat(mdc.values()).containsEntry("systemCode", "provider-system");
+			});
+	}
+
+	@Configuration(proxyBeanMethods = false)
+	static class SystemCodeProviderConfiguration {
+
+		@Bean
+		SystemCodeProvider systemCodeProvider() {
+			return () -> Optional.of("provider-system");
+		}
+
 	}
 
 }

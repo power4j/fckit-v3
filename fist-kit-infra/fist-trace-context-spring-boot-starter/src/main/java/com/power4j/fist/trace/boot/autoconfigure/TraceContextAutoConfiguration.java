@@ -2,6 +2,7 @@ package com.power4j.fist.trace.boot.autoconfigure;
 
 import com.power4j.fist.trace.context.DefaultTraceContextItemSpec;
 import com.power4j.fist.trace.context.DefaultTraceContextRuntime;
+import com.power4j.fist.trace.context.SystemCodeProvider;
 import com.power4j.fist.trace.context.TraceContextItemFactory;
 import com.power4j.fist.trace.context.TraceContextItemSpec;
 import com.power4j.fist.trace.context.TraceContextItemFactoryContext;
@@ -18,7 +19,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.client.RestClientCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
@@ -50,15 +50,15 @@ public class TraceContextAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	SystemCodeTraceContextItemFactory systemCodeTraceContextItemFactory(Environment environment) {
-		return new SystemCodeTraceContextItemFactory(environment);
+	SystemCodeTraceContextItemFactory systemCodeTraceContextItemFactory(Environment environment,
+			ObjectProvider<SystemCodeProvider> systemCodeProvider) {
+		return new SystemCodeTraceContextItemFactory(environment, systemCodeProvider);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	TraceContextItemFactoryContext traceContextItemFactoryContext(ApplicationContext applicationContext) {
-		return new TraceContextItemFactoryContext(() -> UUID.randomUUID().toString(),
-				new SpringTraceContextBeanLocator(applicationContext));
+	TraceContextItemFactoryContext traceContextItemFactoryContext() {
+		return new TraceContextItemFactoryContext(() -> UUID.randomUUID().toString());
 	}
 
 	@Bean
