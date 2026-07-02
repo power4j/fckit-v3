@@ -38,7 +38,8 @@
 | R4-2 | done | 第 4 轮低风险整改 | starter README、gateway auth core、Servlet filter | 明确 WebFlux 入站边界；Servlet filter 顺序显式化；gateway 显式依赖 trace core |
 | R4-3 | done | 第 4 轮 TaskDecorator 共存整改 | `fist-trace-context-spring-boot-starter` | 用户已有 `TaskDecorator` 时仍恢复 trace 上下文，用户装饰逻辑不丢失 |
 | R4-4 | done | 第 4 轮 span 文档补充 | starter README、`@TraceSpan` Javadoc | 明确 `@TraceSpan(".xxx")` 不拼接类级 group |
-| R4-5 | todo | 第 4 轮剩余设计项 | span AOP、WebFlux 入站、异常 requestId 消费、ponytail 简化项 | 单独评估后拆分实施 |
+| R4-5 | done | 第 4 轮 span AOP 开关整改 | `fist-trace-context-spring-boot-starter` | `fist.trace-context.span.enabled=false` 时不创建 span aspect，也不主动启用 AOP |
+| R4-6 | todo | 第 4 轮剩余设计项 | WebFlux 入站、异常 requestId 消费、ponytail 简化项 | 单独评估后拆分实施 |
 
 ## 建议提交粒度
 
@@ -94,3 +95,5 @@ git diff --check
 - 2026-07-02：清理历史 `spring.factories` 后执行 `mvnd -pl fist-kit-app/fist-boot-apidoc,fist-kit-app/fist-data/fist-boot-data,fist-kit-app/fist-data/fist-boot-crud-mybatis,fist-kit-infra/fist-redisson,fist-kit-app/fist-security/fist-boot-security -am -DskipTests validate` 通过。
 - 2026-07-02：R4-3 先执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dtest=TraceContextTaskDecoratorTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 验证 RED，失败原因为用户自定义 `TaskDecorator` 存在时 trace 上下文未恢复。
 - 2026-07-02：R4-3 / R4-4 执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试、starter 15 个测试通过。
+- 2026-07-02：R4-5 先执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dtest=TraceSpanAspectTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 验证 RED，失败原因为 `fist.trace-context.span.enabled=false` 时仍创建 `TraceSpanAspect`。
+- 2026-07-02：R4-5 执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试、starter 16 个测试通过。

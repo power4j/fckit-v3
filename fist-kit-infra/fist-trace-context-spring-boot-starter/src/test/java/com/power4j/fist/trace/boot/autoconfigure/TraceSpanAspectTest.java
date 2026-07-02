@@ -56,6 +56,12 @@ class TraceSpanAspectTest {
 		});
 	}
 
+	@Test
+	void shouldDisableSpanAspectByProperty() {
+		this.runner.withPropertyValues("fist.trace-context.span.enabled=false")
+			.run((context) -> assertThat(context).doesNotHaveBean(TraceSpanAspect.class));
+	}
+
 	@Configuration(proxyBeanMethods = false)
 	static class TestSpanConfiguration {
 

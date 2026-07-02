@@ -20,7 +20,7 @@ import org.springframework.boot.web.client.RestClientCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.web.client.RestClient;
@@ -39,7 +39,7 @@ import java.util.UUID;
 @AutoConfiguration
 @EnableConfigurationProperties(TraceContextProperties.class)
 @ConditionalOnProperty(prefix = TraceContextProperties.PREFIX, name = "enabled", havingValue = "true")
-@EnableAspectJAutoProxy
+@Import(TraceSpanAopConfiguration.class)
 public class TraceContextAutoConfiguration {
 
 	@Bean
@@ -108,6 +108,8 @@ public class TraceContextAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
+	@ConditionalOnProperty(prefix = TraceContextProperties.PREFIX + ".span", name = "enabled", havingValue = "true",
+			matchIfMissing = true)
 	TraceSpanAspect traceSpanAspect(TraceContextRuntime runtime) {
 		return new TraceSpanAspect(runtime);
 	}

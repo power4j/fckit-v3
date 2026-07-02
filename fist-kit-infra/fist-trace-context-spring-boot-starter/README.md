@@ -91,6 +91,15 @@ class OrderService {
 - 依赖 Spring AOP。
 - `@Async` 方法上的 span 边界以实际代理执行为准。
 
+不需要 span 注解时可关闭：
+
+```yaml
+fist:
+  trace-context:
+    span:
+      enabled: false
+```
+
 ## 自定义 item
 
 实现并注册 `TraceContextItemFactory` Bean：
