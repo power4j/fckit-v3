@@ -28,7 +28,7 @@
 | T2 | done | 实现核心上下文 API | `TraceContext`、`TraceContextHolder`、`TraceContexts`、`TraceScope`、`TraceContextSnapshot` | 单元测试覆盖读写、snapshot、restore、scope 清理、span 嵌套 |
 | T3 | done | 实现 item 与 runtime 编排 | `TraceContextItem`、`TraceContextItemFactory`、`TraceContextRegistry`、`TraceContextRuntime`、载体接口、抽象基类 | 单元测试覆盖排序、入口冻结、出口透传、MDC 同步、配置冲突 |
 | T4 | done | 实现 starter 配置与默认 processor | `TraceContextProperties`、自动配置、`correlation-id`、`system-code`、配置元数据 | `enabled=false` 不创建 runtime；默认配置可生成 `X-REQ-UID` / `requestId` |
-| T5 | todo | 实现 Servlet / RestClient / async / span 注解 | starter Filter、RestClient interceptor、TaskDecorator、`@TraceSpan`、`@TraceSpanGroup` | 测试覆盖入口采集、缺失生成、MDC 清理、RestClient 透传、注解 span、异步恢复 |
+| T5 | done | 实现 Servlet / RestClient / async / span 注解 | starter Filter、RestClient interceptor、TaskDecorator、`@TraceSpan`、`@TraceSpanGroup` | 测试覆盖入口采集、缺失生成、MDC 清理、RestClient 透传、注解 span、异步恢复 |
 | T6 | todo | 治理 Web 旧能力 | `fist-support-web`、`fist-boot-web-app` | 删除旧默认 `HeaderMdcFilter` 和默认 `TraceInfoResolver` 装配；public 类型 deprecated；异常事件读取 `TraceContext` |
 | T7 | todo | 治理 Feign 透传 | `fist-cloud-rpc-feign` | 删除 `HeaderRelayHandler`；新增 `TraceRelayHandler`；保留单个 `RelayInterceptor`；认证 header 不受影响 |
 | T8 | todo | 治理 reactive / gateway | `fist-support-web`、`fist-gateway-auth-core`、`fist-cloud-gateway-acl` | `RequestIdGlobalFilter` 写入 snapshot 并保留 `X-REQ-UID`；`MdcContextLifter` 每个信号 close scope；异常响应读取统一上下文 |
@@ -67,3 +67,5 @@ git diff --check
 - 2026-07-01：T3 已写入 registry builder 测试，本地 `javac -encoding UTF-8` 编译主代码通过；临时 smoke 程序验证 item 排序和重复 `context-name` fail-fast 通过。
 - 2026-07-01：T4 已写入 starter 自动配置测试和基础实现，`git diff --check` 通过；`mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter "-Dtest=TraceContextAutoConfigurationTest" test` 仍受父 BOM 下载失败限制，未进入 Java 编译阶段。
 - 2026-07-01：用户在本地执行 Maven 测试命令无报错。该结果作为 T2、T3、T4 的外部验证记录；当前 Codex 沙箱内 Maven 仍受网络限制，无法复现该结果。
+- 2026-07-02：T5 执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dtest=TraceContextServletFilterTest,TraceContextRestClientTest,TraceContextTaskDecoratorTest,TraceSpanAspectTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，9 个测试通过。
+- 2026-07-02：执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试通过，starter 13 个测试通过。
