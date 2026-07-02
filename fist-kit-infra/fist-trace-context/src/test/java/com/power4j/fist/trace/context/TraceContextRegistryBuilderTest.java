@@ -2,7 +2,6 @@ package com.power4j.fist.trace.context;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TraceContextRegistryBuilderTest {
 
 	private final TraceContextItemFactoryContext context = new TraceContextItemFactoryContext(() -> "ID-1",
-			Clock.systemUTC(), TraceContextBeanLocator.empty());
+			TraceContextBeanLocator.empty());
 
 	@Test
 	void buildShouldSortByOrderThenId() {

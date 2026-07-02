@@ -1,6 +1,5 @@
 package com.power4j.fist.trace.context;
 
-import java.time.Clock;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -14,23 +13,15 @@ public class TraceContextItemFactoryContext {
 
 	private final Supplier<String> idGenerator;
 
-	private final Clock clock;
-
 	private final TraceContextBeanLocator beanLocator;
 
-	public TraceContextItemFactoryContext(Supplier<String> idGenerator, Clock clock,
-			TraceContextBeanLocator beanLocator) {
+	public TraceContextItemFactoryContext(Supplier<String> idGenerator, TraceContextBeanLocator beanLocator) {
 		this.idGenerator = Objects.requireNonNull(idGenerator, "idGenerator");
-		this.clock = Objects.requireNonNull(clock, "clock");
 		this.beanLocator = Objects.requireNonNull(beanLocator, "beanLocator");
 	}
 
 	public Supplier<String> idGenerator() {
 		return this.idGenerator;
-	}
-
-	public Clock clock() {
-		return this.clock;
 	}
 
 	public TraceContextBeanLocator beanLocator() {

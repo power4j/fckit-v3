@@ -23,9 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.web.client.RestClient;
 
-import java.time.Clock;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +55,7 @@ public class TraceContextAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	TraceContextItemFactoryContext traceContextItemFactoryContext(ApplicationContext applicationContext) {
-		return new TraceContextItemFactoryContext(() -> UUID.randomUUID().toString(), Clock.systemUTC(),
+		return new TraceContextItemFactoryContext(() -> UUID.randomUUID().toString(),
 				new SpringTraceContextBeanLocator(applicationContext));
 	}
 
@@ -108,8 +106,10 @@ public class TraceContextAutoConfiguration {
 	}
 
 	private static List<TraceContextItemSpec> toSpecs(TraceContextProperties properties) {
-		Map<String, TraceContextProperties.Item> items = properties.getItems().isEmpty() ? defaultItems()
-				: properties.getItems();
+		Map<String, TraceContextProperties.Item> items = properties.getItems();
+		if (items.isEmpty()) {
+			return defaultSpecs();
+		}
 		List<TraceContextItemSpec> specs = new ArrayList<>();
 		items.forEach((id, item) -> {
 			if (item.isEnabled()) {
@@ -119,20 +119,13 @@ public class TraceContextAutoConfiguration {
 		return specs;
 	}
 
-	private static Map<String, TraceContextProperties.Item> defaultItems() {
-		Map<String, TraceContextProperties.Item> items = new LinkedHashMap<>();
-		TraceContextProperties.Item correlation = new TraceContextProperties.Item();
-		correlation.setProcessor(CorrelationIdTraceContextItemFactory.PROCESSOR);
-		correlation.setOrder(0);
-		correlation.setProps(Map.of("context-name", "requestId", "inbound-header", "X-REQ-UID", "outbound-header",
-				"X-REQ-UID", "mdc-name", "requestId"));
-		items.put("correlation", correlation);
-		TraceContextProperties.Item systemCode = new TraceContextProperties.Item();
-		systemCode.setProcessor(SystemCodeTraceContextItemFactory.PROCESSOR);
-		systemCode.setOrder(10);
-		systemCode.setProps(Map.of("context-name", "systemCode", "mdc-name", "systemCode"));
-		items.put("systemCode", systemCode);
-		return items;
+	private static List<TraceContextItemSpec> defaultSpecs() {
+		return List.of(
+				new DefaultTraceContextItemSpec("correlation", CorrelationIdTraceContextItemFactory.PROCESSOR, 0,
+						Map.of("context-name", "requestId", "inbound-header", "X-REQ-UID", "outbound-header",
+								"X-REQ-UID", "mdc-name", "requestId")),
+				new DefaultTraceContextItemSpec("systemCode", SystemCodeTraceContextItemFactory.PROCESSOR, 10,
+						Map.of("context-name", "systemCode", "mdc-name", "systemCode")));
 	}
 
 }

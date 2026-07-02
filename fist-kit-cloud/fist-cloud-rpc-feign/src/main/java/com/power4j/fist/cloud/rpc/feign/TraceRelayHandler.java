@@ -17,12 +17,16 @@
 package com.power4j.fist.cloud.rpc.feign;
 
 import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.trace.context.TraceContexts;
+import com.power4j.fist.trace.context.OutboundTraceContext;
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
+
+import java.util.Optional;
 
 /**
  * 基于 {@link TraceContextRuntime} 的 Feign 追踪信息传递处理器。
@@ -38,7 +42,29 @@ public class TraceRelayHandler implements RelayHandler {
 
 	@Override
 	public void handle(@Nullable HttpServletRequest request, RequestTemplate template) {
-		this.runtime.outbound(new FeignRequestTemplateOutboundTraceContext(template));
+		this.runtime.outbound(new FeignOutboundTraceContext(template));
+	}
+
+	@RequiredArgsConstructor
+	private static class FeignOutboundTraceContext implements OutboundTraceContext {
+
+		private final RequestTemplate template;
+
+		@Override
+		public Optional<String> getValue(String name) {
+			return TraceContexts.current().flatMap(context -> context.getValue(name));
+		}
+
+		@Override
+		public void writeHeader(String name, String value) {
+			this.template.header(name, value);
+		}
+
+		@Override
+		public boolean hasHeader(String name) {
+			return this.template.headers().containsKey(name);
+		}
+
 	}
 
 }
