@@ -17,7 +17,11 @@
 package com.power4j.fist.boot.web.reactive.log;
 
 import com.power4j.fist.boot.web.reactive.constant.ContextConstant;
+import com.power4j.fist.boot.web.reactive.trace.TraceContextWebFilter;
 import com.power4j.fist.trace.context.TraceContextRuntime;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.Nullable;
 import reactor.core.publisher.Hooks;
@@ -50,6 +54,13 @@ public class MdcContextLifterConfiguration {
 	@PreDestroy
 	private void cleanupHook() {
 		Hooks.resetOnEachOperator(ContextConstant.KEY_MDC);
+	}
+
+	@Bean
+	@ConditionalOnBean(TraceContextRuntime.class)
+	@ConditionalOnMissingBean
+	TraceContextWebFilter traceContextWebFilter(TraceContextRuntime runtime) {
+		return new TraceContextWebFilter(runtime);
 	}
 
 }

@@ -18,12 +18,17 @@ package com.power4j.fist.boot.web.reactive.error;
 
 import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.boot.web.reactive.trace.ReactiveTraceContext;
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.trace.context.TraceContextSnapshot;
+import com.power4j.fist.trace.context.TraceCorrelation;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.lang.Nullable;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -34,6 +39,17 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 
 	private final static String ATTRIBUTE_KEY_REQUEST_ID = "requestId";
 
+	@Nullable
+	private final TraceContextRuntime runtime;
+
+	public GlobalErrorAttributes() {
+		this(null);
+	}
+
+	public GlobalErrorAttributes(@Nullable TraceContextRuntime runtime) {
+		this.runtime = runtime;
+	}
+
 	@Override
 	public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
 		return processErrorAttributes(super.getErrorAttributes(request, options), request);
@@ -41,7 +57,7 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 
 	protected Map<String, Object> processErrorAttributes(Map<String, Object> attributes, ServerRequest request) {
 		ReactiveTraceContext.getSnapshot(request.exchange())
-			.map(snapshot -> snapshot.values().get(ATTRIBUTE_KEY_REQUEST_ID))
+			.flatMap(snapshot -> requestId(snapshot))
 			.ifPresent(requestId -> attributes.put(ATTRIBUTE_KEY_REQUEST_ID, requestId));
 		if (attributes.containsKey(ATTRIBUTE_KEY_REQUEST_ID)) {
 			return attributes;
@@ -51,6 +67,14 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 			attributes.put(ATTRIBUTE_KEY_REQUEST_ID, customRequestId);
 		}
 		return attributes;
+	}
+
+	private Optional<String> requestId(TraceContextSnapshot snapshot) {
+		if (this.runtime != null) {
+			return TraceCorrelation.resolve(this.runtime, snapshot)
+				.or(() -> Optional.ofNullable(snapshot.values().get(ATTRIBUTE_KEY_REQUEST_ID)));
+		}
+		return Optional.ofNullable(snapshot.values().get(ATTRIBUTE_KEY_REQUEST_ID));
 	}
 
 }

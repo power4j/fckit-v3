@@ -26,7 +26,11 @@ import com.power4j.fist.boot.web.event.error.HandlerErrorEvent;
 import com.power4j.fist.boot.web.event.error.RequestInfo;
 import com.power4j.fist.support.spring.web.servlet.util.HttpServletRequestUtil;
 import com.power4j.fist.trace.context.TraceContexts;
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.trace.context.TraceCorrelation;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Optional;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -64,8 +68,15 @@ public class AbstractExceptionHandler {
 
 	private static TraceInfo createTraceInfo() {
 		TraceInfo traceInfo = new TraceInfo();
-		TraceContexts.current().flatMap(context -> context.getValue("requestId")).ifPresent(traceInfo::setRequestId);
+		currentRequestId().ifPresent(traceInfo::setRequestId);
 		return traceInfo;
+	}
+
+	private static Optional<String> currentRequestId() {
+		return ApplicationContextHolder.getContextOptional()
+			.map(context -> context.getBeanProvider(TraceContextRuntime.class).getIfAvailable())
+			.flatMap(runtime -> runtime == null ? Optional.empty() : TraceCorrelation.current(runtime))
+			.or(() -> TraceContexts.current().flatMap(context -> context.getValue("requestId")));
 	}
 
 	/**

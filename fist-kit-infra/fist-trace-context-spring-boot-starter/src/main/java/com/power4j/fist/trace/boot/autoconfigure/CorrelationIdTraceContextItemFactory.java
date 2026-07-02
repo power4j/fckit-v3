@@ -1,6 +1,7 @@
 package com.power4j.fist.trace.boot.autoconfigure;
 
 import com.power4j.fist.trace.context.AbstractPropDrivenTraceContextItem;
+import com.power4j.fist.trace.context.CorrelationTraceContextItem;
 import com.power4j.fist.trace.context.InboundTraceContext;
 import com.power4j.fist.trace.context.TraceContextItem;
 import com.power4j.fist.trace.context.TraceContextItemFactory;
@@ -26,12 +27,21 @@ public class CorrelationIdTraceContextItemFactory implements TraceContextItemFac
 
 	@Override
 	public TraceContextItem create(TraceContextItemSpec spec, TraceContextItemFactoryContext context) {
-		return new AbstractPropDrivenTraceContextItem(spec) {
+		return new CorrelationIdTraceContextItem(spec) {
 			@Override
 			protected Optional<String> generateValue(InboundTraceContext inbound) {
 				return Optional.of(context.idGenerator().get());
 			}
 		};
+	}
+
+	private abstract static class CorrelationIdTraceContextItem extends AbstractPropDrivenTraceContextItem
+			implements CorrelationTraceContextItem {
+
+		CorrelationIdTraceContextItem(TraceContextItemSpec spec) {
+			super(spec);
+		}
+
 	}
 
 }
