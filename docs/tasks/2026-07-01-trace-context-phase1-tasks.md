@@ -33,7 +33,7 @@
 | T7 | done | 治理 Feign 透传 | `fist-cloud-rpc-feign` | 删除 `HeaderRelayHandler`；新增 `TraceRelayHandler`；保留单个 `RelayInterceptor`；认证 header 不受影响 |
 | T8 | done | 治理 reactive / gateway | `fist-support-web`、`fist-gateway-auth-core`、`fist-cloud-gateway-acl` | `RequestIdGlobalFilter` 写入 snapshot 并保留 `X-REQ-UID`；`MdcContextLifter` 每个信号 close scope；异常响应读取统一上下文 |
 | T9 | done | 补充 README / changelog / 示例 | starter README、原模块迁移说明、`examples/fist-trace-context` | README 简洁；两个示例覆盖默认能力和自定义 item |
-| T10 | todo | 首阶段集成验证 | 相关模块测试和必要聚合构建 | 关键模块测试通过；破坏性更新说明完整 |
+| T10 | done | 首阶段集成验证 | 相关模块测试和必要聚合构建 | 关键模块测试通过；破坏性更新说明完整 |
 
 ## 建议提交粒度
 
@@ -77,3 +77,8 @@ git diff --check
 - 2026-07-02：T8 执行 `mvnd -pl fist-kit-app/fist-web/fist-support-web,fist-kit-cloud/fist-cloud-gateway/fist-gateway-auth-core,fist-kit-cloud/fist-cloud-gateway/fist-cloud-gateway-acl -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，相关模块测试通过。
 - 2026-07-02：T9 直接执行 `mvnd -f examples/fist-trace-context/pom.xml "-Dsurefire.failIfNoSpecifiedTests=false" test` 未通过，原因为独立示例构建无法解析本地 snapshot 版本的 `fist-trace-context-spring-boot-starter`。该方式不作为当前 worktree 内验收命令。
 - 2026-07-02：T9 执行 `mvnd -Pexamples -pl examples/fist-trace-context/example-trace-context-basic,examples/fist-trace-context/example-trace-context-extension -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，root reactor 可编译 core、starter 和两个示例模块。
+- 2026-07-02：T10 执行 `mvnd -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，core 19 个测试、starter 13 个测试通过。
+- 2026-07-02：T10 执行 `mvnd -pl fist-kit-app/fist-web/fist-boot-web-app,fist-kit-app/fist-web/fist-support-web -am "-Dtest=FistWebAutoConfigurationTest,AbstractExceptionHandlerTraceContextTest,MdcContextLifterTraceContextTest,GlobalErrorAttributesTraceContextTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，`fist-support-web` 4 个目标测试、`fist-boot-web-app` 2 个目标测试通过。
+- 2026-07-02：T10 执行 `mvnd -pl fist-kit-cloud/fist-cloud-rpc-feign -am "-Dtest=FeignClientAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，4 个测试通过。
+- 2026-07-02：T10 执行 `mvnd -pl fist-kit-app/fist-web/fist-support-web,fist-kit-cloud/fist-cloud-gateway/fist-gateway-auth-core,fist-kit-cloud/fist-cloud-gateway/fist-cloud-gateway-acl -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，相关模块测试通过；其中 `fist-cloud-gateway-acl` 6 个测试通过。
+- 2026-07-02：T10 执行 `mvnd -Pexamples -pl examples/fist-trace-context/example-trace-context-basic,examples/fist-trace-context/example-trace-context-extension -am "-Dsurefire.failIfNoSpecifiedTests=false" test` 通过，两个示例模块编译通过。
