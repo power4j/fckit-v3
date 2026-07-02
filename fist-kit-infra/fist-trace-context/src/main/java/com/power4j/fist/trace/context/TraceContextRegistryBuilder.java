@@ -20,12 +20,13 @@ public class TraceContextRegistryBuilder {
 
 	private final TraceContextItemFactoryContext context;
 
-	public TraceContextRegistryBuilder(List<TraceContextItemFactory> factories, TraceContextItemFactoryContext context) {
-		this.factories = factories.stream().collect(Collectors.toMap(TraceContextItemFactory::processor, Function.identity(),
-				(left, right) -> {
-					throw new TraceContextConfigurationException(
-							"duplicate trace context item factory processor: " + left.processor());
-				}, LinkedHashMap::new));
+	public TraceContextRegistryBuilder(List<TraceContextItemFactory> factories,
+			TraceContextItemFactoryContext context) {
+		this.factories = factories.stream()
+			.collect(Collectors.toMap(TraceContextItemFactory::processor, Function.identity(), (left, right) -> {
+				throw new TraceContextConfigurationException(
+						"duplicate trace context item factory processor: " + left.processor());
+			}, LinkedHashMap::new));
 		this.context = context;
 	}
 
@@ -63,9 +64,8 @@ public class TraceContextRegistryBuilder {
 	private static void checkUnique(Map<String, String> names, String kind, String name, String processor) {
 		String existing = names.putIfAbsent(name, processor);
 		if (existing != null) {
-			throw new TraceContextConfigurationException(
-					"Duplicate trace context " + kind + " '" + name + "' used by processors '" + existing + "' and '"
-							+ processor + "'");
+			throw new TraceContextConfigurationException("Duplicate trace context " + kind + " '" + name
+					+ "' used by processors '" + existing + "' and '" + processor + "'");
 		}
 	}
 

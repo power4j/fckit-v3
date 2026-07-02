@@ -90,9 +90,8 @@ class TraceContextsTest {
 		TraceContext context = TraceContexts.create(Map.of("requestId", "REQ-1"), Optional.of("root"));
 
 		try (TraceScope ignored = TraceContexts.restore(context.snapshot())) {
-			String value = TraceContexts.withSpan("compute", () -> TraceContexts.requireCurrent()
-				.getSpanId()
-				.orElseThrow());
+			String value = TraceContexts.withSpan("compute",
+					() -> TraceContexts.requireCurrent().getSpanId().orElseThrow());
 
 			assertThat(value).isEqualTo("compute");
 			assertThat(TraceContexts.requireCurrent().getSpanId()).contains("root");

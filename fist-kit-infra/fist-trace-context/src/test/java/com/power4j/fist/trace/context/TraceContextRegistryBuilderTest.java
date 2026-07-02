@@ -63,8 +63,8 @@ class TraceContextRegistryBuilderTest {
 	void buildShouldRejectDuplicateMdcName() {
 		TraceContextRegistryBuilder builder = new TraceContextRegistryBuilder(List.of(new TestFactory()), this.context);
 
-		assertThatThrownBy(() -> builder
-			.build(List.of(spec("a", 0, "a", "sameMdc", "A"), spec("b", 1, "b", "sameMdc", "B"))))
+		assertThatThrownBy(
+				() -> builder.build(List.of(spec("a", 0, "a", "sameMdc", "A"), spec("b", 1, "b", "sameMdc", "B"))))
 			.isInstanceOf(TraceContextConfigurationException.class)
 			.hasMessageContaining("mdc-name");
 	}
@@ -98,8 +98,9 @@ class TraceContextRegistryBuilderTest {
 
 		@Override
 		public TraceContextItem create(TraceContextItemSpec spec, TraceContextItemFactoryContext context) {
-			return new AbstractSingleValueTraceContextItem(spec.processor(), spec.optionalProp("context-name").orElseThrow(),
-					Optional.empty(), spec.optionalProp("outbound-header"), spec.optionalProp("mdc-name")) {
+			return new AbstractSingleValueTraceContextItem(spec.processor(),
+					spec.optionalProp("context-name").orElseThrow(), Optional.empty(),
+					spec.optionalProp("outbound-header"), spec.optionalProp("mdc-name")) {
 			};
 		}
 

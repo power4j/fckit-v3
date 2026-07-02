@@ -36,7 +36,8 @@ class DefaultTraceContextRuntimeTest {
 				context.putValue("derived", context.getValue("requestId").orElseThrow() + "-D");
 			}
 		};
-		TraceContextRuntime runtime = new DefaultTraceContextRuntime(new DefaultTraceContextRegistry(List.of(first, second)));
+		TraceContextRuntime runtime = new DefaultTraceContextRuntime(
+				new DefaultTraceContextRegistry(List.of(first, second)));
 		MapInboundTraceContext inbound = new MapInboundTraceContext(Map.of());
 
 		TraceContext context = runtime.inbound(inbound);
@@ -73,7 +74,8 @@ class DefaultTraceContextRuntimeTest {
 		TraceContextRuntime runtime = new DefaultTraceContextRuntime(new DefaultTraceContextRegistry(List.of(item)));
 		MapOutboundTraceContext outbound = new MapOutboundTraceContext();
 
-		try (TraceScope ignored = TraceContexts.restore(TraceContexts.create(Map.of("requestId", "REQ-1")).snapshot())) {
+		try (TraceScope ignored = TraceContexts
+			.restore(TraceContexts.create(Map.of("requestId", "REQ-1")).snapshot())) {
 			runtime.outbound(outbound);
 		}
 
@@ -91,8 +93,8 @@ class DefaultTraceContextRuntimeTest {
 		TraceContextRuntime runtime = new DefaultTraceContextRuntime(new DefaultTraceContextRegistry(List.of(item)));
 		MapTraceMdcContext mdc = new MapTraceMdcContext();
 
-		try (TraceScope ignored = TraceContexts.restore(
-				TraceContexts.create(Map.of("requestId", "REQ-1"), Optional.of("span-1")).snapshot())) {
+		try (TraceScope ignored = TraceContexts
+			.restore(TraceContexts.create(Map.of("requestId", "REQ-1"), Optional.of("span-1")).snapshot())) {
 			runtime.syncMdc(mdc);
 		}
 

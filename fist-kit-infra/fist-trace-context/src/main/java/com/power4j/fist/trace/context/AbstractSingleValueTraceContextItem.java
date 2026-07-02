@@ -51,13 +51,14 @@ public abstract class AbstractSingleValueTraceContextItem extends AbstractTraceC
 
 	@Override
 	public void onOutbound(OutboundTraceContext context) {
-		this.outboundHeader.ifPresent(header -> context.getValue(this.contextName)
-			.ifPresent(value -> context.writeHeader(header, value)));
+		this.outboundHeader.ifPresent(
+				header -> context.getValue(this.contextName).ifPresent(value -> context.writeHeader(header, value)));
 	}
 
 	@Override
 	public void onMdc(TraceMdcContext context) {
-		this.mdcName.ifPresent(name -> context.getValue(this.contextName).ifPresent(value -> context.putMdc(name, value)));
+		this.mdcName
+			.ifPresent(name -> context.getValue(this.contextName).ifPresent(value -> context.putMdc(name, value)));
 	}
 
 	protected Optional<String> generateValue(InboundTraceContext context) {
