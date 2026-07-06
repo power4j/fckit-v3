@@ -199,7 +199,7 @@ CHANGELOG `[Unreleased]` 的 `Changed`/`Deprecated`/`Fixed` 已覆盖：`HeaderM
 tasks 文档已记录 starter、web、gateway、feign、examples 各模块的验证命令均通过。本轮无需新增验证命令，建议在补 N1–N4 测试后重跑：
 
 ```bash
-cmd /c mvn -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test
+cmd /c mvn -pl fist-kit-infra/fist-trace/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test
 cmd /c mvn -pl fist-kit-app/fist-web/fist-boot-web-app,fist-kit-app/fist-web/fist-support-web -am "-Dtest=FistWebAutoConfigurationTest,TraceContextWebFilterTest,MdcContextLifterTraceContextTest,GlobalErrorAttributesTraceContextTest,AbstractExceptionHandlerTraceContextTest" "-Dsurefire.failIfNoSpecifiedTests=false" test
 cmd /c mvn -pl fist-kit-cloud/fist-cloud-rpc-feign -am "-Dtest=FeignClientAutoConfigurationTest" "-Dsurefire.failIfNoSpecifiedTests=false" test
 ```

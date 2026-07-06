@@ -26,10 +26,10 @@ Major 项集中在三处：普通 WebFlux 应用（非 gateway）没有入站采
 
 ### B1 starter 缺少 `AutoConfiguration.imports`，Spring Boot 3.x 下无法自动装配
 
-- **位置**：`fist-kit-infra/fist-trace-context-spring-boot-starter/src/main/resources/META-INF/`；现有 `spring.factories`（`EnableAutoConfiguration=TraceContextAutoConfiguration`），缺失 `spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`
+- **位置**：`fist-kit-infra/fist-trace/fist-trace-context-spring-boot-starter/src/main/resources/META-INF/`；现有 `spring.factories`（`EnableAutoConfiguration=TraceContextAutoConfiguration`），缺失 `spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`
 - **现象**：starter 只用旧式 `spring.factories` 注册自动配置。项目内其余所有 starter（`fist-jasypt-spring-boot-starter`、`fist-boot-web-app`、`fist-cloud-rpc-feign`、`fist-redisson` 等）都**同时维护** `spring.factories` 与 `AutoConfiguration.imports` 两个文件，唯独本模块只有前者
 - **风险**：Spring Boot 3.0 起不再从 `spring.factories` 读取自动配置（官方文档明确：auto-configurations must be registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`，not in `spring.factories`）。项目当前是 Spring Boot 3.5.x。最终用户引入 starter 并设置 `fist.trace-context.enabled=true` 后，`TraceContextAutoConfiguration` 不会被自动发现，`TraceContextRuntime`、Servlet Filter、RestClient interceptor、TaskDecorator、`TraceSpanAspect` 全部不会创建，starter 完全不生效。现有测试 `TraceContextAutoConfigurationTest`、`TraceContextServletFilterTest` 等均用 `ApplicationContextRunner.withConfiguration(AutoConfigurations.of(TraceContextAutoConfiguration.class))` 显式注入配置类，**不经过自动发现**，因此测试全绿却掩盖了该缺陷
-- **建议**：新增文件 `fist-kit-infra/fist-trace-context-spring-boot-starter/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`，内容为单行：
+- **建议**：新增文件 `fist-kit-infra/fist-trace/fist-trace-context-spring-boot-starter/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`，内容为单行：
   ```
   com.power4j.fist.trace.boot.autoconfigure.TraceContextAutoConfiguration
   ```
@@ -96,7 +96,7 @@ Major 项集中在三处：普通 WebFlux 应用（非 gateway）没有入站采
 
 ### m1 core 模块 pom 声明 `slf4j-api` 但代码未使用
 
-- **位置**：`fist-kit-infra/fist-trace-context/pom.xml:33-36`；`src/main` 下无任何 `org.slf4j` 引用（已 grep 验证）
+- **位置**：`fist-kit-infra/fist-trace/fist-trace-context/pom.xml:33-36`；`src/main` 下无任何 `org.slf4j` 引用（已 grep 验证）
 - **现象**：core 依赖了 `slf4j-api`，但 main 代码零引用
 - **风险**：无直接功能风险，但属"声明即承诺"的噪音，且与第 6 节 P3 决策直接相关
 - **建议**：与 P3 联动——若把 `Slf4jTraceMdcContext` 移入 core，依赖被使用，保留；否则删除该依赖声明

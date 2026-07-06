@@ -26,13 +26,12 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>fist-trace-context</artifactId>
+  <artifactId>fist-trace</artifactId>
   <name>${project.artifactId}</name>
+  <packaging>pom</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>fist-trace-context</module>
+    <module>fist-trace-context-spring-boot-starter</module>
+  </modules>
 </project>

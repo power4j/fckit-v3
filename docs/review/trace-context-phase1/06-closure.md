@@ -43,7 +43,7 @@ git diff --check
 ### 3.2 core 与 starter
 
 ```bash
-cmd /c mvn -pl fist-kit-infra/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test
+cmd /c mvn -pl fist-kit-infra/fist-trace/fist-trace-context-spring-boot-starter -am "-Dsurefire.failIfNoSpecifiedTests=false" test
 ```
 
 结果：通过。
