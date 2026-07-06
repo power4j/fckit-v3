@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [3.15.0] - 2026-07-06
+
 ### Added
 
 - 新增 `fist-jasypt-cli hmac-key-fingerprint` 命令，用于按应用完整性运维页面一致算法计算 HMAC 业务密钥指纹。
