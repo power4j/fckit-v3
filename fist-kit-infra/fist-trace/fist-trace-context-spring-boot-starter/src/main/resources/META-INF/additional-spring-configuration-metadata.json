@@ -1,0 +1,21 @@
+{
+  "properties": [
+    {
+      "name": "fist.trace-context.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable trace context runtime auto-configuration.",
+      "defaultValue": false
+    },
+    {
+      "name": "fist.trace-context.span.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable @TraceSpan aspect and AOP proxy support.",
+      "defaultValue": true
+    },
+    {
+      "name": "fist.trace-context.items",
+      "type": "java.util.Map<java.lang.String, com.power4j.fist.trace.boot.autoconfigure.TraceContextProperties$Item>",
+      "description": "Trace context item definitions keyed by item ID."
+    }
+  ]
+}

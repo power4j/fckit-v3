@@ -40,6 +40,10 @@
     </dependency>
     <dependency>
       <groupId>com.power4j.fist3</groupId>
+      <artifactId>fist-trace-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.power4j.fist3</groupId>
       <artifactId>fist-support-spring</artifactId>
     </dependency>
     <dependency>

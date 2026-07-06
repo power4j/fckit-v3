@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.power4j.fist.cloud.autoconfigure.rpc.feign.FeignClientAutoConfiguration,\
-  com.power4j.fist.cloud.autoconfigure.rpc.loadbalancer.LoadBalancerAutoConfiguration,\
-  com.power4j.fist.cloud.autoconfigure.rpc.loadbalancer.ReactiveLoadBalancerAutoConfiguration

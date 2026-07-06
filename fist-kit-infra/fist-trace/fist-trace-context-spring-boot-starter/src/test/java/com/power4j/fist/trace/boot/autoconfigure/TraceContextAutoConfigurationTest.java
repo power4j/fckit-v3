@@ -1,0 +1,129 @@
+package com.power4j.fist.trace.boot.autoconfigure;
+
+import com.power4j.fist.trace.context.carrier.MapInboundTraceContext;
+import com.power4j.fist.trace.context.carrier.MapOutboundTraceContext;
+import com.power4j.fist.trace.context.carrier.MapTraceMdcContext;
+import com.power4j.fist.trace.context.spi.SystemCodeProvider;
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.trace.context.TraceContexts;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.context.annotation.ImportCandidates;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * {@link TraceContextAutoConfiguration} 测试。
+ *
+ * @author CJ (power4j@outlook.com)
+ * @since 3.15
+ */
+class TraceContextAutoConfigurationTest {
+
+	private final ApplicationContextRunner runner = new ApplicationContextRunner()
+		.withConfiguration(AutoConfigurations.of(TraceContextAutoConfiguration.class));
+
+	@AfterEach
+	void tearDown() {
+		TraceContexts.clear();
+	}
+
+	@Test
+	void shouldRegisterAutoConfigurationImportCandidate() {
+		assertThat(ImportCandidates.load(AutoConfiguration.class, getClass().getClassLoader()))
+			.contains(TraceContextAutoConfiguration.class.getName());
+	}
+
+	@Test
+	void shouldStayDisabledByDefault() {
+		this.runner.run((context) -> assertThat(context).doesNotHaveBean(TraceContextRuntime.class));
+	}
+
+	@Test
+	void shouldCreateRuntimeWhenEnabled() {
+		this.runner.withPropertyValues("fist.trace-context.enabled=true")
+			.run((context) -> assertThat(context).hasSingleBean(TraceContextRuntime.class));
+	}
+
+	@Test
+	void defaultCorrelationIdShouldGenerateAndRelayRequestId() {
+		this.runner.withPropertyValues("fist.trace-context.enabled=true").run((context) -> {
+			TraceContextRuntime runtime = context.getBean(TraceContextRuntime.class);
+			runtime.inbound(new MapInboundTraceContext(Map.of()));
+
+			MapOutboundTraceContext outbound = new MapOutboundTraceContext();
+			MapTraceMdcContext mdc = new MapTraceMdcContext();
+			runtime.outbound(outbound);
+			runtime.syncMdc(mdc);
+
+			assertThat(outbound.headers()).containsKey("X-REQ-UID");
+			assertThat(mdc.values()).containsKey("requestId");
+			assertThat(outbound.headers().get("X-REQ-UID")).isEqualTo(mdc.values().get("requestId"));
+		});
+	}
+
+	@Test
+	void defaultSystemCodeShouldReadSpringApplicationName() {
+		this.runner.withPropertyValues("fist.trace-context.enabled=true", "spring.application.name=bank-web")
+			.run((context) -> {
+				TraceContextRuntime runtime = context.getBean(TraceContextRuntime.class);
+				runtime.inbound(new MapInboundTraceContext(Map.of()));
+				MapTraceMdcContext mdc = new MapTraceMdcContext();
+				runtime.syncMdc(mdc);
+
+				assertThat(mdc.values()).containsEntry("systemCode", "bank-web");
+			});
+	}
+
+	@Test
+	void defaultSystemCodeShouldPreferSystemCodeProvider() {
+		this.runner.withUserConfiguration(SystemCodeProviderConfiguration.class)
+			.withPropertyValues("fist.trace-context.enabled=true", "spring.application.name=bank-web")
+			.run((context) -> {
+				TraceContextRuntime runtime = context.getBean(TraceContextRuntime.class);
+				runtime.inbound(new MapInboundTraceContext(Map.of()));
+				MapTraceMdcContext mdc = new MapTraceMdcContext();
+				runtime.syncMdc(mdc);
+
+				assertThat(mdc.values()).containsEntry("systemCode", "provider-system");
+			});
+	}
+
+	@Test
+	void configuredSystemCodeShouldUseFixedValue() {
+		this.runner
+			.withPropertyValues("fist.trace-context.enabled=true", "spring.application.name=bank-web",
+					"fist.trace-context.items.systemCode.processor=system-code",
+					"fist.trace-context.items.systemCode.props.context-name=systemCode",
+					"fist.trace-context.items.systemCode.props.mdc-name=systemCode",
+					"fist.trace-context.items.systemCode.props.value=ZFMM")
+			.run((context) -> {
+				TraceContextRuntime runtime = context.getBean(TraceContextRuntime.class);
+				runtime.inbound(new MapInboundTraceContext(Map.of()));
+				MapTraceMdcContext mdc = new MapTraceMdcContext();
+				runtime.syncMdc(mdc);
+
+				assertThat(runtime.capture().values()).containsEntry("systemCode", "ZFMM");
+				assertThat(mdc.values()).containsEntry("systemCode", "ZFMM");
+			});
+	}
+
+	@Configuration(proxyBeanMethods = false)
+	static class SystemCodeProviderConfiguration {
+
+		@Bean
+		SystemCodeProvider systemCodeProvider() {
+			return () -> Optional.of("provider-system");
+		}
+
+	}
+
+}

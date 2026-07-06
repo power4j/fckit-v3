@@ -1,5 +1,6 @@
 package com.power4j.fist.autoconfigure.gateway;
 
+import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.boot.security.inner.DefaultUserCodec;
 import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.cloud.gateway.ApiGuardFilter;
@@ -12,6 +13,7 @@ import com.power4j.fist.cloud.security.DefaultAccessPermittedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,8 +67,8 @@ public class RouteGuardConfiguration {
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
 	@ConditionalOnMissingBean
-	RequestIdGlobalFilter requestIdGlobalFilter() {
-		return new RequestIdGlobalFilter(HttpConstant.Header.KEY_REQUEST_ID);
+	RequestIdGlobalFilter requestIdGlobalFilter(ObjectProvider<TraceContextRuntime> runtime) {
+		return new RequestIdGlobalFilter(HttpConstant.Header.KEY_REQUEST_ID, runtime.getIfAvailable());
 	}
 
 }
