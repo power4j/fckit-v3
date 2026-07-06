@@ -16,7 +16,7 @@
 
 package com.power4j.fist.boot.web.reactive.trace;
 
-import com.power4j.fist.trace.context.InboundTraceContext;
+import com.power4j.fist.trace.context.carrier.InboundTraceContext;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
 import java.util.LinkedHashMap;

@@ -1,5 +1,7 @@
 package com.power4j.fist.trace.context;
 
+import com.power4j.fist.trace.context.runtime.TraceContextHolder;
+
 /**
  * 追踪上下文作用域。
  *

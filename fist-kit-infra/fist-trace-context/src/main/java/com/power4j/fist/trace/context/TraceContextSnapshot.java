@@ -1,5 +1,6 @@
 package com.power4j.fist.trace.context;
 
+import com.power4j.fist.trace.context.runtime.DefaultTraceContext;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;

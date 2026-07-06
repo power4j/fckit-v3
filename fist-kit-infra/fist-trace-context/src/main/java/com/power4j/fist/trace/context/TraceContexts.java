@@ -1,5 +1,7 @@
 package com.power4j.fist.trace.context;
 
+import com.power4j.fist.trace.context.runtime.DefaultTraceContext;
+import com.power4j.fist.trace.context.runtime.TraceContextHolder;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;

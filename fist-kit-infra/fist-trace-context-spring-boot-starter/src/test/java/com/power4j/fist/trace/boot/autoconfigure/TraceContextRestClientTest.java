@@ -1,5 +1,6 @@
 package com.power4j.fist.trace.boot.autoconfigure;
 
+import com.power4j.fist.trace.boot.autoconfigure.client.TraceContextRestClientInterceptor;
 import com.power4j.fist.trace.context.TraceContexts;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

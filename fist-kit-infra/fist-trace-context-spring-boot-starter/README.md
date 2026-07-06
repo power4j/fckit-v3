@@ -69,6 +69,9 @@ logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{reque
 ## span 注解
 
 ```java
+import com.power4j.fist.trace.boot.annotation.TraceSpan;
+import com.power4j.fist.trace.boot.annotation.TraceSpanGroup;
+
 @TraceSpanGroup("order")
 @Service
 class OrderService {
@@ -105,6 +108,12 @@ fist:
 实现并注册 `TraceContextItemFactory` Bean：
 
 ```java
+import com.power4j.fist.trace.context.item.AbstractPropDrivenTraceContextItem;
+import com.power4j.fist.trace.context.item.TraceContextItem;
+import com.power4j.fist.trace.context.item.TraceContextItemFactory;
+import com.power4j.fist.trace.context.item.TraceContextItemFactoryContext;
+import com.power4j.fist.trace.context.item.TraceContextItemSpec;
+
 @Bean
 TraceContextItemFactory tenantItemFactory() {
     return new TraceContextItemFactory() {

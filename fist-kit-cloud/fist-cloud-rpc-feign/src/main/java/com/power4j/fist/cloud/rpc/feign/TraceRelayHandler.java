@@ -16,9 +16,9 @@
 
 package com.power4j.fist.cloud.rpc.feign;
 
+import com.power4j.fist.trace.context.carrier.OutboundTraceContext;
 import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.trace.context.TraceContexts;
-import com.power4j.fist.trace.context.OutboundTraceContext;
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

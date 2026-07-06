@@ -1,5 +1,10 @@
 package com.power4j.fist.trace.context;
 
+import com.power4j.fist.trace.context.item.AbstractSingleValueTraceContextItem;
+import com.power4j.fist.trace.context.item.CorrelationTraceContextItem;
+import com.power4j.fist.trace.context.runtime.DefaultTraceContextRegistry;
+import com.power4j.fist.trace.context.runtime.DefaultTraceContextRuntime;
+import com.power4j.fist.trace.context.support.TraceCorrelation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

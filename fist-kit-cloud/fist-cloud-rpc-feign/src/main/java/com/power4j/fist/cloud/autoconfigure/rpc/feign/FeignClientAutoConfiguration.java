@@ -16,11 +16,11 @@
 
 package com.power4j.fist.cloud.autoconfigure.rpc.feign;
 
+import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.cloud.rpc.feign.RelayHandler;
 import com.power4j.fist.cloud.rpc.feign.RelayInterceptor;
 import com.power4j.fist.cloud.rpc.feign.TraceRelayHandler;
 import com.power4j.fist.cloud.rpc.feign.UserRelayHandler;
-import com.power4j.fist.trace.context.TraceContextRuntime;
 import feign.RequestInterceptor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

@@ -1,12 +1,11 @@
 package com.power4j.fist.trace.boot.autoconfigure;
 
-import com.power4j.fist.trace.context.MapInboundTraceContext;
-import com.power4j.fist.trace.context.MapOutboundTraceContext;
-import com.power4j.fist.trace.context.MapTraceMdcContext;
-import com.power4j.fist.trace.context.SystemCodeProvider;
+import com.power4j.fist.trace.context.carrier.MapInboundTraceContext;
+import com.power4j.fist.trace.context.carrier.MapOutboundTraceContext;
+import com.power4j.fist.trace.context.carrier.MapTraceMdcContext;
+import com.power4j.fist.trace.context.spi.SystemCodeProvider;
 import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.trace.context.TraceContexts;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -95,6 +94,25 @@ class TraceContextAutoConfigurationTest {
 				runtime.syncMdc(mdc);
 
 				assertThat(mdc.values()).containsEntry("systemCode", "provider-system");
+			});
+	}
+
+	@Test
+	void configuredSystemCodeShouldUseFixedValue() {
+		this.runner
+			.withPropertyValues("fist.trace-context.enabled=true", "spring.application.name=bank-web",
+					"fist.trace-context.items.systemCode.processor=system-code",
+					"fist.trace-context.items.systemCode.props.context-name=systemCode",
+					"fist.trace-context.items.systemCode.props.mdc-name=systemCode",
+					"fist.trace-context.items.systemCode.props.value=ZFMM")
+			.run((context) -> {
+				TraceContextRuntime runtime = context.getBean(TraceContextRuntime.class);
+				runtime.inbound(new MapInboundTraceContext(Map.of()));
+				MapTraceMdcContext mdc = new MapTraceMdcContext();
+				runtime.syncMdc(mdc);
+
+				assertThat(runtime.capture().values()).containsEntry("systemCode", "ZFMM");
+				assertThat(mdc.values()).containsEntry("systemCode", "ZFMM");
 			});
 	}
 

@@ -1,5 +1,6 @@
 package com.power4j.fist.autoconfigure.gateway;
 
+import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.boot.security.inner.DefaultUserCodec;
 import com.power4j.fist.boot.web.constant.HttpConstant;
 import com.power4j.fist.cloud.gateway.ApiGuardFilter;
@@ -9,7 +10,6 @@ import com.power4j.fist.cloud.security.AccessDeniedHandler;
 import com.power4j.fist.cloud.security.AccessPermittedHandler;
 import com.power4j.fist.cloud.security.DefaultAccessDeniedHandler;
 import com.power4j.fist.cloud.security.DefaultAccessPermittedHandler;
-import com.power4j.fist.trace.context.TraceContextRuntime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;

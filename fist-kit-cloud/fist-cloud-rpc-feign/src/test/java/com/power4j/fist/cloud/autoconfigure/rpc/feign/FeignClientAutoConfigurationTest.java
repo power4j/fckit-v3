@@ -1,16 +1,16 @@
 package com.power4j.fist.cloud.autoconfigure.rpc.feign;
 
+import com.power4j.fist.trace.context.item.AbstractSingleValueTraceContextItem;
+import com.power4j.fist.trace.context.runtime.DefaultTraceContextRegistry;
+import com.power4j.fist.trace.context.runtime.DefaultTraceContextRuntime;
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.trace.context.TraceContexts;
 import com.power4j.fist.boot.security.context.UserContextHolder;
 import com.power4j.fist.boot.security.core.SecurityConstant;
 import com.power4j.fist.cloud.rpc.feign.RelayHandler;
 import com.power4j.fist.cloud.rpc.feign.RelayInterceptor;
 import com.power4j.fist.cloud.rpc.feign.TraceRelayHandler;
 import com.power4j.fist.cloud.rpc.feign.UserRelayHandler;
-import com.power4j.fist.trace.context.AbstractSingleValueTraceContextItem;
-import com.power4j.fist.trace.context.DefaultTraceContextRegistry;
-import com.power4j.fist.trace.context.DefaultTraceContextRuntime;
-import com.power4j.fist.trace.context.TraceContextRuntime;
-import com.power4j.fist.trace.context.TraceContexts;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.jupiter.api.AfterEach;

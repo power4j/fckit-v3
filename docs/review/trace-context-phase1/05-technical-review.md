@@ -121,7 +121,7 @@
 | --- | --- | --- | --- | --- |
 | P1 | 移除 `TraceContextBeanLocator` | `e44558e7` | **已闭环** | `TraceContextBeanLocator`、`EmptyTraceContextBeanLocator`、`SpringTraceContextBeanLocator` 三个类已删除；`TraceContextItemFactoryContext` 仅剩 `idGenerator`；`SystemCodeTraceContextItemFactory` 改为直接注入 `ObjectProvider<SystemCodeProvider>` 与 `Environment`，`CorrelationIdTraceContextItemFactory` 用 `context.idGenerator()`。扩展方自定义 factory 仍是 Spring bean，直接 `@Autowired` 所需依赖，路径比 locator 间接层更直接。 |
 | P2 | 保留 registry 冲突校验 | — | **保留（符合建议）** | `TraceContextRegistryBuilder#checkSingleValueConflicts`（`TraceContextRegistryBuilder.java:50-62`）仍对 `context-name`/`mdc-name`/`outbound-header` 做 fail-fast，包含第 3 轮补齐的 `outbound-header` 检测。 |
-| P3 | 合并 `Slf4jTraceMdcContext` 到 core | `b0b1ce33` | **已闭环** | core 的 `com.power4j.fist.trace.context.Slf4jTraceMdcContext`（实现 `TraceMdcContext` + `AutoCloseable`，保存旧值→写新值→close 恢复）被 starter（filter/decorator/aspect）与 `MdcContextLifter` 共用；`fist-support-web/.../reactive/trace/Slf4jTraceMdcContext.java` 已删除。core 依赖 SLF4J 门面不破坏「core 保持通用」原则，与第 4 轮判断一致。 |
+| P3 | 合并 `Slf4jTraceMdcContext` 到 core | `b0b1ce33` | **已闭环** | core 的 `com.power4j.fist.trace.context.carrier.Slf4jTraceMdcContext`（实现 `TraceMdcContext` + `AutoCloseable`，保存旧值→写新值→close 恢复）被 starter（filter/decorator/aspect）与 `MdcContextLifter` 共用；`fist-support-web/.../reactive/trace/Slf4jTraceMdcContext.java` 已删除。core 依赖 SLF4J 门面不破坏「core 保持通用」原则，与第 4 轮判断一致。 |
 
 ### 5.5 第 4 轮测试缺口（T1–T8）
 

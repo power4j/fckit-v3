@@ -1,7 +1,7 @@
 package com.power4j.fist3.examples.trace.basic;
 
-import com.power4j.fist.trace.boot.autoconfigure.TraceSpan;
-import com.power4j.fist.trace.boot.autoconfigure.TraceSpanGroup;
+import com.power4j.fist.trace.boot.annotation.TraceSpan;
+import com.power4j.fist.trace.boot.annotation.TraceSpanGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

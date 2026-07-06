@@ -1,5 +1,9 @@
 package com.power4j.fist.trace.boot.autoconfigure;
 
+import com.power4j.fist.trace.boot.annotation.TraceSpan;
+import com.power4j.fist.trace.boot.annotation.TraceSpanGroup;
+import com.power4j.fist.trace.boot.autoconfigure.span.TraceSpanAspect;
+import com.power4j.fist.trace.boot.autoconfigure.TraceContextAutoConfiguration;
 import com.power4j.fist.trace.context.TraceContexts;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

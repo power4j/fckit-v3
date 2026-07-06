@@ -1,5 +1,6 @@
 package com.power4j.fist.trace.boot.autoconfigure;
 
+import com.power4j.fist.trace.boot.autoconfigure.servlet.TraceContextServletFilter;
 import com.power4j.fist.trace.context.TraceContextRuntime;
 import com.power4j.fist.trace.context.TraceContexts;
 import jakarta.servlet.FilterChain;
