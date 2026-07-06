@@ -16,17 +16,19 @@
 
 package com.power4j.fist.cloud.autoconfigure.rpc.feign;
 
-import com.power4j.fist.boot.web.constant.HttpConstant;
-import com.power4j.fist.cloud.rpc.feign.HeaderRelayHandler;
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.cloud.rpc.feign.RelayHandler;
 import com.power4j.fist.cloud.rpc.feign.RelayInterceptor;
+import com.power4j.fist.cloud.rpc.feign.TraceRelayHandler;
 import com.power4j.fist.cloud.rpc.feign.UserRelayHandler;
 import feign.RequestInterceptor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -34,14 +36,24 @@ import java.util.Set;
  * @since 1.0
  */
 @AutoConfiguration
+@AutoConfigureAfter(name = "com.power4j.fist.trace.boot.autoconfigure.TraceContextAutoConfiguration")
 @ComponentScan(basePackages = { "com.power4j.fist.cloud.autoconfigure.rpc.feign.error" })
 public class FeignClientAutoConfiguration {
 
 	@Bean
-	public RequestInterceptor requestInterceptor() {
-		UserRelayHandler userRelayHandler = new UserRelayHandler();
-		HeaderRelayHandler headerRelayHandler = new HeaderRelayHandler(Set.of(HttpConstant.Header.KEY_REQUEST_ID));
-		return new RelayInterceptor(List.of(headerRelayHandler, userRelayHandler));
+	public RequestInterceptor requestInterceptor(List<RelayHandler> handlers) {
+		return new RelayInterceptor(handlers);
+	}
+
+	@Bean
+	@ConditionalOnBean(TraceContextRuntime.class)
+	public TraceRelayHandler traceRelayHandler(TraceContextRuntime runtime) {
+		return new TraceRelayHandler(runtime);
+	}
+
+	@Bean
+	public UserRelayHandler userRelayHandler() {
+		return new UserRelayHandler();
 	}
 
 	// TODO: 统一降级处理

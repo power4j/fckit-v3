@@ -16,6 +16,8 @@
 
 package com.power4j.fist.boot.web.reactive.error;
 
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -36,8 +38,8 @@ public class GlobalErrorConfigure {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ErrorAttributes globalErrorAttributes() {
-		return new GlobalErrorAttributes();
+	public ErrorAttributes globalErrorAttributes(ObjectProvider<TraceContextRuntime> runtime) {
+		return new GlobalErrorAttributes(runtime.getIfAvailable());
 	}
 
 }

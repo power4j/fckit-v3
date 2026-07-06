@@ -19,10 +19,12 @@ package com.power4j.fist.boot.mon.info;
 import java.util.Optional;
 
 /**
+ * @deprecated 默认追踪信息改为从 {@code fist-trace-context} 获取。
  * @author CJ (power4j@outlook.com)
  * @date 2021/10/14
  * @since 1.0
  */
+@Deprecated(since = "3.15", forRemoval = false)
 public interface TraceInfoResolver<C> {
 
 	/**

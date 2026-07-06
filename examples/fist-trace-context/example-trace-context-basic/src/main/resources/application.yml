@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: trace-basic
+
+fist:
+  trace-context:
+    enabled: true
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%X{requestId:-},%X{systemCode:-},%X{spanId:-}] %logger{36} - %msg%n"

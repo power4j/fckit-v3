@@ -6,6 +6,33 @@
 
 ## [Unreleased]
 
+## [3.15.0] - 2026-07-06
+
+### Added
+
+- 新增 `fist-jasypt-cli hmac-key-fingerprint` 命令，用于按应用完整性运维页面一致算法计算 HMAC 业务密钥指纹。
+- 新增 `fist-trace-context` 和 `fist-trace-context-spring-boot-starter`，提供追踪上下文核心 API、默认 `correlation-id` / `system-code` item、Servlet 入口、RestClient 透传、异步恢复和 `@TraceSpan` 支持。
+- 新增 `examples/fist-trace-context`，包含默认能力示例和自定义 item 示例。
+
+### Changed
+
+- `fist-boot-web-app` 不再默认注册旧 `HeaderMdcFilter`。原入口请求 ID 与 MDC 能力迁移到 `fist-trace-context-spring-boot-starter`，需要该能力的应用应引入 starter 并启用 `fist.trace-context.enabled=true`。
+- `fist-support-web` 默认异常事件不再消费默认 `TraceInfoResolver`，改为从当前 `TraceContext` 构造 `TraceInfo`。
+- `fist-cloud-rpc-feign` 使用 `TraceRelayHandler` 取代内部 `HeaderRelayHandler`。启用 `TraceContextRuntime` 后，Feign 通过现有 `RelayInterceptor` handler 链透传 trace header，认证 header 仍由 `UserRelayHandler` 处理。
+- `fist-cloud-gateway` 的 `RequestIdGlobalFilter`、`MdcContextLifter` 和 `GlobalErrorAttributes` 改为使用统一 Reactor Context 快照协议；未启用 `TraceContextRuntime` 时保留旧 requestId 字符串回退。
+
+### Removed
+
+- 移除多个 Spring Boot starter 中冗余的 `spring.factories` 自动配置条目。Spring Boot 3 自动配置由 `AutoConfiguration.imports` 提供，对 Spring Boot 3 应用无功能影响。
+
+### Deprecated
+
+- `HeaderMdcFilter` 和 `TraceInfoResolver` 已标记为 deprecated，后续应迁移到 `fist-trace-context` 相关 API。
+
+### Fixed
+
+- 修正 `fist-trace-context-spring-boot-starter` 缺少 Spring Boot 3 `AutoConfiguration.imports` 导致无法被自动配置发现的问题。
+
 ## [3.14.0] - 2026-06-09
 
 ### Added

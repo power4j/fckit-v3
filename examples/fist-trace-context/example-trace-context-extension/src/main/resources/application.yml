@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: trace-extension
+
+fist:
+  trace-context:
+    enabled: true
+    items:
+      correlation:
+        processor: correlation-id
+        order: 0
+        props:
+          context-name: requestId
+          inbound-header: X-REQ-UID
+          outbound-header: X-REQ-UID
+          mdc-name: requestId
+      tenant:
+        processor: tenant-id
+        order: 5
+        props:
+          context-name: tenantId
+          inbound-header: X-TENANT-ID
+          outbound-header: X-TENANT-ID
+          mdc-name: tenantId
+      systemCode:
+        processor: system-code
+        order: 10
+        props:
+          context-name: systemCode
+          mdc-name: systemCode
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%X{requestId:-},%X{tenantId:-},%X{systemCode:-},%X{spanId:-}] %logger{36} - %msg%n"

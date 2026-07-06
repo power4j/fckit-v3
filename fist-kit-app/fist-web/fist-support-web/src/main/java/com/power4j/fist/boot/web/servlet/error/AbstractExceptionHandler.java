@@ -16,20 +16,20 @@
 
 package com.power4j.fist.boot.web.servlet.error;
 
+import com.power4j.fist.trace.context.support.TraceCorrelation;
+import com.power4j.fist.trace.context.TraceContextRuntime;
+import com.power4j.fist.trace.context.TraceContexts;
 import com.power4j.coca.kit.common.datetime.DateTimeKit;
 import com.power4j.fist.boot.mon.info.ExceptionInfo;
 import com.power4j.fist.boot.mon.info.InfoUtil;
 import com.power4j.fist.boot.mon.info.TraceInfo;
-import com.power4j.fist.boot.mon.info.TraceInfoResolver;
 import com.power4j.fist.support.spring.util.ApplicationContextHolder;
 import com.power4j.fist.support.spring.util.SpringEventUtil;
 import com.power4j.fist.boot.web.event.error.HandlerErrorEvent;
 import com.power4j.fist.boot.web.event.error.RequestInfo;
 import com.power4j.fist.support.spring.web.servlet.util.HttpServletRequestUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -38,13 +38,6 @@ import java.util.Optional;
  * @since 1.0
  */
 public class AbstractExceptionHandler {
-
-	private TraceInfoResolver<HttpServletRequest> traceInfoResolver = request -> Optional.empty();
-
-	@Autowired(required = false)
-	public void setTraceInfoResolver(TraceInfoResolver<HttpServletRequest> traceInfoResolver) {
-		this.traceInfoResolver = traceInfoResolver;
-	}
 
 	/**
 	 * 发送异常报警
@@ -61,9 +54,7 @@ public class AbstractExceptionHandler {
 		String appName = ApplicationContextHolder.getContextOptional()
 			.map(ApplicationContext::getApplicationName)
 			.orElse("未知应用");
-		TraceInfo traceInfo = HttpServletRequestUtil.getCurrentRequestIfAvailable()
-			.flatMap(o -> traceInfoResolver.resolve(o))
-			.orElse(new TraceInfo());
+		TraceInfo traceInfo = createTraceInfo();
 		HandlerErrorEvent handlerErrorEvent = new HandlerErrorEvent();
 		handlerErrorEvent.setAppName(appName);
 		handlerErrorEvent.setTime(DateTimeKit.utcNow());
@@ -73,6 +64,19 @@ public class AbstractExceptionHandler {
 		handlerErrorEvent.setTraceInfo(traceInfo);
 
 		return handlerErrorEvent;
+	}
+
+	private static TraceInfo createTraceInfo() {
+		TraceInfo traceInfo = new TraceInfo();
+		currentRequestId().ifPresent(traceInfo::setRequestId);
+		return traceInfo;
+	}
+
+	private static Optional<String> currentRequestId() {
+		return ApplicationContextHolder.getContextOptional()
+			.map(context -> context.getBeanProvider(TraceContextRuntime.class).getIfAvailable())
+			.flatMap(runtime -> runtime == null ? Optional.empty() : TraceCorrelation.current(runtime))
+			.or(() -> TraceContexts.current().flatMap(context -> context.getValue("requestId")));
 	}
 
 	/**

@@ -22,6 +22,7 @@
     <module>fist-jasypt</module>
     <module>fist-logback</module>
     <module>fist-sde</module>
+    <module>fist-trace-context</module>
   </modules>
 
   <build>

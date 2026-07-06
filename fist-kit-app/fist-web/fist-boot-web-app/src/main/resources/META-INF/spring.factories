@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.power4j.fist.boot.autoconfigure.common.CommonConfiguration,\
-  com.power4j.fist.boot.autoconfigure.web.FistWebAutoConfiguration,\
-  com.power4j.fist.boot.autoconfigure.web.FistReactiveWebAutoConfiguration
