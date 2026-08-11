@@ -101,7 +101,7 @@
     <excel-spring-boot-starter.version>3.4.3</excel-spring-boot-starter.version>
     <seancfoley.ipaddress.version>5.6.2</seancfoley.ipaddress.version>
     <bucket4j.version>8.19.0</bucket4j.version>
-    <jspecify.version>1.0.0</jspecify.version>
+    <jspecify.version>1.0.1</jspecify.version>
 
     <junit-pioneer.version>2.3.0</junit-pioneer.version>
     <spock-lib.version>2.4-groovy-5.0</spock-lib.version>
