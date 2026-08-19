@@ -18,6 +18,7 @@ package com.power4j.fist.boot.mybaits.tree;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -89,6 +91,11 @@ class AbstractNodeIdxSupportTest {
 		orgTreeService.generatePath(2012L, 201L);
 	}
 
+	@BeforeEach
+	void setUp() {
+		orgTreeService.getRepository().deleteAll();
+	}
+
 	@AfterEach
 	void tearDown() {
 		orgTreeService.getRepository().deleteAll();
@@ -113,6 +120,96 @@ class AbstractNodeIdxSupportTest {
 		Set<Long> sub2 = orgTreeService.subTreeNodes(idList2);
 		Set<Long> expected2 = new HashSet<>(Arrays.asList(20L, 201L, 2011L, 2012L));
 		Assertions.assertEquals(expected2, sub2);
+	}
+
+	@Test
+	void movingNonLeafNodeShouldRebuildDescendantPaths() {
+		makeSingleRoot();
+
+		orgTreeService.moveSubtree(20L, 10L);
+
+		Set<String> paths = orgTreeService.findAllDescendant(10L, 0, null)
+			.stream()
+			.map(path -> path.getAncestor() + ">" + path.getDescendant() + ":" + path.getDistance())
+			.collect(Collectors.toSet());
+		Set<String> expected = new HashSet<>(
+				Arrays.asList("10>10:0", "10>101:1", "10>20:1", "10>201:2", "10>2011:3", "10>2012:3"));
+
+		Assertions.assertEquals(expected, paths);
+		Assertions.assertTrue(orgTreeService.findAllDescendant(0L, 0, null)
+			.stream()
+			.noneMatch(path -> (path.getDescendant().equals(201L) && path.getDistance() == 2)
+					|| (Set.of(2011L, 2012L).contains(path.getDescendant()) && path.getDistance() == 3)));
+	}
+
+	@Test
+	void movingSubtreeToGrandparentShouldKeepAllDescendantPaths() {
+		// 根节点（0）下有 XD（10），XD 下有 T1（20），T1 下有 T1-1（21）。
+		// T1 下再创建 T2（30）及 T2-1（31），然后将 T2 移动到 XD 下。
+		orgTreeService.generatePath(0L, null);
+		orgTreeService.generatePath(10L, 0L);
+		orgTreeService.generatePath(20L, 10L);
+		orgTreeService.generatePath(21L, 20L);
+		orgTreeService.generatePath(30L, 20L);
+		orgTreeService.generatePath(31L, 30L);
+
+		orgTreeService.moveSubtree(30L, 10L);
+
+		Set<String> paths = orgTreeService.findAllDescendant(10L, 0, null)
+			.stream()
+			.map(path -> path.getAncestor() + ">" + path.getDescendant() + ":" + path.getDistance())
+			.collect(Collectors.toSet());
+		Set<String> expected = new HashSet<>(Arrays.asList("10>10:0", "10>20:1", "10>21:2", "10>30:1", "10>31:2"));
+
+		Assertions.assertEquals(expected, paths);
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(10L, 20L, 21L, 30L, 31L)),
+				orgTreeService.subTreeNodes(Collections.singleton(10L)));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(20L, 21L)),
+				orgTreeService.subTreeNodes(Collections.singleton(20L)));
+	}
+
+	@Test
+	void generatePathAfterMovingSubtreeShouldUseNewAncestors() {
+		orgTreeService.generatePath(0L, null);
+		orgTreeService.generatePath(10L, 0L);
+		orgTreeService.generatePath(20L, 10L);
+		orgTreeService.generatePath(30L, 20L);
+		orgTreeService.moveSubtree(30L, 10L);
+
+		orgTreeService.generatePath(31L, 30L);
+
+		Assertions.assertTrue(orgTreeService.findAllDescendant(10L, 0, null)
+			.stream()
+			.anyMatch(path -> path.getDescendant().equals(31L) && path.getDistance() == 2));
+		Assertions.assertTrue(orgTreeService.findAllDescendant(20L, 0, null)
+			.stream()
+			.noneMatch(path -> path.getDescendant().equals(31L)));
+	}
+
+	@Test
+	void deletingSubtreePathsBeforeRecreatingSameIdsShouldBuildNewPaths() {
+		orgTreeService.generatePath(0L, null);
+		orgTreeService.generatePath(10L, 0L);
+		orgTreeService.generatePath(20L, 10L);
+		orgTreeService.generatePath(30L, 20L);
+		orgTreeService.generatePath(31L, 30L);
+
+		// 按叶子到根的顺序清理关系，模拟部门同步的级联删除。
+		orgTreeService.removeAllPath(31L);
+		orgTreeService.removeAllPath(30L);
+		orgTreeService.generatePath(30L, 10L);
+		orgTreeService.generatePath(31L, 30L);
+
+		Set<String> paths = orgTreeService.findAllDescendant(10L, 0, null)
+			.stream()
+			.map(path -> path.getAncestor() + ">" + path.getDescendant() + ":" + path.getDistance())
+			.collect(Collectors.toSet());
+		Set<String> expected = new HashSet<>(Arrays.asList("10>10:0", "10>20:1", "10>30:1", "10>31:2"));
+
+		Assertions.assertEquals(expected, paths);
+		Assertions.assertTrue(orgTreeService.findAllDescendant(20L, 0, null)
+			.stream()
+			.noneMatch(path -> Set.of(30L, 31L).contains(path.getDescendant())));
 	}
 
 	@Test
