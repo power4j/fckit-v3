@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author CJ (power4j@outlook.com)
@@ -113,6 +114,26 @@ class AbstractNodeIdxSupportTest {
 		Set<Long> sub2 = orgTreeService.subTreeNodes(idList2);
 		Set<Long> expected2 = new HashSet<>(Arrays.asList(20L, 201L, 2011L, 2012L));
 		Assertions.assertEquals(expected2, sub2);
+	}
+
+	@Test
+	void movingNonLeafNodeShouldRebuildDescendantPaths() {
+		makeSingleRoot();
+
+		orgTreeService.moveSubtree(20L, 10L);
+
+		Set<String> paths = orgTreeService.findAllDescendant(10L, 0, null)
+			.stream()
+			.map(path -> path.getAncestor() + ">" + path.getDescendant() + ":" + path.getDistance())
+			.collect(Collectors.toSet());
+		Set<String> expected = new HashSet<>(
+				Arrays.asList("10>10:0", "10>101:1", "10>20:1", "10>201:2", "10>2011:3", "10>2012:3"));
+
+		Assertions.assertEquals(expected, paths);
+		Assertions.assertTrue(orgTreeService.findAllDescendant(0L, 0, null)
+			.stream()
+			.noneMatch(path -> (path.getDescendant().equals(201L) && path.getDistance() == 2)
+					|| (Set.of(2011L, 2012L).contains(path.getDescendant()) && path.getDistance() == 3)));
 	}
 
 	@Test
