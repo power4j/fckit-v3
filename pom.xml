@@ -87,8 +87,8 @@
     <friendly-id.version>1.1.0</friendly-id.version>
     <bcprov-18.version>1.85</bcprov-18.version>
     <jasypt-spring-boot.version>4.0.4</jasypt-spring-boot.version>
-    <mybatis-spring.version>3.0.5</mybatis-spring.version>
-    <mybatis-plus.version>3.5.16</mybatis-plus.version>
+    <mybatis-spring.version>3.0.6</mybatis-spring.version>
+    <mybatis-plus.version>3.5.17</mybatis-plus.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <springfox.version>3.0.0</springfox.version>
     <swagger3-api.version>2.2.52</swagger3-api.version>
