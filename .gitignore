@@ -105,7 +105,16 @@ temp/
 tmp/
 verification.md
 
+# codegraph
+.codegraph/
+
+# playwright
+.playwright-cli/
+
 # AI
+.cursor/
+.agents/
 .claude/
-.mcp.json
 .codex/
+.mcp.json
+skills-lock.json
