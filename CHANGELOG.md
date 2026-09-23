@@ -6,6 +6,12 @@
 
 ## [Unreleased]
 
+## [3.15.2] - 2026-09-23
+
+### Changed
+
+- 升级 Apache Commons Collections、Guava、Bouncy Castle、Swagger Core、Springdoc OpenAPI 和 Bucket4j 依赖版本。
+
 ## [3.15.1] - 2026-08-19
 
 ### Fixed
