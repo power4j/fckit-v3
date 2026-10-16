@@ -35,6 +35,30 @@ public class FistJasyptAutoConfiguration {
 	}
 
 	private static String resolveMasterKey(FistJasyptProperties properties, Environment environment) {
+		String source = properties.getMasterKeySource();
+		if (source != null) {
+			if ("raw".equals(source)) {
+				String value = properties.getMasterKeyValue();
+				if (!StringUtils.hasText(value)) {
+					throw new IllegalStateException(
+							"FIST Jasypt raw master key is missing. Set fist.jasypt.master-key-value.");
+				}
+				String masterKey = value.trim();
+				if (masterKey.startsWith(properties.getCipherPrefix())
+						&& masterKey.endsWith(properties.getCipherSuffix())) {
+					throw new IllegalStateException("FIST Jasypt raw master key must not be encrypted with itself.");
+				}
+				return masterKey;
+			}
+			if (!"file".equals(source)) {
+				throw new IllegalStateException("FIST Jasypt master-key-source must be file or raw.");
+			}
+			if (!StringUtils.hasText(properties.getMasterKeyFile())) {
+				throw new IllegalStateException(
+						"FIST Jasypt file master key is missing. Set fist.jasypt.master-key-file.");
+			}
+			return readMasterKey(properties.getMasterKeyFile(), properties.getMasterKeyEnv());
+		}
 		if (StringUtils.hasText(properties.getMasterKeyFile())) {
 			return readMasterKey(properties.getMasterKeyFile(), properties.getMasterKeyEnv());
 		}

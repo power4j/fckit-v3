@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- `fist-jasypt-spring-boot-starter` 新增可选的 `fist.jasypt.master-key-source` 和 `master-key-value`，支持直接从配置提供主密钥，便于不同平台的实例共用配置；未指定来源时保留原有文件和环境属性加载逻辑。
+
 ## [3.15.2] - 2026-09-23
 
 ### Changed

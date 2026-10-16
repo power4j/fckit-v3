@@ -2,6 +2,8 @@
 
 本示例演示 FIST 国密配置加密的最小接入流程。
 
+本文使用主密钥文件。跨平台共享配置可选择 `raw` 来源，配置规则及兼容行为见 [Jasypt 主密钥来源](../../../docs/public/develop/jasypt-master-key.md)。
+
 ## 生成主密钥文件
 
 查看 CLI 命令和参数：
