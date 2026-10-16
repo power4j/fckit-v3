@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [3.15.3] - 2026-10-16
+
 ### Added
 
 - `fist-jasypt-spring-boot-starter` 新增可选的 `fist.jasypt.master-key-source` 和 `master-key-value`，支持直接从配置提供主密钥，便于不同平台的实例共用配置；未指定来源时保留原有文件和环境属性加载逻辑。
@@ -13,6 +15,7 @@
 ### Changed
 
 - `example-jasypt-basic` 默认使用 `raw` 主密钥，提供配套演示密文和密钥文件，可通过切换配置注释体验文件方式。
+- 升级 Guava 至 `33.7.2-jre`，Spring Boot Admin 至 `3.5.11`。
 
 ## [3.15.2] - 2026-09-23
 
