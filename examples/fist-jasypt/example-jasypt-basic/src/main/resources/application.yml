@@ -1,6 +1,13 @@
 fist:
   jasypt:
     enabled: true
+    # 仅供示例使用，主密钥与下方密文配套。
+    master-key-source: raw
+    master-key-value: example-only-master-key
+    # 切换为文件方式时，注释上面两行并取消下面两行的注释。
+    # 相对路径基于进程工作目录，请从 example-jasypt-basic 目录启动。
+    # master-key-source: file
+    # master-key-file: ./demo-master.key
 
 demo:
-  hmac-key: GMENC(v1:6Lq7J4ce0JnDAzzh3D7UxA==:XoA9UJTkas7phDQNqOn4dQ==:0FHOQABbInKUIJVzUvORLQ==:wzQI6MjFcpMTXlUwPKJcTkhSCSqPLpkknnBeF095pkI=)
+  hmac-key: GMENC(v1:r+oSOlw1FBjsMIHC2B4q0w==:FLacb5h+6I5PT6YFBF9O6g==:81jpUpLDN5D/XLsiiLgQGQ==:RMu1en8SvREr1mFms2On/340WL8Db152VycD7DJzY5w=)
