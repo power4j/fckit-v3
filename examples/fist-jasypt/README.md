@@ -6,4 +6,4 @@
 
 | 示例 | 说明 |
 | --- | --- |
-| `example-jasypt-basic` | 演示主密钥文件、`GMENC(...)` 配置项和启动后读取明文配置。 |
+| `example-jasypt-basic` | 默认使用 `raw` 主密钥，可通过切换配置注释改用文件，演示 `GMENC(...)` 配置解密。 |
